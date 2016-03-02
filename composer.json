@@ -1,0 +1,12 @@
+{
+  "name": "TechnicalWeb/TechnicalWeb",
+  "description": "Technotes Manager",
+  "minimum-stability": "stable",
+  "license": "GNU Apache",
+  "authors": [
+    {
+      "name": "Fati CHEN",
+      "email": "fati.chen@etu.umontpellier.fr"
+    }
+  ]
+}
