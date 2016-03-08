@@ -18,7 +18,7 @@
  *
  */
 
-namespace techweb\lib\core\security;
+namespace techweb\lib\core\io;
 
 use techweb\core\exception\IOException;
 use techweb\core\exception\UploadException;
