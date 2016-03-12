@@ -27,26 +27,46 @@ use techweb\core\exception\UnknownDriverException;
 
 abstract class Model
 {
+    const QUERY = 'query';
+    const VALUES = 'values';
+    const DRIVER = 'driver';
     protected static $table;
     protected static $primary;
-    private static $driver;
+    private static $olddriver;
+
+    protected $query;
+    protected $params;
+    private $driver;
+
+    public function __construct(GenericDriver $driver, Query $query)
+    {
+        //$this->driver = DriverFactory::get(Config::getDatabase(self::DRIVER));
+        $this->driver = $driver;
+        $this->query = $query;
+    }
 
     public static function lastInsertId(): string
     {
         return self::getDriver()->lastInsertId();
     }
 
+
+    /**
+     * @return GenericDriver
+     * @deprecated use $driver instead
+     * @see $driver
+     */
     private static function getDriver(): GenericDriver
     {
-        if (!isset(self::$driver)) {
+        if (!isset(self::$olddriver)) {
             try {
-                self::$driver = DriverFactory::get(Config::getDatabase('driver'));
+                self::$olddriver = DriverFactory::get(Config::getDatabase('driver'));
             } catch (UnknownDriverException $exception) {
                 Error::create($exception->getMessage(), 500);
             }
         }
 
-        return self::$driver;
+        return self::$olddriver;
     }
 
     public static function insert(array $rows)
@@ -76,6 +96,12 @@ abstract class Model
         self::getDriver()->execute($statement, $values);
     }
 
+    /**
+     * @return array
+     *
+     * @deprecated use find() instead
+     * @see find()
+     */
     public static function selectAll(): array
     {
         return self::query('SELECT * FROM ' . static::$table);
@@ -91,6 +117,13 @@ abstract class Model
         return self::queryOne('SELECT * FROM ' . static::$table . ' WHERE ' . static::$primary . ' = :primary', [':primary' => $primary]);
     }
 
+    /**
+     * @param string $statement
+     * @param array $values
+     * @return mixed
+     *
+     * @deprecated use first() instead
+     */
     public static function queryOne(string $statement, array $values = [])
     {
         return self::getDriver()->queryOne($statement, $values);
@@ -122,6 +155,16 @@ abstract class Model
     public static function count(): int
     {
         return self::queryOne('SELECT COUNT(' . static::$primary . ') AS count FROM ' . static::$table)->count;
+    }
+
+    /**
+     * Return the first matching value of the query
+     * @see queryOne()
+     * @return mixed
+     */
+    public function first()
+    {
+        return $this->driver->queryOne($this->params[self::VALUES], $this->params[self::VALUES]);
     }
 
 }

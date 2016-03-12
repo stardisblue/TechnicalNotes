@@ -23,5 +23,37 @@ namespace techweb\core;
 
 class Query
 {
+    public function __construct()
+    {
+    }
 
+    public function select(): self
+    {
+        //TODO
+        return $this;
+    }
+
+    public function from(Model $model):self
+    {
+        //TODO
+        return $this;
+    }
+
+    public function where($params): self
+    {
+        //TODO
+        return $this;
+    }
+
+    public function sortBy($params): self
+    {
+        //TODO
+        return $this;
+    }
+
+    public function groupBy($params): self
+    {
+        //TODO
+        return $this;
+    }
 }
