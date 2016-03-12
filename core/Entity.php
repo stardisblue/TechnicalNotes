@@ -18,13 +18,6 @@
  *
  */
 
-/**
- * Created by PhpStorm.
- * User: stardisblue
- * Date: 08/03/16
- * Time: 16:22
- */
-
 namespace techweb\core;
 
 use techweb\core\exception\UnknownPropertyException;

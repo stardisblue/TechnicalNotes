@@ -21,15 +21,15 @@
 namespace techweb\core\database;
 
 use techweb\core\database\driver\GenericDriver;
-use techweb\core\exception\UnknownDriverException;
 use techweb\core\database\driver\MySQLDriverPDO\MySQLDriverPDO;
 use techweb\core\database\driver\SQLiteDriverPDO\SQLiteDriverPDO;
+use techweb\core\exception\UnknownDriverException;
 
 class DriverFactory
 {
     const MYSQL_PDO = 'MySQLPDO';
     const SQLITE_PDO = 'SQLitePDO';
-	
+
     public static function get(string $driverConstant): GenericDriver
     {
         switch ($driverConstant) {
@@ -41,5 +41,5 @@ class DriverFactory
                 throw new UnknownDriverException('Driver ' . $driverConstant . ' does not exists');
         }
     }
-	
+
 }

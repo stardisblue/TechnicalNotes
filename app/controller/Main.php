@@ -21,12 +21,14 @@
 namespace techweb\app\controller;
 
 use techweb\core\Controller;
+use techweb\core\Query;
 
 class Main extends Controller
 {
 
-    public function __construct()
+    public function __construct(Query $query)
     {
+        parent::__construct($query);
         $this->setLayout('default');
     }
 

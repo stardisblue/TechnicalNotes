@@ -41,6 +41,7 @@ class Text
         $trimmedData = trim($data);
         $escapedData = stripslashes($trimmedData);
         $cleanedData = htmlspecialchars($escapedData);
+
         return $cleanedData;
     }
 
@@ -73,6 +74,7 @@ class Text
             array_values(static::$_transliteration),
             $string
         );
+
         return preg_replace(array_keys($map), array_values($map), $string);
     }
 }

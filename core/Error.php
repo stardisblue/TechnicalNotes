@@ -21,7 +21,6 @@
 namespace techweb\core;
 
 use techweb\config\Config;
-
 use techweb\core\exception\UnknownErrorException;
 
 class Error

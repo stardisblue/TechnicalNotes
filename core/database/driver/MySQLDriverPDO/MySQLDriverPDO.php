@@ -20,15 +20,39 @@
 
 namespace techweb\core\database\driver\MySQLDriverPDO;
 
-use PDO, PDOException;
-
-use techweb\core\Error;
+use PDO;
+use PDOException;
 use techweb\config\Config;
 use techweb\core\database\driver\GenericDriver;
+use techweb\core\Error;
 
 class MySQLDriverPDO implements GenericDriver
 {
     private static $instance;
+
+    public function query(string $statement, array $values = []): array
+    {
+        return $this->queryDatabase($statement, $values, false);
+    }
+
+    private function queryDatabase(string $statement, array $values, bool $unique)
+    {
+        try {
+            $sql = self::getInstance()->prepare($statement);
+            $sql->execute($values);
+
+            if ($unique === true) {
+                $result = $sql->fetch(PDO::FETCH_OBJ);
+
+                return $result === false ? null : $result;
+            }
+            $result = $sql->fetchAll(PDO::FETCH_OBJ);
+
+            return $result === false ? null : $result;
+        } catch (PDOException $pdoException) {
+            Error::create($pdoException->getMessage(), 500);
+        }
+    }
 
     private static function getInstance()
     {
@@ -43,29 +67,7 @@ class MySQLDriverPDO implements GenericDriver
 
         return self::$instance;
     }
-    
-    private function queryDatabase(string $statement, array $values, bool $unique)
-    {
-    	try {
-            $sql = self::getInstance()->prepare($statement);
-            $sql->execute($values);
 
-            if ($unique === true) {
-                $result = $sql->fetch(PDO::FETCH_OBJ);
-            	return $result === false ? null : $result;
-            }
-            $result = $sql->fetchAll(PDO::FETCH_OBJ);
-            return $result === false ? null : $result;
-    	} catch (PDOException $pdoException) {
-            Error::create($pdoException->getMessage(), 500);
-    	}
-    }
-    
-    public function query(string $statement, array $values = []): array
-    {
-        return $this->queryDatabase($statement, $values, false);
-    }
-    
     public function queryOne(string $statement, array $values = [])
     {
         return $this->queryDatabase($statement, $values, true);

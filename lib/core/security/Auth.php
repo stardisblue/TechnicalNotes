@@ -23,12 +23,12 @@ namespace techweb\lib\core\security;
 class Auth
 {
 
-    private static function hash(string $data): string
+    public static function login(string $name)
     {
-        return hash('sha256', $data);
+        $_SESSION[$name] = self::hash($_SERVER['REMOTE_ADDR']);
     }
 
-    public static function login(string $name)
+    private static function hash(string $data): string
     {
         $_SESSION[$name] = self::hash($_SERVER['REMOTE_ADDR']);
     }

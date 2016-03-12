@@ -22,7 +22,7 @@ namespace techweb\core\exception;
 
 class FileTypeException extends \Exception
 {
-	const ERROR_CODE = 3;
+    const ERROR_CODE = 3;
 
     public function __construct($message)
     {

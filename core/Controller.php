@@ -28,11 +28,15 @@ abstract class Controller
     const LOG_WARNING = 1;
     const LOG_FATAL_ERROR = 2;
 
+    private static $currentLogFile;
     protected $data = [];
-
+    protected $query;
     protected $layout = false;
 
-    private static $currentLogFile;
+    public function __construct(Query $query)
+    {
+        $this->query = $query;
+    }
 
     public function afterCall($method)
     {

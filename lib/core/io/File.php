@@ -20,9 +20,9 @@
 
 namespace techweb\lib\core\io;
 
+use techweb\core\exception\FileTypeException;
 use techweb\core\exception\IOException;
 use techweb\core\exception\UploadException;
-use techweb\core\exception\FileTypeException;
 
 class File
 {
@@ -60,7 +60,7 @@ class File
         if (move_uploaded_file($_FILES[$fileName]['tmp_name'], ROOT . '/' . $uploadPath . '/' . $uploadedFileName) === false) {
             throw new IOException('Failed to move the uploaded file');
         }
-	
+
         return $uploadedFileName;
     }
 

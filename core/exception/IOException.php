@@ -22,7 +22,7 @@ namespace techweb\core\exception;
 
 class IOException extends \Exception
 {
-	const ERROR_CODE = 0;
+    const ERROR_CODE = 0;
 
     public function __construct($message)
     {
