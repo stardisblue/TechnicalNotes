@@ -30,12 +30,30 @@ class MySQLDriverPDO implements GenericDriver
 {
     private static $instance;
 
-    public function query(string $statement, array $values = []): array
+    /**
+     * {@inheritdoc}
+     * @see queryDatabase()
+     */
+    public function query(string $statement, array $values = [])
     {
         return $this->queryDatabase($statement, $values, false);
     }
 
-    private function queryDatabase(string $statement, array $values, bool $unique)
+
+    /**
+     * Executes the given query in the database
+     *
+     * @param string $statement
+     * @param array $values [optional]
+     * @param bool $unique [optional]
+     *
+     * fetch only one result
+     *
+     * @return array|null the result, null if failed
+     * @see query()
+     * @see queryOne()
+     */
+    private function queryDatabase(string $statement, array $values = [], bool $unique)
     {
         try {
             $sql = self::getInstance()->prepare($statement);
@@ -68,11 +86,18 @@ class MySQLDriverPDO implements GenericDriver
         return self::$instance;
     }
 
+    /**
+     * {@inheritdoc}
+     * @see queryDatabase()
+     */
     public function queryOne(string $statement, array $values = [])
     {
         return $this->queryDatabase($statement, $values, true);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function execute(string $statement, array $values = [])
     {
         try {
@@ -83,7 +108,10 @@ class MySQLDriverPDO implements GenericDriver
         }
     }
 
-    public function lastInsertId(): string
+    /**
+     * {@inheritdoc}
+     */
+    public function lastInsertId()
     {
         return self::getInstance()->lastInsertId();
     }

@@ -22,11 +22,18 @@ namespace techweb\app\entity;
 
 use techweb\core\Entity;
 
+/**
+ * Class TechnoteEntity
+ * @package techweb\app\entity
+ */
 class TechnoteEntity extends Entity
 {
+    /**
+     * TechnoteEntity constructor.
+     */
     public function __construct()
     {
-        $properties = [
+        $columns = [
             'id' => null,
             "titre" => '',
             "contenu" => '',
@@ -35,7 +42,7 @@ class TechnoteEntity extends Entity
             "user_id" => null,
         ];
 
-        parent::__construct($properties);
+        parent::__construct($columns);
     }
 
 }

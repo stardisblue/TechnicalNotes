@@ -23,12 +23,39 @@ namespace techweb\core\database\driver;
 interface GenericDriver
 {
 
+    /**
+     * Executes the query
+     *
+     * @param string $statement
+     * @param array $values
+     * @return array result of the query
+     */
     public function query(string $statement, array $values = []): array;
 
+    /**
+     * Executes the query and returns the first element
+     *
+     * @param string $statement
+     * @param array $values
+     * @return mixed result of the query
+     */
     public function queryOne(string $statement, array $values = []);
 
+    /**
+     * Executes the query without waiting for the result
+     *
+     * @param string $statement
+     * @param array $values [optional]
+     *
+     * @return array result of the query
+     */
     public function execute(string $statement, array $values = []);
 
-    public function lastInsertId(): string;
+    /**
+     * Return the last inserted id
+     *
+     * @return int|string
+     */
+    public function lastInsertId();
 
 }

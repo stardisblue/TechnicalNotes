@@ -22,6 +22,10 @@ namespace techweb\core;
 
 use techweb\core\exception\UnknownPropertyException;
 
+/**
+ * Class Entity
+ * @package techweb\core
+ */
 abstract class Entity
 {
     protected $options = [];
@@ -34,7 +38,7 @@ abstract class Entity
     public function __construct(array $properties, array $options = [])
     {
         foreach ($properties as $property => $value) {
-            $this->$property = $value;
+           $this->$property = $value;
         }
 
         $this->options = $options;
