@@ -18,13 +18,23 @@
  *
  */
 
+/**
+ * Created by PhpStorm.
+ * User: stardisblue
+ * Date: 13/03/16
+ * Time: 16:51
+ */
 
-namespace techweb\app\model;
+namespace techweb\core\exception;
 
 
-use techweb\core\Model;
-
-class TechnotesModel extends Model
+class IncorrectQueryException extends \Exception
 {
-    protected static $table = 'technotes';
+    const ERROR_CODE = 7;
+
+    public function __construct($message)
+    {
+        parent::__construct($message, self::ERROR_CODE);
+    }
+
 }

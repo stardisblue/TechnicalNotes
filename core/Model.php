@@ -23,6 +23,7 @@ namespace techweb\core;
 use techweb\config\Config;
 use techweb\core\database\driver\GenericDriver;
 use techweb\core\database\DriverFactory;
+use techweb\core\exception\IncorrectQueryException;
 use techweb\core\exception\UnknownDriverException;
 
 abstract class Model
@@ -32,10 +33,17 @@ abstract class Model
     const DRIVER = 'driver';
 
     protected static $table;
-    protected static $primary;
+    protected static $primary = 'id';
+
+    /**
+     * @deprecated use $driver instead
+     * @see $driver
+     */
     private static $olddriver;
 
+    /** @var Query $query */
     protected $query;
+
     private $driver;
 
     public function __construct(GenericDriver $driver)
@@ -44,30 +52,11 @@ abstract class Model
         $this->driver = $driver;
     }
 
-    public static function lastInsertId(): string
-    {
-        return self::getDriver()->lastInsertId();
-    }
-
-
     /**
-     * @return GenericDriver
-     * @deprecated use $driver instead
-     * @see $driver
+     * @param array $rows
+     * @deprecated use add() instead
+     * @see add()
      */
-    private static function getDriver(): GenericDriver
-    {
-        if (!isset(self::$olddriver)) {
-            try {
-                self::$olddriver = DriverFactory::get(Config::getDatabase('driver'));
-            } catch (UnknownDriverException $exception) {
-                Error::create($exception->getMessage(), 500);
-            }
-        }
-
-        return self::$olddriver;
-    }
-
     public static function insert(array $rows)
     {
         $firstHalfStatement = 'INSERT INTO ' . static::$table . ' (';
@@ -102,21 +91,54 @@ abstract class Model
     }
 
     /**
+     * @return GenericDriver
+     * @deprecated use $driver instead
+     * @see $driver
+     */
+    private static function getDriver(): GenericDriver
+    {
+        if (!isset(self::$olddriver)) {
+            try {
+                self::$olddriver = DriverFactory::get(Config::getDatabase('driver'));
+            } catch (UnknownDriverException $exception) {
+                Error::create($exception->getMessage(), 500);
+            }
+        }
+
+        return self::$olddriver;
+    }
+
+    /**
      * @return array
      *
-     * @deprecated use find() instead
+     * @deprecated use find('all') instead
      * @see find()
      */
     public static function selectAll(): array
     {
-        return self::query('SELECT * FROM ' . static::$table);
+        return self::oldquery('SELECT * FROM ' . static::$table);
     }
 
-    public function query(string $statement, array $values = []): array
+    /**
+     * Executes the given query
+     *
+     * @param string $statement
+     * @param array $values
+     * @return array
+     * @deprecated use query() instead
+     * @see query()
+     */
+    public static function oldquery(string $statement, array $values = []): array
     {
-        return $this->driver->query($statement, $values);
+        return self::getDriver()->query($statement, $values);
     }
 
+    /**
+     * @param string $primary
+     * @param array $rows
+     * @deprecated use save() instead
+     * @see save()
+     */
     public static function update(string $primary, array $rows)
     {
         $statement = 'UPDATE ' . static::$table . ' SET ';
@@ -135,11 +157,6 @@ abstract class Model
         self::execute($request, $rows);
     }
 
-    public static function delete(string $primary)
-    {
-        self::execute('DELETE FROM ' . static::$table . ' WHERE ' . static::$primary . ' = :primary', [':primary' => $primary]);
-    }
-
     /**
      * @deprecated see find instead
      * @see find()
@@ -156,6 +173,8 @@ abstract class Model
      * @return mixed
      *
      * @deprecated use first() instead
+     * @see first()
+     * @see find()
      */
     public static function queryOne(string $statement, array $values = [])
     {
@@ -163,16 +182,45 @@ abstract class Model
     }
 
     /**
-     * Getter
-     *
-     * @return string the name of the table
+     * @return string <p>the name of the table associated to the model</p>
      */
     public static function getTable(): string
     {
         return self::$table;
     }
 
-    public function select($primary)
+    /**
+     * Executes the given query
+     *
+     * @param string $statement <p>SQL statement</p>
+     * @param array $values [optional] <p>PDO SQL injection security</p>
+     * @return array result of the query
+     */
+    public function query(string $statement, array $values = []): array
+    {
+        return $this->driver->query($statement, $values);
+    }
+
+    /**
+     * Get the last inserted ID
+     * @return string
+     */
+    public function lastInsertId(): string
+    {
+        return $this->driver->lastInsertId();
+    }
+
+    public function add(Entity $entity)
+    {
+        //TODO
+    }
+
+    public function delete(string $primary)
+    {
+        $this->driver->execute('DELETE FROM ' . static::$table . ' WHERE ' . static::$primary . ' = :primary', [':primary' => $primary]);
+    }
+
+    public function get($primary)
     {
         $this->createQuery()->select()->from(self::$table)->where([self::$primary => $primary]);
 
@@ -192,10 +240,14 @@ abstract class Model
      * @see queryOne()
      * @see find('first')
      * @return mixed
-     *
+     * @throws IncorrectQueryException
      */
     public function first()
     {
+        if (is_null($this->query)) {
+            throw new IncorrectQueryException('The query is incorrect');
+        }
+
         $params = $this->query->getParams();
 
         return $this->driver->queryOne($params[self::SQL], $params[self::VALUES]);
@@ -204,13 +256,17 @@ abstract class Model
     /**
      * Executes the query
      *
-     * $options can either be :
-     *
-     * - a string :
-     *      - 'all' `SELECT * ` from the current table
-     *      - 'first' select first matching element
-     * - an array :
-     * ```
+     *<p>
+     * Can either be :
+     * <ul>
+     * <li>a string :
+     *  <ul>
+     *      <li>'all' `SELECT * ` from the current table</li>
+     *      <li>'first' select first matching element</li>
+     *  </ul>
+     * </li>
+     * <li>an array :
+     * <code>
      *  ['select' => ['id', 'title'],
      *      'from' =>
      *          ['articles', new BlogModel()],
@@ -221,22 +277,31 @@ abstract class Model
      *          ],
      *      'append' => 'GROUP BY id'
      *  ]
-     * ```
+     * </code>
+     * </li>
+     * <ul></p>
      *
-     * @see queryOne()
-     * @param string|array|null $options
-     * @return mixed
+     * @see GenericDriver::queryOne()
+     * @param string|array|null $options [optional]
+     * @return array|mixed
+     * @throws IncorrectQueryException if the query is not correct
      */
     public function find($options = null): array
     {
         if (is_array($options)) {
             $this->createQuery()->select($options['select'])->from($options['from'])->where($options['where']);
             if (isset($options['append'])) {
+                /** @var Query $query */
                 $this->query->appendSQL($options['append']);
             }
             $params = $this->query->getParams();
 
             return $this->driver->query($params[self::SQL], $params[self::VALUES]);
+        }
+
+        if (is_null($this->query)) {
+            throw new IncorrectQueryException('The query is incorrect');
+
         }
 
         if ($options == 'first') {
@@ -249,6 +314,8 @@ abstract class Model
 
             return $this->driver->query($this->query->getParams()[self::SQL]);
         }
+
+        throw new IncorrectQueryException('The query is incorrect');
 
     }
 
