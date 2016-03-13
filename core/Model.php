@@ -39,7 +39,7 @@ abstract class Model
      * @deprecated use $driver instead
      * @see $driver
      */
-    private static $olddriver;
+    private static $staticdriver;
 
     /** @var Query $query */
     protected $query;
@@ -76,7 +76,7 @@ abstract class Model
 
         $statement = $firstHalfRequest . $secondHalfRequest . ')';
 
-        self::execute($statement, $rows);
+        self::staticExecute($statement, $rows);
     }
 
     /**
@@ -85,7 +85,7 @@ abstract class Model
      * @deprecated
      * @see find()
      */
-    public static function execute(string $statement, array $values = [])
+    public static function staticExecute(string $statement, array $values = [])
     {
         self::getDriver()->execute($statement, $values);
     }
@@ -97,15 +97,15 @@ abstract class Model
      */
     private static function getDriver(): GenericDriver
     {
-        if (!isset(self::$olddriver)) {
+        if (!isset(self::$staticdriver)) {
             try {
-                self::$olddriver = DriverFactory::get(Config::getDatabase('driver'));
+                self::$staticdriver = DriverFactory::get(Config::getDatabase('driver'));
             } catch (UnknownDriverException $exception) {
                 Error::create($exception->getMessage(), 500);
             }
         }
 
-        return self::$olddriver;
+        return self::$staticdriver;
     }
 
     /**
@@ -116,7 +116,7 @@ abstract class Model
      */
     public static function selectAll(): array
     {
-        return self::oldquery('SELECT * FROM ' . static::$table);
+        return self::staticQuery('SELECT * FROM ' . static::$table);
     }
 
     /**
@@ -128,7 +128,7 @@ abstract class Model
      * @deprecated use query() instead
      * @see query()
      */
-    public static function oldquery(string $statement, array $values = []): array
+    public static function staticQuery(string $statement, array $values = []): array
     {
         return self::getDriver()->query($statement, $values);
     }
@@ -139,7 +139,7 @@ abstract class Model
      * @deprecated use save() instead
      * @see save()
      */
-    public static function update(string $primary, array $rows)
+    public static function staticUpdate(string $primary, array $rows)
     {
         $statement = 'UPDATE ' . static::$table . ' SET ';
 
@@ -154,7 +154,7 @@ abstract class Model
 
         $rows[':primary'] = $primary;
 
-        self::execute($request, $rows);
+        self::staticExecute($request, $rows);
     }
 
     /**
@@ -162,7 +162,7 @@ abstract class Model
      * @see find()
      * @return int
      */
-    public static function count(): int
+    public static function staticCount(): int
     {
         return self::queryOne('SELECT COUNT(' . static::$primary . ') AS count FROM ' . static::$table)->count;
     }
@@ -215,8 +215,14 @@ abstract class Model
         //TODO
     }
 
-    public function delete(string $primary)
+    public function update(Entity $entity)
     {
+        // TODO
+    }
+
+    public function delete(Entity $primary)
+    {
+        //TODO
         $this->driver->execute('DELETE FROM ' . static::$table . ' WHERE ' . static::$primary . ' = :primary', [':primary' => $primary]);
     }
 
