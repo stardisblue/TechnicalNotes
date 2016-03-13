@@ -38,9 +38,9 @@ if ($webRoot === '/') {
 /**
  * Include the autoloader
  */
-require_once ROOT . '/core/AutoLoader.php';
+//require_once ROOT . '/core/AutoLoader.php';
 
-//require_once ROOT . '/vendor/autoload.php';
+require_once ROOT . '/vendor/autoload.php';
 
 /**
  * Enable the autoloader
