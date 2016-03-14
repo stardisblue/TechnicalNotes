@@ -23,7 +23,7 @@ namespace techweb\core;
 
 class Query
 {
-    const CONDITION = 'conditions';
+    const CONDITIONS = 'conditions';
     const SQL = 'sql';
     const VALUES = 'values';
     private $params;
@@ -134,7 +134,7 @@ class Query
      *
      * ```
      * [
-     *   'where' => 'id = :id AND ...',
+     *   'conditions' => 'id = :id AND ...',
      *   'values' => [':id'=> 2, ...]
      * ]
      * ```
@@ -152,7 +152,7 @@ class Query
             return $this;
         }
 
-        $this->where = 'WHERE ' . $params[self::CONDITION] . ' ';
+        $this->where = 'WHERE ' . $params[self::CONDITIONS] . ' ';
         $this->params[self::VALUES] = $params[self::VALUES];
         $this->concat();
 

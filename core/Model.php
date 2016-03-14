@@ -228,7 +228,11 @@ abstract class Model
 
     public function get($primary)
     {
-        $this->createQuery()->select()->from(self::$table)->where([self::$primary => $primary]);
+        $this->createQuery()
+            ->select()
+            ->from(self::$table)
+            ->where(['conditions' => self::$primary . ' = :primary',
+                'values' => [':id' => $primary]]);
 
         return $this->first();
         //return self::queryOne('SELECT * FROM ' . static::$table . ' WHERE ' . static::$primary . ' = :primary', [':primary' => $primary]);
