@@ -17,16 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-/**
- * Created by PhpStorm.
- * User: stardisblue
- * Date: 13/03/16
- * Time: 14:16
- */
-
 namespace techweb\test\core;
-
 
 use PHPUnit_Framework_TestCase;
 use techweb\core\Query;
@@ -42,16 +33,23 @@ class QueryTest extends PHPUnit_Framework_TestCase
     public function testSelect()
     {
         $query = new Query();
-        $this->assertEquals($query->select()->getParams(), ['sql' => 'SELECT *;']);
-        $this->assertEquals($query->select(['id', 'title'])->getParams(), ['sql' => 'SELECT id, title;']);
+
+        $this->assertEquals(
+            $query->select()
+                ->getParams(),
+            ['statement' => 'SELECT *;']);
+
+        $this->assertEquals(
+            $query->select(['id', 'title'])
+                ->getParams(),
+            ['statement' => 'SELECT id, title;']);
     }
 
     public function testFrom()
     {
         $query = new Query();
-        $this->assertEquals($query->from()->getParams(), ['sql' => ';']);
-        $this->assertEquals($query->from('test')->getParams(), ['sql' => 'FROM test;']);
-        $this->assertEquals($query->from(['article', 'blog'])->getParams(), ['sql' => 'FROM article, blog;']);
+        $this->assertEquals($query->from('test')->getParams(), ['statement' => 'FROM test;']);
+        $this->assertEquals($query->from(['article', 'blog'])->getParams(), ['statement' => 'FROM article, blog;']);
 
         // TODO ModelTest
     }
@@ -59,24 +57,28 @@ class QueryTest extends PHPUnit_Framework_TestCase
     public function testWhere()
     {
         $query = new Query();
-        $this->assertEquals($query->where()->getParams(), ['sql' => ';', 'values' => []]);
+        $this->assertEquals($query->where()->getParams(), ['statement' => ';', 'values' => []]);
         $this->assertEquals($query->where(['conditions' => 'id = :id', 'values' => [':id' => 2]])->getParams(),
-            ['sql' => 'WHERE id = :id;', 'values' => [':id' => 2]]);
+            ['statement' => 'WHERE id = :id;', 'values' => [':id' => 2]]);
     }
 
     public function testAppendSQL()
     {
         $query = new Query();
         $query->appendSQL('GROUP BY id');
-        $result = ['sql' => 'GROUP BY id;'];
+        $result = ['statement' => 'GROUP BY id;'];
         $this->assertEquals($query->getParams(), $result);
     }
 
     public function testAll()
     {
         $query = new Query();
-        $query->select()->from('articles')->where(['conditions' => 'id <= :id', 'values' => [':id' => 2]])->appendSQL('GROUP BY id');
-        $result = ['sql' => 'SELECT * FROM articles WHERE id <= :id GROUP BY id;', 'values' => [':id' => 2]];
+        $query->select()
+            ->from('articles')
+            ->where(['conditions' => 'id <= :id',
+                'values' => [':id' => 2]])
+            ->appendSQL('GROUP BY id');
+        $result = ['statement' => 'SELECT * FROM articles WHERE id <= :id GROUP BY id;', 'values' => [':id' => 2]];
         $this->assertEquals($query->getParams(), $result);
     }
 }

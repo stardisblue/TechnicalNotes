@@ -20,36 +20,37 @@
 
 namespace techweb\core\database\driver;
 
+use techweb\core\Query;
+
 interface GenericDriver
 {
 
     /**
-     * Executes the query
+     * Executes the query and returns the results
      *
-     * @param string $statement
-     * @param array $values
+     * @param Query $query
+     * @param string $entity
      * @return array result of the query
      */
-    public function query(string $statement, array $values = []): array;
+    public function query(Query $query, string $entity = null);
 
     /**
      * Executes the query and returns the first element
      *
-     * @param string $statement
-     * @param array $values
+     * @param Query $query
+     * @param string $entity
      * @return mixed result of the query
      */
-    public function queryOne(string $statement, array $values = []);
+    public function queryOne(Query $query, string $entity = null);
 
     /**
      * Executes the query without waiting for the result
      *
-     * @param string $statement
-     * @param array $values [optional]
-     *
+     * @param Query $query
      * @return array result of the query
+     *
      */
-    public function execute(string $statement, array $values = []);
+    public function execute(Query $query);
 
     /**
      * Return the last inserted id

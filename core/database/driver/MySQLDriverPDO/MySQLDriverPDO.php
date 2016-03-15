@@ -25,6 +25,7 @@ use PDOException;
 use techweb\config\Config;
 use techweb\core\database\driver\GenericDriver;
 use techweb\core\Error;
+use techweb\core\Query;
 
 class MySQLDriverPDO implements GenericDriver
 {
@@ -34,37 +35,46 @@ class MySQLDriverPDO implements GenericDriver
      * {@inheritdoc}
      * @see queryDatabase()
      */
-    public function query(string $statement, array $values = [])
+    public function query(Query $query, string $entity = null)
     {
-        return $this->queryDatabase($statement, $values, false);
+        return $this->queryDatabase($query, $entity, false);
     }
 
 
     /**
      * Executes the given query in the database
      *
-     * @param string $statement
-     * @param array $values [optional]
+     * @param Query $query
+     * @param string $entity
      * @param bool $unique [optional]
      *
      * fetch only one result
-     *
      * @return array|null the result, null if failed
      * @see query()
      * @see queryOne()
      */
-    private function queryDatabase(string $statement, array $values = [], bool $unique)
+    private function queryDatabase(Query $query, string $entity = null, bool $unique)
     {
         try {
-            $sql = self::getInstance()->prepare($statement);
-            $sql->execute($values);
+            $sql = self::getInstance()->prepare($query->get(Query::STATEMENT));
+            $sql->execute($query->get(Query::VALUES));
 
             if ($unique === true) {
-                $result = $sql->fetch(PDO::FETCH_OBJ);
+                if (null === $entity) {
+                    $result = $sql->fetch(PDO::FETCH_OBJ);
+                } else {
+                    $result = $sql->fetch(PDO::FETCH_CLASS, $entity);
+                }
 
                 return $result === false ? null : $result;
             }
-            $result = $sql->fetchAll(PDO::FETCH_OBJ);
+
+            if (null === $entity) {
+                $result = $sql->fetchAll(PDO::FETCH_OBJ);
+            } else {
+                $result = $sql->fetchAll(PDO::FETCH_CLASS, $entity);
+
+            }
 
             return $result === false ? null : $result;
         } catch (PDOException $pdoException) {
@@ -90,19 +100,19 @@ class MySQLDriverPDO implements GenericDriver
      * {@inheritdoc}
      * @see queryDatabase()
      */
-    public function queryOne(string $statement, array $values = [])
+    public function queryOne(Query $query, string $entity = null)
     {
-        return $this->queryDatabase($statement, $values, true);
+        return $this->queryDatabase($query, $entity, true);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function execute(string $statement, array $values = [])
+    public function execute(Query $query)
     {
         try {
-            $sql = $this->getInstance()->prepare($statement);
-            $sql->execute($values);
+            $sql = $this->getInstance()->prepare($query->get(Query::STATEMENT));
+            $sql->execute($query->get(Query::VALUES));
         } catch (PDOException $pdoException) {
             Error::create($pdoException->getMessage(), 500);
         }

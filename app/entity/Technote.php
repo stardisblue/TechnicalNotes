@@ -26,7 +26,7 @@ use techweb\core\Entity;
  * Class TechnoteEntity
  * @package techweb\app\entity
  */
-class TechnoteEntity extends Entity
+class Technote extends Entity
 {
     /**
      * TechnoteEntity constructor.
@@ -42,7 +42,10 @@ class TechnoteEntity extends Entity
             "user_id" => null,
         ];
 
-        parent::__construct($columns);
+
+        $options = ['primary' => 'id'];
+
+        parent::__construct($columns, $options);
     }
 
 }

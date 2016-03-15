@@ -38,7 +38,7 @@ abstract class Entity
     public function __construct(array $properties, array $options = [])
     {
         foreach ($properties as $property => $value) {
-           $this->$property = $value;
+            $this->$property = $value;
         }
 
         $this->options = $options;
@@ -75,5 +75,10 @@ abstract class Entity
         } else {
             throw new UnknownPropertyException("No matching property");
         }
+    }
+
+    public function options(string $option)
+    {
+        return $this->options[$option] ?? false;
     }
 }

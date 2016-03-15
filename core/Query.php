@@ -21,14 +21,16 @@
 namespace techweb\core;
 
 
+use techweb\core\exception\IncorrectQueryException;
+
 class Query
 {
     const CONDITIONS = 'conditions';
-    const SQL = 'sql';
+    const STATEMENT = 'statement';
     const VALUES = 'values';
     private $params;
 
-    private $select;
+    private $firstelement;
     private $from;
     private $where;
     private $more;
@@ -41,28 +43,36 @@ class Query
     /**
      * Generates the SELECT statement
      *
-     * $params MUST be :
+     * $params can be an array:
      *
      * ```
      * ['id', 'title', ...]
      * ```
      *
-     * @param array $params
+     * or a string :`'id, title'`
+     *
+     * @param string|array $params [optional]
      * @return Query
+     * @throws IncorrectQueryException
      */
-    public function select(array $params = []): self
+    public function select($params = '*'): self
     {
-        if (empty($params)) {
-            $this->select = 'SELECT * ';
+        $this->firstelement = 'SELECT ';
+
+        if (is_string($params)) {
+            $this->firstelement .= $params . ' ';
+            $this->concat();
+
+            return $this;
+        } else if (is_array($params) && !empty($params)) {
+            $this->firstelement .= implode(', ', $params) . ' ';
             $this->concat();
 
             return $this;
         }
 
-        $this->select = 'SELECT ' . implode(', ', $params) . ' ';
-        $this->concat();
+        throw new IncorrectQueryException('Incorrect SELECT');
 
-        return $this;
     }
 
     /**
@@ -70,62 +80,7 @@ class Query
      */
     private function concat()
     {
-        $this->params[self::SQL] = rtrim($this->select . $this->from . $this->where . $this->more) . ';';
-    }
-
-    /**
-     * adds FROM clause to the query
-     *
-     * $model can either be :
-     * - a string : `blog, ...`
-     * - Model Class
-     * - null
-     * - array of strings or Model Classes :
-     * ```
-     * [new ArticleModel(), 'article', ...]
-     * ```
-     *
-     *
-     * @param Model|array|null|string $model
-     * @return Query
-     */
-    public function from($model = null): self
-    {
-        if ($model == null) {
-            $this->from = '';
-            $this->concat();
-
-            return $this;
-        }
-        if (is_string($model)) {
-            $this->from = 'FROM ' . $model . ' ';
-            $this->concat();
-
-            return $this;
-
-        }
-
-        if ($model instanceof Model) {
-            $this->from = 'FROM ' . $model->getTable() . ' ';
-            $this->concat();
-        }
-
-        if (is_array($model)) {
-            $this->from = 'FROM ';
-            foreach ($model as $item) {
-                if ($item instanceof Model) {
-                    $this->from .= $model->getTable() . ', ';
-                } elseif (is_string($item)) {
-                    $this->from .= $item . ', ';
-                }
-            }
-            $this->from = rtrim($this->from, ', ');
-            $this->from .= ' ';
-
-            $this->concat();
-        }
-
-        return $this;
+        $this->params[self::STATEMENT] = rtrim($this->firstelement . $this->from . $this->where . $this->more) . ';';
     }
 
     /**
@@ -172,6 +127,68 @@ class Query
     }
 
     /**
+     * @param $table
+     * @return $this
+     *
+     * @see from()
+     */
+    public function deletefrom($table)
+    {
+        $this->firstelement = 'DELETE ';
+        $this->from($table);
+
+        return $this;
+    }
+
+    /**
+     * adds FROM clause to the query
+     *
+     * $model can either be :
+     * - a string : `blog, ...`
+     * - Model Class
+     * - array of strings or Model Classes :
+     * ```
+     * [new ArticleModel(), 'article', ...]
+     * ```
+     *
+     *
+     * @param Model|array|string $model
+     * @return Query
+     */
+    public function from($model): self
+    {
+        if (is_string($model)) {
+            $this->from = 'FROM ' . $model . ' ';
+            $this->concat();
+
+            return $this;
+
+        }
+
+        if (is_subclass_of($model, Model::class, false)) {
+            $this->from = 'FROM ' . $model->getTable() . ' ';
+            $this->concat();
+        }
+
+        if (is_array($model)) {
+            $this->from = 'FROM ';
+            foreach ($model as $item) {
+                if ($item instanceof Model) {
+                    $this->from .= $model->getTable() . ', ';
+                } elseif (is_string($item)) {
+                    $this->from .= $item . ', ';
+                }
+            }
+            $this->from = rtrim($this->from, ', ');
+            $this->from .= ' ';
+
+            $this->concat();
+        }
+
+        return $this;
+    }
+
+    /**
      * Returns the array containing the SQL query
      *
      * @return mixed
@@ -179,5 +196,65 @@ class Query
     public function getParams(): array
     {
         return $this->params;
+    }
+
+    /**
+     * Returns the parameter
+     *
+     * @param string $parameter
+     * @return array|mixed
+     */
+    public function get(string $parameter)
+    {
+        return $this->params[$parameter] ?? null;
+    }
+
+    /**
+     * Custom query generator
+     * @param string $statement
+     * @param array $values [optional]
+     */
+    public function setQuery(string $statement, array $values = [])
+    {
+        $this->params[self::STATEMENT] = $statement;
+        $this->params[self::VALUES] = $values;
+    }
+
+    /**
+     * @param Model|string $model
+     * @param Entity $entity
+     * @return Query
+     * @throws IncorrectQueryException
+     */
+    public function update($model, Entity $entity): Query
+    {
+        $this->firstelement = 'UPDATE ';
+        if (is_string($model)) {
+            $this->firstelement .= $model;
+
+        } else if (is_subclass_of($model, Model::class, false)) {
+            $this->firstelement .= $model->getTable();
+        } else {
+            throw new IncorrectQueryException('Model incorrect');
+        }
+
+        $this->firstelement .= ' SET ';
+
+
+        $statement = 'UPDATE ' . static::$table . ' SET ';
+
+        foreach ($rows as $key => $value) {
+            $statement .= $key . ' = :' . $key . ', ';
+            stripcslashes($value);
+            trim($value);
+        }
+
+        $request = rtrim($statement, ', ');
+        $request .= ' WHERE ' . static::$primary . ' = :primary';
+
+        $rows[':primary'] = $primary;
+
+
+        throw new IncorrectQueryException('the query is not valid');
     }
 }

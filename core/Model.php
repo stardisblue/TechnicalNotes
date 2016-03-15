@@ -23,6 +23,7 @@ namespace techweb\core;
 use techweb\config\Config;
 use techweb\core\database\driver\GenericDriver;
 use techweb\core\database\DriverFactory;
+use techweb\core\exception\EntityException;
 use techweb\core\exception\IncorrectQueryException;
 use techweb\core\exception\UnknownDriverException;
 
@@ -46,10 +47,9 @@ abstract class Model
 
     private $driver;
 
-    public function __construct(GenericDriver $driver)
+    public function __construct()
     {
-        //$this->driver = DriverFactory::get(Config::getDatabase(self::DRIVER));
-        $this->driver = $driver;
+        $this->driver = DriverFactory::get(Config::getDatabase(self::DRIVER));
     }
 
     /**
@@ -198,7 +198,16 @@ abstract class Model
      */
     public function query(string $statement, array $values = []): array
     {
-        return $this->driver->query($statement, $values);
+        $this->newQuery()->setQuery($statement, $values);
+
+        return $this->driver->query($this->query);
+    }
+
+    public function newQuery(): Query
+    {
+        $this->query = new Query();
+
+        return $this->query;
     }
 
     /**
@@ -217,32 +226,41 @@ abstract class Model
 
     public function update(Entity $entity)
     {
-        // TODO
+        $this->newQuery()
+            ->update(static::$table, $entity)
+            ->where([
+                'conditions' => static::$primary . ' = :' . static::$primary,
+                'values' => [':' . static::$primary => $entity->get(static::$primary)]
+            ]);
+
+        $this->driver->query($this->query, get_class($entity));
+
     }
 
-    public function delete(Entity $primary)
+    public function delete(Entity $entity)
     {
-        //TODO
-        $this->driver->execute('DELETE FROM ' . static::$table . ' WHERE ' . static::$primary . ' = :primary', [':primary' => $primary]);
+        $this->newQuery()->deletefrom(static::$table)->where(['conditions' => static::$primary . ' = :' . static::$primary, 'values' => [':' . static::$primary => $entity->get(static::$primary)]]);
+
+        $this->driver->execute($this->query);
     }
 
     public function get($primary)
     {
-        $this->createQuery()
+        $entity_name = str_replace('model', 'entity', str_replace('Model', null, static::class));
+
+        if (!class_exists($entity_name)) {
+            throw new EntityException('There is no matching entity ' . $entity_name . 'for this model' . static::class);
+        }
+
+
+        $this->newQuery()
             ->select()
-            ->from(self::$table)
-            ->where(['conditions' => self::$primary . ' = :primary',
+            ->from(static::$table)
+            ->where(['conditions' => static::$primary . ' = :primary',
                 'values' => [':id' => $primary]]);
 
-        return $this->first();
+        return $this->driver->queryOne($this->query, $entity_name);
         //return self::queryOne('SELECT * FROM ' . static::$table . ' WHERE ' . static::$primary . ' = :primary', [':primary' => $primary]);
-    }
-
-    public function createQuery(): Query
-    {
-        $this->query = new Query();
-
-        return $this->query;
     }
 
     /**
@@ -258,9 +276,7 @@ abstract class Model
             throw new IncorrectQueryException('The query is incorrect');
         }
 
-        $params = $this->query->getParams();
-
-        return $this->driver->queryOne($params[self::SQL], $params[self::VALUES]);
+        return $this->driver->queryOne($this->query, self::class);
     }
 
     /**
@@ -299,14 +315,18 @@ abstract class Model
     public function find($options = null): array
     {
         if (is_array($options)) {
-            $this->createQuery()->select($options['select'])->from($options['from'])->where($options['where']);
+            $this->newQuery()->select($options['select'])->from($options['from'])->where($options['where']);
             if (isset($options['append'])) {
-                /** @var Query $query */
                 $this->query->appendSQL($options['append']);
             }
-            $params = $this->query->getParams();
 
-            return $this->driver->query($params[self::SQL], $params[self::VALUES]);
+            return $this->driver->query($this->query);
+        }
+
+        if (empty($query) && $options === null || $options === 'all') {
+            $this->newQuery()->select()->from(self::$table);
+
+            return $this->driver->query($this->query);
         }
 
         if (is_null($this->query)) {
@@ -315,15 +335,9 @@ abstract class Model
         }
 
         if ($options == 'first') {
-            $params = $this->query->getParams();
-            $this->driver->queryOne($params[self::SQL], $params[self::VALUES]);
+            return $this->driver->queryOne($this->query);
         }
 
-        if (empty($query) && $options === null || $options === 'all') {
-            $this->createQuery()->select()->from(self::$table);
-
-            return $this->driver->query($this->query->getParams()[self::SQL]);
-        }
 
         throw new IncorrectQueryException('The query is incorrect');
 
