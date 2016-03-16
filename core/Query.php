@@ -28,10 +28,26 @@ class Query
     const CONDITIONS = 'conditions';
     const STATEMENT = 'statement';
     const VALUES = 'values';
+
+    private const CUSTOM = 0;
+    private const INSERT = 1;
+    private const SELECT = 2;
+    private const UPDATE = 3;
+    private const DELETE = 4;
+
     private $params;
 
-    private $firstelement;
+    private $query_type;
+
+    private $insert_into;
+    private $insert_into_values;
+
+    private $select;
+    private $delete;
     private $from;
+    private $update;
+    private $update_set;
+
     private $where;
     private $more;
 
@@ -57,22 +73,24 @@ class Query
      */
     public function select($params = '*'): self
     {
-        $this->firstelement = 'SELECT ';
+        if(isset($this->query_type) || isset($this->select)){
+            throw new IncorrectQueryException('Cannot add a select statement');
+        }
+
+        $this->query_type = self::SELECT;
+        $this->select = 'SELECT ';
 
         if (is_string($params)) {
-            $this->firstelement .= $params . ' ';
-            $this->concat();
+            $this->select .= $params . ' ';
 
             return $this;
-        } else if (is_array($params) && !empty($params)) {
-            $this->firstelement .= implode(', ', $params) . ' ';
-            $this->concat();
+        } elseif (is_array($params) && !empty($params)) {
+            $this->select .= implode(', ', $params) . ' ';
 
             return $this;
         }
 
         throw new IncorrectQueryException('Incorrect SELECT');
-
     }
 
     /**
@@ -80,7 +98,37 @@ class Query
      */
     private function concat()
     {
-        $this->params[self::STATEMENT] = rtrim($this->firstelement . $this->from . $this->where . $this->more) . ';';
+        if(!isset($this->query_type)){
+            throw new IncorrectQueryException('Cannot concat inexisting statement');
+        } elseif ($this->query_type === self::CUSTOM) {
+            // NE FAIT RIEN
+        } elseif ($this->query_type === self::INSERT) {
+            if(!isset($this->insert_into, $this->insert_into_values)){
+                throw new IncorrectQueryException('Incomplete INSERT statement');   
+            }
+
+            $this->params[self::STATEMENT] = $this->insert_into . $this->insert_into_values;
+        } elseif ($this->query_type === self::SELECT) {
+            if (!isset($this->select, $this->from)) {
+                throw new IncorrectQueryException('Incomplete SELECT statement');
+            }
+
+            $this->params[self::STATEMENT] = $this->select . $this->from . $this->where;
+        } elseif ($this->query_type === self::UPDATE) {
+            if(!isset($this->update, $this->update_set, $this->where)){
+                throw new IncorrectQueryException('Incomplete UPDATE statement');
+            }
+
+            $this->params[self::STATEMENT] = $this->update . $this->update_set . $this->where;
+        } elseif ($this->query_type === self::DELETE) {
+            if(!isset($this->delete, $this->from, $this->where)){
+                throw new IncorrectQueryException('Incomplete DELETE statement');
+            }
+
+            $this->params[self::STATEMENT] = $this->delete . $this->from . $this->where;
+        }
+
+        $this->params[self::STATEMENT] = $this->more;
     }
 
     /**
@@ -99,17 +147,24 @@ class Query
      */
     public function where(array $params = []): self
     {
+        if(isset($this->where) || !isset($this->query_type) || $this->query_type === self::INSERT){
+            throw new IncorrectQueryException('Cannot add a WHERE statement');
+        }
+
         if (empty($params)) {
             $this->where = '';
             $this->params[self::VALUES] = [];
-            $this->concat();
 
             return $this;
         }
 
         $this->where = 'WHERE ' . $params[self::CONDITIONS] . ' ';
-        $this->params[self::VALUES] = $params[self::VALUES];
-        $this->concat();
+
+        if ($this->query_type === self::UPDATE) {
+            array_merge($this->params[self::VALUES], $params[self::VALUES]);
+        } else {
+            $this->params[self::VALUES] = $params[self::VALUES];
+        }
 
         return $this;
     }
@@ -118,24 +173,27 @@ class Query
      * @param string $append
      * @return Query
      */
-    public function appendSQL(string $append): self
+    public function appendSQL(string $more): self
     {
-        $this->more = $append;
-        $this->concat();
+        $this->more = $more;
 
         return $this;
     }
 
     /**
-     * @param $table
-     * @return $this
+     * @param string|Model|array $table
+     * @return Query $this
      *
      * @see from()
      */
-    public function deletefrom($table)
+    public function delete(): self
     {
-        $this->firstelement = 'DELETE ';
-        $this->from($table);
+        if(isset($this->query_type)){
+            throw new IncorrectQueryException('Cannot add DELETE statement');
+        }
+
+        $this->query_type = self::DELETE;
+        $this->delete = 'DELETE ';
 
         return $this;
     }
@@ -157,32 +215,29 @@ class Query
      */
     public function from($model): self
     {
-        if (is_string($model)) {
+        if(isset($this->from) || !isset($this->query_type) 
+            || ($this->query_type !== self::SELECT && $this->query_type !== self::DELETE)){
+            throw new IncorrectQueryException('Cannot add FROM statement');
+        } elseif (is_string($model)) {
             $this->from = 'FROM ' . $model . ' ';
-            $this->concat();
-
+            
             return $this;
-
-        }
-
-        if (is_subclass_of($model, Model::class, false)) {
+        } elseif (is_subclass_of($model, Model::class, false)) {
             $this->from = 'FROM ' . $model->getTable() . ' ';
-            $this->concat();
-        }
-
-        if (is_array($model)) {
+        } elseif (is_array($model)) {
             $this->from = 'FROM ';
+
             foreach ($model as $item) {
-                if ($item instanceof Model) {
-                    $this->from .= $model->getTable() . ', ';
+
+                if (is_subclass_of($item, Model::class, false)) {
+                    $this->from .= $item->getTable() . ', ';
                 } elseif (is_string($item)) {
                     $this->from .= $item . ', ';
                 }
             }
+
             $this->from = rtrim($this->from, ', ');
             $this->from .= ' ';
-
-            $this->concat();
         }
 
         return $this;
@@ -192,21 +247,34 @@ class Query
      * Returns the array containing the SQL query
      *
      * @return mixed
+     * @see getStatement()
+     * @see getValues()
      */
     public function getParams(): array
     {
+        $this->concat;
         return $this->params;
     }
 
     /**
-     * Returns the parameter
+     * Returns the statement
      *
-     * @param string $parameter
-     * @return array|mixed
+     * @return string
      */
-    public function get(string $parameter)
+    public function getStatement(): string
     {
-        return $this->params[$parameter] ?? null;
+        $this->concat();
+        return $this->params[self::STATEMENT];
+    }
+
+    /**
+     * Returns the values
+     *
+     * @return array
+     */
+    public function getValues(): array
+    {
+        return $this->params[self::VALUES];
     }
 
     /**
@@ -216,45 +284,133 @@ class Query
      */
     public function setQuery(string $statement, array $values = [])
     {
+        $this->query_type = 0;
         $this->params[self::STATEMENT] = $statement;
         $this->params[self::VALUES] = $values;
     }
 
     /**
      * @param Model|string $model
-     * @param Entity $entity
      * @return Query
      * @throws IncorrectQueryException
      */
-    public function update($model, Entity $entity): Query
+    public function update($model): self
     {
-        $this->firstelement = 'UPDATE ';
-        if (is_string($model)) {
-            $this->firstelement .= $model;
-
-        } else if (is_subclass_of($model, Model::class, false)) {
-            $this->firstelement .= $model->getTable();
-        } else {
-            throw new IncorrectQueryException('Model incorrect');
+        if(isset($this->update, $this->query_type)){
+            throw new IncorrectQueryException('Cannot add UPDATE statement');
         }
 
-        $this->firstelement .= ' SET ';
+        $this->query_type = self::UPDATE;
+        $this->update = 'UPDATE ';
 
+        if (is_string($model)) {
+            $this->update .= $model;
+        } elseif (is_subclass_of($model, Model::class, false)) {
+            $this->update .= $model->getTable();
+        } else {
+            throw new IncorrectQueryException('Incorrect class');
+        }
 
-        $statement = 'UPDATE ' . static::$table . ' SET ';
+        return $this;
+    }
+
+    /**
+     * @param Model|string $model
+     * @return Query
+     * @throws IncorrectQueryException
+     */
+    public function insertInto($model): self
+    {
+        if(isset($this->insert_into, $this->query_type)){
+            throw new IncorrectQueryException('Cannot add INSERT INTO statement');
+        }
+
+        $this->query_type = self::INSERT;
+        $this->insert_into = 'INSERT INTO ';
+
+        if (is_string($model)) {
+            $this->insert_into .= $model;
+        } elseif (is_subclass_of($model, Model::class, false)) {
+            $this->insert_into .= $model->getTable();
+        } else {
+            throw new IncorrectQueryException('Incorrect class');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param array|Entity $data
+     * @return Query
+     * @throws IncorrectQueryException
+     */
+    public function values($data): self
+    {
+        if(isset($this->insert_into_values) || !isset($this->query_type) || $this->query_type !== self::INSERT){
+            throw new IncorrectQueryException('Cannot add (...)VALUES(...) statement');
+        }
+
+        $this->insert_into_values = ' (';
+
+        if(is_array($data)){
+            $rows = $data;
+        } elseif (is_subclass_of($data, Entity::class, false)) {
+            $rows = get_object_vars($data);
+        } else {
+            throw new IncorrectQueryException('Not an array, nor an Entity during statement INSERT');
+        }
 
         foreach ($rows as $key => $value) {
-            $statement .= $key . ' = :' . $key . ', ';
+            $columns .= $key . ', ';
+            $values .= ':'.$key . ', ';
             stripcslashes($value);
             trim($value);
         }
+        
+        $this->params[self::VALUES] = $rows;
 
-        $request = rtrim($statement, ', ');
-        $request .= ' WHERE ' . static::$primary . ' = :primary';
+        $columns = rtrim($firstHalfStatement, ', ');
+        $values = rtrim($secondHalfStatement, ', ');
 
-        $rows[':primary'] = $primary;
+        $this->insert_into_values = $columns . ') VALUES (' . $data . ')';
 
+        return $this;
+    }
 
-        throw new IncorrectQueryException('the query is not valid');
+    /**
+     * @param array|Entity $data
+     * @return Query
+     * @throws IncorrectQueryException
+     */
+    public function set($data): self
+    {
+        if(isset($this->insert_into_values) || !isset($this->query_type) || $this->query_type !== self::INSERT){
+            throw new IncorrectQueryException('Cannot add (...)VALUES(...) statement');
+        }
+
+        $this->insert_into_values = ' (';
+
+        if(is_array($data)){
+            $rows = $data;
+        } elseif(is_subclass_of($data, Entity::class, false)){
+            $rows = get_object_vars($data);
+        } else {
+            throw new IncorrectQueryException('Not an array, nor an Entity during statement INSERT');
+        }
+
+        foreach ($rows as $key => $value) {
+            $columns .= $key . '= :'.$key . ', ';
+            stripcslashes($value);
+            trim($value);
+        }
+        
+        $columns = rtrim($firstHalfStatement, ', ');
+        $values = rtrim($secondHalfStatement, ', ');
+
+        $this->insert_into_values = $columns . ') VALUES (' . $data . ')';
+        
+        $this->params[self::VALUES] = $rows;
+
+        return $this;
     }
 }

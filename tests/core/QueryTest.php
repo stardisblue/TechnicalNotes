@@ -70,6 +70,14 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($query->getParams(), $result);
     }
 
+    public function testUpdate()
+    {
+        $query = new Query();
+        $query->update('article');
+        $result = ['statement' => 'GROUP BY id;'];
+        $this->assertEquals($query->getParams(), $result);
+    }
+
     public function testAll()
     {
         $query = new Query();

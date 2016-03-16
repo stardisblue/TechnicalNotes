@@ -226,6 +226,8 @@ abstract class Model
 
     public function update(Entity $entity)
     {
+        //TODO
+
         $this->newQuery()
             ->update(static::$table, $entity)
             ->where([
