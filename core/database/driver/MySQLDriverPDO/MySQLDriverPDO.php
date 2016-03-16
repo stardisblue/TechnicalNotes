@@ -35,9 +35,9 @@ class MySQLDriverPDO implements GenericDriver
      * {@inheritdoc}
      * @see queryDatabase()
      */
-    public function query(Query $query, string $entity = null)
+    public function query(Query $query, string $entity_name = null)
     {
-        return $this->queryDatabase($query, $entity, false);
+        return $this->queryDatabase($query, $entity_name, false);
     }
 
 
@@ -45,7 +45,7 @@ class MySQLDriverPDO implements GenericDriver
      * Executes the given query in the database
      *
      * @param Query $query
-     * @param string $entity
+     * @param string $entity_name
      * @param bool $unique [optional]
      *
      * fetch only one result
@@ -53,26 +53,26 @@ class MySQLDriverPDO implements GenericDriver
      * @see query()
      * @see queryOne()
      */
-    private function queryDatabase(Query $query, string $entity = null, bool $unique)
+    private function queryDatabase(Query $query, string $entity_name = null, bool $unique)
     {
         try {
-            $sql = self::getInstance()->prepare($query->get(Query::STATEMENT));
-            $sql->execute($query->get(Query::VALUES));
+            $sql = self::getInstance()->prepare($query->getStatement());
+            $sql->execute($query->getValues());
 
             if ($unique === true) {
-                if (null === $entity) {
+                if (null === $entity_name) {
                     $result = $sql->fetch(PDO::FETCH_OBJ);
                 } else {
-                    $result = $sql->fetch(PDO::FETCH_CLASS, $entity);
+                    $result = $sql->fetch(PDO::FETCH_CLASS, $entity_name);
                 }
 
                 return $result === false ? null : $result;
             }
 
-            if (null === $entity) {
+            if (null === $entity_name) {
                 $result = $sql->fetchAll(PDO::FETCH_OBJ);
             } else {
-                $result = $sql->fetchAll(PDO::FETCH_CLASS, $entity);
+                $result = $sql->fetchAll(PDO::FETCH_CLASS, $entity_name);
 
             }
 
@@ -100,9 +100,9 @@ class MySQLDriverPDO implements GenericDriver
      * {@inheritdoc}
      * @see queryDatabase()
      */
-    public function queryOne(Query $query, string $entity = null)
+    public function queryOne(Query $query, string $entity_name = null)
     {
-        return $this->queryDatabase($query, $entity, true);
+        return $this->queryDatabase($query, $entity_name, true);
     }
 
     /**
@@ -111,8 +111,8 @@ class MySQLDriverPDO implements GenericDriver
     public function execute(Query $query)
     {
         try {
-            $sql = $this->getInstance()->prepare($query->get(Query::STATEMENT));
-            $sql->execute($query->get(Query::VALUES));
+            $sql = $this->getInstance()->prepare($query->getStatement());
+            $sql->execute($query->getValues());
         } catch (PDOException $pdoException) {
             Error::create($pdoException->getMessage(), 500);
         }

@@ -35,6 +35,7 @@ abstract class Model
 
     protected static $table;
     protected static $primary = 'id';
+    protected static $entity_name;
 
     /**
      * @deprecated use $driver instead
@@ -219,41 +220,54 @@ abstract class Model
         return $this->driver->lastInsertId();
     }
 
+    public function save(Entity $entity)
+    {
+        if(isset($entity->get(static::$primary))){ //si l'entité existe
+            $this->update($entity);
+        }else{
+            $this->add($entity);
+        }
+    }
+
     public function add(Entity $entity)
     {
-        //TODO
+        $this->newQuery()
+            ->insertInto(static::$table)
+            ->values($entity);
+
+        $this->driver->query($this->query);
     }
 
     public function update(Entity $entity)
     {
-        //TODO
-
         $this->newQuery()
-            ->update(static::$table, $entity)
+            ->update(static::$table)
+            ->set($entity)
             ->where([
                 'conditions' => static::$primary . ' = :' . static::$primary,
                 'values' => [':' . static::$primary => $entity->get(static::$primary)]
             ]);
 
-        $this->driver->query($this->query, get_class($entity));
-
+        $this->driver->query($this->query);
     }
 
     public function delete(Entity $entity)
     {
-        $this->newQuery()->deletefrom(static::$table)->where(['conditions' => static::$primary . ' = :' . static::$primary, 'values' => [':' . static::$primary => $entity->get(static::$primary)]]);
+        $this->newQuery()
+            ->delete()
+            ->from(static::$table)
+            ->where(['conditions' => static::$primary . ' = :' . static::$primary, 'values' => [':' . static::$primary => $entity->get(static::$primary)]]);
 
         $this->driver->execute($this->query);
     }
 
     public function get($primary)
     {
-        $entity_name = str_replace('model', 'entity', str_replace('Model', null, static::class));
+        $entity_name = self::$entity_name ?? str_replace('model', 'entity', str_replace('Model', null, static::class));
 
         if (!class_exists($entity_name)) {
             throw new EntityException('There is no matching entity ' . $entity_name . 'for this model' . static::class);
         }
-
 
         $this->newQuery()
             ->select()
@@ -278,7 +292,7 @@ abstract class Model
             throw new IncorrectQueryException('The query is incorrect');
         }
 
-        return $this->driver->queryOne($this->query, self::class);
+        return $this->driver->queryOne($this->query);
     }
 
     /**
@@ -318,31 +332,32 @@ abstract class Model
     {
         if (is_array($options)) {
             $this->newQuery()->select($options['select'])->from($options['from'])->where($options['where']);
+
             if (isset($options['append'])) {
                 $this->query->appendSQL($options['append']);
             }
 
             return $this->driver->query($this->query);
-        }
+        } elseif (empty($this->query) && $options === null || $options === 'all') {
 
-        if (empty($query) && $options === null || $options === 'all') {
-            $this->newQuery()->select()->from(self::$table);
+            $entity_name = self::$entity_name ?? str_replace('model', 'entity', str_replace('Model', null, static::class));
 
-            return $this->driver->query($this->query);
-        }
+            if (!class_exists($entity_name)) {
+                throw new EntityException('There is no matching entity ' . $entity_name . 'for this model' . static::class);
+            }
 
-        if (is_null($this->query)) {
+            $this->newQuery()
+                ->select()
+                ->from(self::$table);
+
+            return $this->driver->query($this->query, $entity_name);
+        } elseif (!isset($this->query)) {
             throw new IncorrectQueryException('The query is incorrect');
-
-        }
-
-        if ($options == 'first') {
+        } elseif ($options == 'first') {
             return $this->driver->queryOne($this->query);
         }
 
-
         throw new IncorrectQueryException('The query is incorrect');
-
     }
 
 }
