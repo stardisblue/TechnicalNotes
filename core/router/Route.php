@@ -22,7 +22,6 @@ namespace techweb\core\router;
 
 use techweb\core\Controller;
 use techweb\core\Error;
-use techweb\core\Query;
 
 class Route
 {
@@ -68,14 +67,14 @@ class Route
                 Error::create('Router: class "' . $class . '" does not exists', 500);
             }
 
-            $query = new Query();
             /** @var Controller $controller */
-            $controller = new $class($query);
+            $controller = new $class();
 
             if (!is_callable([$controller, $method])) {
                 Error::create('Router: method "' . $method . '" does not exists', 500);
             }
 
+            $controller->beforeCall($method);
             $result = $controller->$method(...$this->matches);
             $controller->afterCall($method);
 

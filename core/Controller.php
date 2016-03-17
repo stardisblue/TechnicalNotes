@@ -33,9 +33,12 @@ abstract class Controller
     protected $query;
     protected $layout = false;
 
-    public function __construct(Query $query)
+    public function __construct()
     {
-        $this->query = $query;
+    }
+
+    public function beforeCall($method)
+    {
     }
 
     public function afterCall($method)

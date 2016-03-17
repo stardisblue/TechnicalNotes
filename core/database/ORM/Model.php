@@ -18,12 +18,13 @@
  *
  */
 
-namespace techweb\core;
+namespace techweb\core\database\ORM;
 
 use techweb\config\Config;
 use techweb\core\database\DriverFactory;
-use techweb\core\exception\EntityException;
-use techweb\core\exception\IncorrectQueryException;
+use techweb\core\exception\{
+    EntityException, IncorrectQueryException, UnknownPropertyException
+};
 
 abstract class Model
 {
@@ -116,7 +117,7 @@ abstract class Model
      *
      * @param Entity $entity
      * @throws IncorrectQueryException
-     * @throws exception\UnknownPropertyException
+     * @throws UnknownPropertyException
      */
     public function update(Entity $entity)
     {
@@ -146,12 +147,14 @@ abstract class Model
         $this->driver->query($this->query);
     }
 
+
     /**
      * Deletes the entity
      *
+     *
      * @param Entity $entity
      * @throws IncorrectQueryException
-     * @throws exception\UnknownPropertyException
+     * @throws UnknownPropertyException
      */
     public function delete(Entity $entity)
     {
@@ -173,7 +176,8 @@ abstract class Model
      */
     public function get($primary)
     {
-        $entity_name = self::$entity_name ?? str_replace('model', 'entity', str_replace('Model', null, static::class));
+        $entity_name = isset(static::$entity_name) ? static::$entity_name
+            : str_replace('model', 'entity', str_replace('Model', 'Entity', static::class));
 
         if (!class_exists($entity_name)) {
             throw new EntityException('There is no matching entity ' . $entity_name . 'for this model' . static::class);
@@ -183,10 +187,9 @@ abstract class Model
             ->select()
             ->from(static::$table)
             ->where(['conditions' => static::$primary . ' = :primary',
-                'values' => [':id' => $primary]]);
+                'values' => [':primary' => $primary]]);
 
         return $this->driver->queryOne($this->query, $entity_name);
-        //return self::queryOne('SELECT * FROM ' . static::$table . ' WHERE ' . static::$primary . ' = :primary', [':primary' => $primary]);
     }
 
     /**
@@ -236,11 +239,12 @@ abstract class Model
      *
      * @see GenericDriver::queryOne()
      * @param string|array|null $options [optional]
-     * @return array|mixed
+     * @return mixed
+     *
      * @throws EntityException
      * @throws IncorrectQueryException if the query is not correct
      */
-    public function find($options = null): array
+    public function find($options = null)
     {
         if (is_array($options)) {
             $this->newQuery()
@@ -255,7 +259,7 @@ abstract class Model
             return $this->driver->query($this->query);
         } elseif ('all' === $options || !isset($this->query) && null === $options) {
 
-            $entity_name = static::$entity_name ?? str_replace('model', 'entity', str_replace('Model', null, static::class));
+            $entity_name = isset(static::$entity_name) ? static::$entity_name : str_replace('model', 'entity', str_replace('Model', 'Entity', static::class));
 
             if (!class_exists($entity_name)) {
                 throw new EntityException('There is no matching entity ' . $entity_name . 'for this model' . static::class);

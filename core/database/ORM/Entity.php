@@ -18,7 +18,7 @@
  *
  */
 
-namespace techweb\core;
+namespace techweb\core\database\ORM;
 
 use techweb\core\exception\UnknownPropertyException;
 

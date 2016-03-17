@@ -20,7 +20,7 @@
 
 namespace techweb\core\database\driver;
 
-use techweb\core\Query;
+use techweb\core\database\ORM\Query;
 
 interface GenericDriver
 {

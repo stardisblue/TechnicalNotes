@@ -21,8 +21,7 @@
 
 namespace techweb\app\model;
 
-
-use techweb\core\Model;
+use techweb\core\database\ORM\Model;
 
 class TechnotesModel extends Model
 {

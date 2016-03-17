@@ -20,13 +20,13 @@
 
 namespace techweb\app\entity;
 
-use techweb\core\Entity;
+use techweb\core\database\ORM\Entity;
 
 /**
  * Class TechnoteEntity
  * @package techweb\app\entity
  */
-class Technote extends Entity
+class TechnoteEntity extends Entity
 {
     /**
      * TechnoteEntity constructor.
@@ -35,15 +35,21 @@ class Technote extends Entity
     {
         $columns = [
             'id' => null,
-            "titre" => '',
-            "contenu" => '',
-            "date modification" => null,
-            "date creation" => null,
-            "user_id" => null,
+            'user_id' => null,
+            'title' => '',
+            'content' => '',
+            'creation_date' => '',
         ];
 
-
-        $options = ['primary' => 'id'];
+        $options = ['primary' => 'id', 'foreing_key' => 'user_id',
+            'belongTo' => ['table' => 'users'],
+            'hasMany' => [
+                ['table' => 'comments',
+                    'through' => 'technote_comments'],
+                ['table' => 'tags',
+                    'through' => 'tags_technotes']
+            ]
+        ];
 
         parent::__construct($columns, $options);
     }
