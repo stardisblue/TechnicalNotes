@@ -326,6 +326,7 @@ abstract class Model
      * @see GenericDriver::queryOne()
      * @param string|array|null $options [optional]
      * @return array|mixed
+     * @throws EntityException
      * @throws IncorrectQueryException if the query is not correct
      */
     public function find($options = null): array
