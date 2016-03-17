@@ -32,8 +32,17 @@ abstract class Entity
 
     /**
      * Entity constructor.
-     * @param array $properties ["property" => "default value"]
-     * @param array $options additionnals options
+     *
+     * ```php
+     * $properties = [
+     *      "property" => "default value",
+     *      "id", ...]
+     * ```
+     *
+     * @param array $properties
+     * @param array $options [optional]
+     *
+     * additionnals options
      */
     public function __construct(array $properties, array $options = [])
     {

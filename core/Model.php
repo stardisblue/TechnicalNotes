@@ -21,11 +21,9 @@
 namespace techweb\core;
 
 use techweb\config\Config;
-use techweb\core\database\driver\GenericDriver;
 use techweb\core\database\DriverFactory;
 use techweb\core\exception\EntityException;
 use techweb\core\exception\IncorrectQueryException;
-use techweb\core\exception\UnknownDriverException;
 
 abstract class Model
 {
@@ -36,12 +34,6 @@ abstract class Model
     protected static $table;
     protected static $primary = 'id';
     protected static $entity_name;
-
-    /**
-     * @deprecated use $driver instead
-     * @see $driver
-     */
-    private static $staticdriver;
 
     /** @var Query $query */
     protected $query;
@@ -54,156 +46,41 @@ abstract class Model
     }
 
     /**
-     * @param array $rows
-     * @deprecated use add() instead
-     * @see add()
-     */
-    public static function insert(array $rows)
-    {
-        $firstHalfStatement = 'INSERT INTO ' . static::$table . ' (';
-
-        $secondHalfStatement = ') VALUES (';
-
-        foreach ($rows as $key => $value) {
-            $firstHalfStatement .= $key . ', ';
-            $key = ':' . $key;
-            $secondHalfStatement .= $key . ', ';
-            stripcslashes($value);
-            trim($value);
-        }
-
-        $firstHalfRequest = rtrim($firstHalfStatement, ', ');
-        $secondHalfRequest = rtrim($secondHalfStatement, ', ');
-
-        $statement = $firstHalfRequest . $secondHalfRequest . ')';
-
-        self::staticExecute($statement, $rows);
-    }
-
-    /**
-     * @param string $statement
-     * @param array $values
-     * @deprecated
-     * @see find()
-     */
-    public static function staticExecute(string $statement, array $values = [])
-    {
-        self::getDriver()->execute($statement, $values);
-    }
-
-    /**
-     * @return GenericDriver
-     * @deprecated use $driver instead
-     * @see $driver
-     */
-    private static function getDriver(): GenericDriver
-    {
-        if (!isset(self::$staticdriver)) {
-            try {
-                self::$staticdriver = DriverFactory::get(Config::getDatabase('driver'));
-            } catch (UnknownDriverException $exception) {
-                Error::create($exception->getMessage(), 500);
-            }
-        }
-
-        return self::$staticdriver;
-    }
-
-    /**
-     * @return array
-     *
-     * @deprecated use find('all') instead
-     * @see find()
-     */
-    public static function selectAll(): array
-    {
-        return self::staticQuery('SELECT * FROM ' . static::$table);
-    }
-
-    /**
-     * Executes the given query
-     *
-     * @param string $statement
-     * @param array $values
-     * @return array
-     * @deprecated use query() instead
-     * @see query()
-     */
-    public static function staticQuery(string $statement, array $values = []): array
-    {
-        return self::getDriver()->query($statement, $values);
-    }
-
-    /**
-     * @param string $primary
-     * @param array $rows
-     * @deprecated use save() instead
-     * @see save()
-     */
-    public static function staticUpdate(string $primary, array $rows)
-    {
-        $statement = 'UPDATE ' . static::$table . ' SET ';
-
-        foreach ($rows as $key => $value) {
-            $statement .= $key . ' = :' . $key . ', ';
-            stripcslashes($value);
-            trim($value);
-        }
-
-        $request = rtrim($statement, ', ');
-        $request .= ' WHERE ' . static::$primary . ' = :primary';
-
-        $rows[':primary'] = $primary;
-
-        self::staticExecute($request, $rows);
-    }
-
-    /**
-     * @deprecated see find instead
-     * @see find()
-     * @return int
-     */
-    public static function staticCount(): int
-    {
-        return self::queryOne('SELECT COUNT(' . static::$primary . ') AS count FROM ' . static::$table)->count;
-    }
-
-    /**
-     * @param string $statement
-     * @param array $values
-     * @return mixed
-     *
-     * @deprecated use first() instead
-     * @see first()
-     * @see find()
-     */
-    public static function queryOne(string $statement, array $values = [])
-    {
-        return self::getDriver()->queryOne($statement, $values);
-    }
-
-    /**
      * @return string <p>the name of the table associated to the model</p>
      */
     public static function getTable(): string
     {
-        return self::$table;
+        return static::$table;
     }
 
     /**
-     * Executes the given query
+     * Prepare the given query, to execute it, use either find() or first()
      *
-     * @param string $statement <p>SQL statement</p>
-     * @param array $values [optional] <p>PDO SQL injection security</p>
-     * @return array result of the query
+     * usage:
+     * ```
+     * $model->query("SELECT * FROM example",[':id' => 2])
+     *      ->first();
+     * ```
+     *
+     * @param string $statement SQL statement
+     * @param array $values [optional]
+     *
+     * PDO SQL injection security
+     *
+     * @return Model
      */
-    public function query(string $statement, array $values = []): array
+    public function query(string $statement, array $values = []): self
     {
         $this->newQuery()->setQuery($statement, $values);
 
-        return $this->driver->query($this->query);
+        return $this;
     }
 
+    /**
+     * Create a new Query
+     *
+     * @return Query
+     */
     public function newQuery(): Query
     {
         $this->query = new Query();
@@ -220,24 +97,27 @@ abstract class Model
         return $this->driver->lastInsertId();
     }
 
+    /**
+     * Saves the entity (add if not exists or updates it)
+     *
+     * @param Entity $entity
+     */
     public function save(Entity $entity)
     {
-        if(isset($entity->get(static::$primary))){ //si l'entité existe
+        if (isset($entity->{static::$primary})) { //si l'entité existe
             $this->update($entity);
-        }else{
+        } else {
             $this->add($entity);
         }
     }
 
-    public function add(Entity $entity)
-    {
-        $this->newQuery()
-            ->insertInto(static::$table)
-            ->values($entity);
-
-        $this->driver->query($this->query);
-    }
-
+    /**
+     * Updates the entity
+     *
+     * @param Entity $entity
+     * @throws IncorrectQueryException
+     * @throws exception\UnknownPropertyException
+     */
     public function update(Entity $entity)
     {
         $this->newQuery()
@@ -251,6 +131,28 @@ abstract class Model
         $this->driver->query($this->query);
     }
 
+    /**
+     * Adds the entity
+     *
+     * @param Entity $entity
+     * @throws IncorrectQueryException
+     */
+    public function add(Entity $entity)
+    {
+        $this->newQuery()
+            ->insertInto(static::$table)
+            ->values($entity);
+
+        $this->driver->query($this->query);
+    }
+
+    /**
+     * Deletes the entity
+     *
+     * @param Entity $entity
+     * @throws IncorrectQueryException
+     * @throws exception\UnknownPropertyException
+     */
     public function delete(Entity $entity)
     {
         $this->newQuery()
@@ -261,6 +163,14 @@ abstract class Model
         $this->driver->execute($this->query);
     }
 
+    /**
+     * Gets the entity
+     *
+     * @param $primary
+     * @return mixed
+     * @throws EntityException
+     * @throws IncorrectQueryException
+     */
     public function get($primary)
     {
         $entity_name = self::$entity_name ?? str_replace('model', 'entity', str_replace('Model', null, static::class));
@@ -281,6 +191,7 @@ abstract class Model
 
     /**
      * Return the first matching value of the query
+     *
      * @see queryOne()
      * @see find('first')
      * @return mixed
@@ -332,16 +243,19 @@ abstract class Model
     public function find($options = null): array
     {
         if (is_array($options)) {
-            $this->newQuery()->select($options['select'])->from($options['from'])->where($options['where']);
+            $this->newQuery()
+                ->select($options['select'])
+                ->from($options['from'])
+                ->where($options['where']);
 
             if (isset($options['append'])) {
                 $this->query->appendSQL($options['append']);
             }
 
             return $this->driver->query($this->query);
-        } elseif (empty($this->query) && $options === null || $options === 'all') {
+        } elseif ('all' === $options || !isset($this->query) && null === $options) {
 
-            $entity_name = self::$entity_name ?? str_replace('model', 'entity', str_replace('Model', null, static::class));
+            $entity_name = static::$entity_name ?? str_replace('model', 'entity', str_replace('Model', null, static::class));
 
             if (!class_exists($entity_name)) {
                 throw new EntityException('There is no matching entity ' . $entity_name . 'for this model' . static::class);
@@ -349,13 +263,14 @@ abstract class Model
 
             $this->newQuery()
                 ->select()
-                ->from(self::$table);
+                ->from(static::$table);
 
             return $this->driver->query($this->query, $entity_name);
-        } elseif (!isset($this->query)) {
-            throw new IncorrectQueryException('The query is incorrect');
-        } elseif ($options == 'first') {
+        } elseif (isset($this->query)) {
+            return $this->driver->query($this->query);
+        } elseif ('first' === $options) {
             return $this->driver->queryOne($this->query);
+
         }
 
         throw new IncorrectQueryException('The query is incorrect');
