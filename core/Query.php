@@ -317,7 +317,7 @@ class Query
 
         }
 
-        $this->where = 'WHERE ' . $params[self::STATEMENT] . ' ';
+        $this->where = 'WHERE ' . $params[self::CONDITIONS] . ' ';
 
         if (self::UPDATE === $this->query_type) {
             array_merge($this->params[self::VALUES], $params[self::VALUES]);

@@ -57,7 +57,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(
             $query->select(['id', 'title'])
                 ->from('articles')
-                ->where(['statement' => 'id = :id', 'values' => [':id' => 2]])
+                ->where(['conditions' => 'id = :id', 'values' => [':id' => 2]])
                 ->getParams(),
             ['statement' => 'SELECT id, title FROM articles WHERE id = :id ;', 'values' => [':id' => 2]]);
 
