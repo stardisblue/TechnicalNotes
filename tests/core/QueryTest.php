@@ -20,14 +20,26 @@
 namespace techweb\test\core;
 
 use PHPUnit_Framework_TestCase;
+use techweb\core\exception\IncorrectQueryException;
 use techweb\core\Query;
 
 class QueryTest extends PHPUnit_Framework_TestCase
 {
     public function testConstruct()
     {
+        $this->expectException(IncorrectQueryException::class);
+        $this->expectExceptionMessage('Cannot concat inexisting statement');
         $query = new Query();
-        $this->assertEquals($query->getParams(), []);
+        $query->getParams();
+    }
+
+    public function testInvalidSelect()
+    {
+        $this->expectException(IncorrectQueryException::class);
+        $this->expectExceptionMessage('Incomplete SELECT statement');
+        $query = new Query();
+        $query->select();
+        $query->getParams();
     }
 
     public function testSelect()
@@ -36,49 +48,20 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $query->select()
+                ->from('articles')
                 ->getParams(),
-            ['statement' => 'SELECT *;']);
+            ['statement' => 'SELECT * FROM articles ;']);
+
+        $query = new Query();
 
         $this->assertEquals(
             $query->select(['id', 'title'])
+                ->from('articles')
+                ->where(['statement' => 'id = :id', 'values' => [':id' => 2]])
                 ->getParams(),
-            ['statement' => 'SELECT id, title;']);
-    }
+            ['statement' => 'SELECT id, title FROM articles WHERE id = :id ;', 'values' => [':id' => 2]]);
 
-    public function testFrom()
-    {
-        $query = new Query();
-        $this->assertEquals($query->from('test')->getParams(), ['statement' => 'FROM test;']);
-        $this->assertEquals($query->from(['article', 'blog'])->getParams(), ['statement' => 'FROM article, blog;']);
-
-        // TODO ModelTest
-    }
-
-    public function testWhere()
-    {
-        $query = new Query();
-        $this->assertEquals($query->where()->getParams(), ['statement' => ';', 'values' => []]);
-        $this->assertEquals($query->where(['conditions' => 'id = :id', 'values' => [':id' => 2]])->getParams(),
-            ['statement' => 'WHERE id = :id;', 'values' => [':id' => 2]]);
-    }
-
-    public function testAppendSQL()
-    {
-        $query = new Query();
-        $query->appendSQL('GROUP BY id');
-        $result = ['statement' => 'GROUP BY id;'];
-        $this->assertEquals($query->getParams(), $result);
-    }
-
-    public function testAll()
-    {
-        $query = new Query();
-        $query->select()
-            ->from('articles')
-            ->where(['conditions' => 'id <= :id',
-                'values' => [':id' => 2]])
-            ->appendSQL('GROUP BY id');
-        $result = ['statement' => 'SELECT * FROM articles WHERE id <= :id GROUP BY id;', 'values' => [':id' => 2]];
-        $this->assertEquals($query->getParams(), $result);
+        //todo Model select
+        //TODO : update, delete, add queries
     }
 }

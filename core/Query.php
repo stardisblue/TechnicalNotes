@@ -317,7 +317,7 @@ class Query
 
         }
 
-        $this->where = 'WHERE ' . $params[self::CONDITIONS] . ' ';
+        $this->where = 'WHERE ' . $params[self::STATEMENT] . ' ';
 
         if (self::UPDATE === $this->query_type) {
             array_merge($this->params[self::VALUES], $params[self::VALUES]);
@@ -339,6 +339,20 @@ class Query
         $this->more = $more;
 
         return $this;
+    }
+
+    /**
+     * Returns the array containing the SQL query
+     *
+     * @return array
+     * @see getStatement()
+     * @see getValues()
+     */
+    public function getParams(): array
+    {
+        $this->concat();
+
+        return $this->params;
     }
 
     /**
@@ -379,21 +393,7 @@ class Query
             $this->params[self::STATEMENT] = $this->delete . $this->from . $this->where;
         }
 
-        $this->params[self::STATEMENT] = $this->more;
-    }
-
-    /**
-     * Returns the array containing the SQL query
-     *
-     * @return array
-     * @see getStatement()
-     * @see getValues()
-     */
-    public function getParams(): array
-    {
-        $this->concat();
-
-        return $this->params;
+        $this->params[self::STATEMENT] .= $this->more . ';';
     }
 
     /**
