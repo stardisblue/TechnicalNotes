@@ -18,20 +18,12 @@
  *
  */
 
-namespace techweb\app\controller;
 
+namespace techweb\app\model;
 
-class Main extends FrontController
+use techweb\core\database\ORM\Model;
+
+class TechnotesModel extends Model
 {
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    public function index()
-    {
-        $this->loadView('main');
-    }
-
+    protected static $table = 'technotes';
 }

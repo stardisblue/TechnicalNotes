@@ -20,14 +20,12 @@
 
 namespace techweb\app\controller;
 
-use techweb\core\Controller;
-
-class Error extends Controller
+class Error extends FrontController
 {
 
     public function __construct()
     {
-        $this->setLayout('default');
+        parent::__construct();
     }
 
     public function internalServerError()

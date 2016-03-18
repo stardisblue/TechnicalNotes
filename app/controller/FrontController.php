@@ -20,18 +20,14 @@
 
 namespace techweb\app\controller;
 
+use techweb\core\Controller;
 
-class Main extends FrontController
+abstract class FrontController extends Controller
 {
 
     public function __construct()
     {
-        parent::__construct();
-    }
-
-    public function index()
-    {
-        $this->loadView('main');
+        $this->setLayout('default');
     }
 
 }

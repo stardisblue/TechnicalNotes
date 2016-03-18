@@ -18,12 +18,6 @@
  *
  */
 
-/**
- * Created by PhpStorm.
- * User: stardisblue
- * Date: 15/03/16
- * Time: 12:10
- */
 
 namespace techweb\core\exception;
 

@@ -18,20 +18,40 @@
  *
  */
 
-namespace techweb\app\controller;
+namespace techweb\app\entity;
 
+use techweb\core\database\ORM\Entity;
 
-class Main extends FrontController
+/**
+ * Class TechnoteEntity
+ * @package techweb\app\entity
+ */
+class TechnoteEntity extends Entity
 {
-
+    /**
+     * TechnoteEntity constructor.
+     */
     public function __construct()
     {
-        parent::__construct();
-    }
+        $columns = [
+            'id' => null,
+            'user_id' => null,
+            'title' => '',
+            'content' => '',
+            'creation_date' => '',
+        ];
 
-    public function index()
-    {
-        $this->loadView('main');
+        $options = ['primary' => 'id', 'foreing_key' => 'user_id',
+            'belongTo' => ['table' => 'users'],
+            'hasMany' => [
+                ['table' => 'comments',
+                    'through' => 'technote_comments'],
+                ['table' => 'tags',
+                    'through' => 'tags_technotes']
+            ]
+        ];
+
+        parent::__construct($columns, $options);
     }
 
 }
