@@ -22,7 +22,7 @@ namespace techweb\app\controller;
 
 use techweb\core\Controller;
 
-abstract class FrontController extends Controller
+abstract class FrontEndController extends Controller
 {
 
     public function __construct()

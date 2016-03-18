@@ -21,7 +21,7 @@
 namespace techweb\app\controller;
 
 
-class Main extends FrontController
+class Main extends FrontEndController
 {
 
     public function __construct()

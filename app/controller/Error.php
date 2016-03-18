@@ -20,7 +20,7 @@
 
 namespace techweb\app\controller;
 
-class Error extends FrontController
+class Error extends FrontEndController
 {
 
     public function __construct()
