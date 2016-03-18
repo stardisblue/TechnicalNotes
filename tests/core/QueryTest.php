@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace techweb\test\core;
+namespace techweb\tests\core;
 
 use PHPUnit_Framework_TestCase;
 use techweb\core\database\ORM\Query;
@@ -62,6 +62,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
             ['statement' => 'SELECT id, title FROM articles WHERE id = :id ;', 'values' => [':id' => 2]]);
 
         //todo Model select
-        //TODO : update, delete, add queries
     }
+
+    //TODO : update, delete, add queries
 }
