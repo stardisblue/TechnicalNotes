@@ -20,8 +20,8 @@
 namespace techweb\test\core;
 
 use PHPUnit_Framework_TestCase;
+use techweb\core\database\ORM\Query;
 use techweb\core\exception\IncorrectQueryException;
-use techweb\core\Query;
 
 class QueryTest extends PHPUnit_Framework_TestCase
 {

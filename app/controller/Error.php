@@ -21,14 +21,12 @@
 namespace techweb\app\controller;
 
 use techweb\core\Controller;
-use techweb\core\Query;
 
 class Error extends Controller
 {
 
-    public function __construct(Query $query)
+    public function __construct()
     {
-        parent::__construct($query);
         $this->setLayout('default');
     }
 
