@@ -1,0 +1,24 @@
+{
+  "name": "TechnicalNotes/TechnicalNotes",
+  "description": "Technotes Manager",
+  "minimum-stability": "stable",
+  "license": "GNU Apache",
+  "authors": [
+    {
+      "name": "Fati CHEN",
+      "email": "fati.chen@etu.umontpellier.fr"
+    },
+    {
+      "name": "Adam GARCIA",
+      "email": "adam.garcia@etu.umontpellier.fr"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "techweb\\": "./"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.2"
+  }
+}
