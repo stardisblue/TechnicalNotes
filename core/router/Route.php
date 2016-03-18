@@ -39,6 +39,12 @@ class Route
         $this->callable = $callable;
     }
 
+    /**
+     * Checks if there is variables
+     *
+     * @param string $url
+     * @return bool
+     */
     public function match(string $url): bool
     {
         $url = trim($url, '/');
@@ -55,6 +61,11 @@ class Route
         return true;
     }
 
+    /**
+     * Calls the Controller and the function
+     *
+     * @return mixed the result of the controller function
+     */
     public function call()
     {
         if (is_array($this->callable)) {
@@ -90,6 +101,13 @@ class Route
         }
     }
 
+    /**
+     * Add variables and their conditions
+     *
+     * @param string $parameter
+     * @param string $regex
+     * @return Route
+     */
     public function with(string $parameter, string $regex): Route
     {
         $this->parameters[$parameter] = str_replace('(', '(?:', $regex);
@@ -97,6 +115,12 @@ class Route
         return $this;
     }
 
+    /**
+     * Returns the url of the Route with the given parameters
+     *
+     * @param array $parameters
+     * @return string
+     */
     public function getUrl(array $parameters): string
     {
         $path = $this->path;
@@ -108,6 +132,14 @@ class Route
         return $path;
     }
 
+    /**
+     * Checks if the parameter Match
+     * 
+     * @param array $match
+     * @return string
+     * 
+     * @see match()
+     */
     private function parameterMatch(array $match): string
     {
         if (isset($this->parameters[$match[self::MATCH_INDEX]])) {

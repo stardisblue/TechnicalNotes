@@ -30,6 +30,13 @@ class DriverFactory
     const MYSQL_PDO = 'MySQLPDO';
     const SQLITE_PDO = 'SQLitePDO';
 
+    /**
+     * Returns the configured used driver
+     *
+     * @param string $driverConstant
+     * @return GenericDriver
+     * @throws UnknownDriverException
+     */
     public static function get(string $driverConstant): GenericDriver
     {
         switch ($driverConstant) {

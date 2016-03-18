@@ -24,8 +24,8 @@ use PDO;
 use PDOException;
 use techweb\config\Config;
 use techweb\core\database\driver\GenericDriver;
+use techweb\core\database\ORM\Query;
 use techweb\core\Error;
-use techweb\core\Query;
 
 class MySQLDriverPDO implements GenericDriver
 {

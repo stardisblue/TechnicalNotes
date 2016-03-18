@@ -25,11 +25,28 @@ class Password
 {
     const COST = 12;
 
+    /**
+     * Hashes the data
+     *
+     * @param string $data
+     * @return string
+     *
+     * @see password_hash
+     */
     public static function hash(string $data): string
     {
-        return password_hash($data, PASSWORD_BCRYPT, ['cost' => self::COST]);
+        return password_hash($data, PASSWORD_DEFAULT, ['cost' => self::COST]);
     }
 
+    /**
+     * Check if the password and the hash are the same
+     *
+     * @param string $password
+     * @param string $hash
+     * @return bool
+     *
+     * @see password_verify()
+     */
     public static function verify(string $password, string $hash): bool
     {
         return password_verify($password, $hash);

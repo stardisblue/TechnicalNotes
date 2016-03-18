@@ -23,22 +23,43 @@ namespace techweb\lib\core\io;
 class Out
 {
 
+    /**
+     * Set session value
+     *
+     * @param string $name
+     * @param $value
+     */
     public static function session(string $name, $value)
     {
         $_SESSION[$name] = $value;
     }
 
+    /**
+     * Serialize session
+     *
+     * @param string $name
+     * @param $value
+     * @see In::uSession()
+     */
     public static function sSession(string $name, $value)
     {
         $_SESSION[$name] = serialize($value);
     }
 
+    /**
+     * Destroy session
+     */
     public static function sessionDestroy()
     {
         session_unset();
         session_destroy();
     }
 
+    /**
+     * Unset session value
+     *
+     * @param string $name
+     */
     public static function unsetSession(string $name)
     {
         if (isset($_SESSION[$name])) {
@@ -46,11 +67,23 @@ class Out
         }
     }
 
+    /**
+     * Create a cookie
+     *
+     * @param string $name
+     * @param string $value
+     * @param int $expire
+     */
     public static function cookie(string $name, string $value, int $expire)
     {
         setcookie($name, $value, time() + $expire, null, null, false, true);
     }
 
+    /**
+     * unset a cookie
+     *
+     * @param string $name
+     */
     public static function unsetCookie(string $name)
     {
         setcookie($name, null, 0, null, null, false, false);

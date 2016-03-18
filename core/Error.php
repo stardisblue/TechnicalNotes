@@ -26,6 +26,13 @@ use techweb\core\exception\UnknownErrorException;
 class Error
 {
 
+    /**
+     * Triggers when there is an error
+     *
+     * @param string $errorMessage
+     * @param int $errorCode
+     * @throws UnknownErrorException
+     */
     public static function create(string $errorMessage, int $errorCode = 404)
     {
         if (Config::isDebug()) {
@@ -35,6 +42,12 @@ class Error
         }
     }
 
+    /**
+     * Shows the error code
+     *
+     * @param int $errorCode
+     * @throws UnknownErrorException
+     */
     private static function show(int $errorCode)
     {
         switch ($errorCode) {

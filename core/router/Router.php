@@ -34,11 +34,28 @@ class Router
         $this->url = $url;
     }
 
+    /**
+     * PUT route
+     *
+     * @param string $path
+     * @param $callable
+     * @param string|null $name
+     * @return Route
+     */
     public function put(string $path, $callable, string $name = null): Route
     {
         return $this->add('PUT', $path, $callable, $name);
     }
 
+    /**
+     * ADD route
+     *
+     * @param string $method
+     * @param string $path
+     * @param $callable
+     * @param $name
+     * @return Route
+     */
     private function add(string $method, string $path, $callable, $name): Route
     {
         $route = new Route($path, $callable);
@@ -60,16 +77,38 @@ class Router
         return $this->add('GET', $path, $callable, $name);
     }
 
+    /**
+     * POST route
+     *
+     * @param string $path
+     * @param $callable
+     * @param string|null $name
+     * @return Route
+     */
     public function post(string $path, $callable, string $name = null): Route
     {
         return $this->add('POST', $path, $callable, $name);
     }
 
+    /**
+     * DELETE route
+     *
+     * @param string $path
+     * @param $callable
+     * @param string|null $name
+     * @return Route
+     */
     public function delete(string $path, $callable, string $name = null): Route
     {
         return $this->add('DELETE', $path, $callable, $name);
     }
 
+    /**
+     * Runs the router
+     *
+     * @return mixed
+     * @throws RouterException
+     */
     public function run()
     {
         if (!isset($this->routes[$_SERVER['REQUEST_METHOD']])) {
@@ -86,6 +125,15 @@ class Router
         throw new RouterException('No matching route');
     }
 
+    /**
+     * Get the url of the given named route
+     *
+     *
+     * @param string $name
+     * @param array $parameters
+     * @return string
+     * @throws RouterException
+     */
     public function url(string $name, $parameters = []): string
     {
         if (!isset($this->namedRoutes[$name])) {

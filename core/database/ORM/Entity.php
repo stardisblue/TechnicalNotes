@@ -56,7 +56,7 @@ abstract class Entity
     /**
      * Set a property only if it was declared in the constructor
      *
-     * @param array $properties , ["property" => "default value"]
+     * @param array $properties , ["property" => "default value", ...]
      * @throws UnknownPropertyException
      */
     public function set(array $properties)
@@ -86,8 +86,15 @@ abstract class Entity
         }
     }
 
+    /**
+     * Return the value of the wanted option
+     * return null if the option doesn't exist
+     *
+     * @param string $option
+     * @return null|mixed
+     */
     public function options(string $option)
     {
-        return $this->options[$option] ?? false;
+        return isset($this->options[$option]) ? $this->options[$option] : null;
     }
 }

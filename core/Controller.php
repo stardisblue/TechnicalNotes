@@ -37,15 +37,31 @@ abstract class Controller
     {
     }
 
+    /**
+     * Trigerred before controller Call (MVC)
+     *
+     * @param $method
+     */
     public function beforeCall($method)
     {
     }
 
-    public function afterCall($method)
+    /**
+     * Trigerred after Controller Call (MVC)
+     *
+     * @param string $method
+     */
+    public function afterCall(string $method)
     {
         $method();
     }
 
+    /**
+     * Load the view
+     *
+     * @param string $view
+     * @param array $data
+     */
     protected function loadView(string $view, array $data = [])
     {
         if (!empty($data) || !empty($this->data)) {
@@ -73,12 +89,23 @@ abstract class Controller
         }
     }
 
+    /**
+     * Redirect to page
+     *
+     * @param string $page
+     */
     protected function redirect(string $page = '')
     {
         header('Location: ' . WEB_ROOT . '/' . $page);
         exit;
     }
 
+    /**
+     * Writes the message in the logs
+     *
+     * @param string $message
+     * @param int $priority
+     */
     protected function log(string $message, int $priority = self::LOG_NOTICE)
     {
         $log = date('H:i:s');
@@ -101,6 +128,12 @@ abstract class Controller
         }
     }
 
+    /**
+     * Write a message in log file
+     *
+     * @param string $message
+     * @throws IOException
+     */
     private function writeLog(string $message)
     {
         if (isset(self::$currentLogFile)) {
@@ -120,7 +153,13 @@ abstract class Controller
         }
     }
 
-    protected function setLayout($layout, array $data = [])
+    /**
+     * Sets the default layout of the Controller
+     *
+     * @param string $layout
+     * @param array $data
+     */
+    protected function setLayout(string $layout, array $data = [])
     {
         $this->data = $data;
         $this->layout = file_exists(ROOT . '/app/view/layout/' . $layout . '.php') ? $layout : false;

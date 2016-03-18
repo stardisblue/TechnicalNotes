@@ -23,11 +23,21 @@ namespace techweb\core;
 class AutoLoader
 {
 
+    /**
+     * Add the class to the sql autoloader
+     *
+     * @see spl_autoload_register()
+     */
     public static function register()
     {
         spl_autoload_register([self::class, 'autoload']);
     }
 
+    /**
+     * changes the classname to path to file
+     *
+     * @param string $className
+     */
     private static function autoload(string $className)
     {
         if (strpos($className, 'techweb') === 0) {

@@ -30,7 +30,7 @@ class Auth
 
     private static function hash(string $data): string
     {
-        $_SESSION[$name] = self::hash($_SERVER['REMOTE_ADDR']);
+        $_SESSION[$data] = self::hash($_SERVER['REMOTE_ADDR']);
     }
 
     public static function check(string $name): bool

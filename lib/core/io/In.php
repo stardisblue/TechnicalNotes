@@ -22,31 +22,65 @@ namespace techweb\lib\core\io;
 
 class In
 {
+    /**
+     * GET data
+     *
+     * @param string $get
+     * @return mixed
+     */
     public static function get(string $get)
     {
         return filter_input(INPUT_GET, $get, FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_NULL_ON_FAILURE);
     }
 
+    /**
+     * POST data
+     *
+     * @param string $post
+     * @return mixed
+     */
     public static function post(string $post)
     {
         return filter_input(INPUT_POST, $post, FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_NULL_ON_FAILURE);
     }
 
+    /**
+     * Get cookie
+     *
+     * @param string $cookie
+     * @return mixed
+     */
     public static function cookie(string $cookie)
     {
         return filter_input(INPUT_COOKIE, $cookie, FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_NULL_ON_FAILURE);
     }
 
+    /**
+     * @param string $session
+     * @return mixed|null
+     */
     public static function session(string $session)
     {
         return isset($_SESSION[$session]) ? $_SESSION[$session] : null;
     }
 
+    /**
+     * Unserialize session
+     *
+     * @param string $session name
+     * @return mixed|null
+     */
     public static function uSession(string $session)
     {
         return isset($_SESSION[$session]) ? unserialize($_SESSION[$session]) : null;
     }
 
+    /**
+     * Checks if data isset
+     *
+     * @param \string[] ...$post
+     * @return bool
+     */
     public static function isSetPost(string ...$post): bool
     {
         foreach ($post as $data) {
@@ -58,6 +92,12 @@ class In
         return true;
     }
 
+    /**
+     * Checks if session isset
+     *
+     * @param \string[] ...$session
+     * @return bool
+     */
     public static function isSetSession(string ...$session): bool
     {
         foreach ($session as $data) {

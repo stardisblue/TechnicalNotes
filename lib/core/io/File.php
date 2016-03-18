@@ -27,9 +27,19 @@ use techweb\core\exception\UploadException;
 class File
 {
 
-    public static function checkSum($filePath)
+    /**
+     * Return the sha1 of the given File
+     *
+     * @param string $filePath path to the file
+     * @param string $algo [optional]
+     *
+     * hashing algorithme
+     * @return null
+     * @see hash_file()
+     */
+    public static function checkSum(string $filePath, string $algo = 'sha1')
     {
-        return file_exists($filePath) ? hash('sha1', file_get_contents($filePath)) : null;
+        return file_exists($filePath) ? hash_file($algo, $filePath) : null;
     }
 
     public static function moveUploadedFile(string $fileName, string $uploadPath, array $extensions = [], array $mimeTypes = [])
