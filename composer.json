@@ -15,7 +15,10 @@
   ],
   "autoload": {
     "psr-4": {
-      "techweb\\": ""
+      "techweb\\core\\": "core/",
+      "techweb\\app\\": "app/",
+      "techweb\\lib\\": "lib/",
+      "techweb\\tests\\": "tests/"
     }
   },
   "require-dev": {
