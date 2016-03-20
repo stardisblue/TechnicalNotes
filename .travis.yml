@@ -6,4 +6,5 @@ php:
   - 7.0
 
 before_script:
-    - composer dump-autoloader
+    - composer update
+    - composer dump-autoload
