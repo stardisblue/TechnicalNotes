@@ -13,14 +13,6 @@
       "email": "adam.garcia@etu.umontpellier.fr"
     }
   ],
-  "autoload": {
-    "psr-4": {
-      "techweb\\core\\": "core/",
-      "techweb\\app\\": "app/",
-      "techweb\\lib\\": "lib/",
-      "techweb\\tests\\": "tests/"
-    }
-  },
   "require-dev": {
     "phpunit/phpunit": "^5.2"
   }

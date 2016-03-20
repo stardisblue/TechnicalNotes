@@ -20,7 +20,6 @@
 
 namespace techweb\core\database\ORM;
 
-
 use techweb\core\exception\IncorrectQueryException;
 
 class Query
