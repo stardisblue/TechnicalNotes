@@ -18,9 +18,7 @@
  *
  */
 
-
 namespace techweb\core\exception;
-
 
 class IncorrectQueryException extends \Exception
 {
