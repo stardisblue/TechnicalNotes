@@ -23,6 +23,7 @@ namespace techweb\tests\core\database\ORM;
 use PHPUnit_Framework_TestCase;
 use techweb\core\database\ORM\Query;
 use techweb\core\exception\IncorrectQueryException;
+use techweb\tests\app\Entity\ArticlesEntity;
 use techweb\tests\app\model\ArticlesModel;
 
 class QueryTest extends PHPUnit_Framework_TestCase
@@ -46,6 +47,30 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->expectException(IncorrectQueryException::class);
         $query = new Query();
         $query->select();
+        $query->getParams();
+    }
+
+    /**
+     * @throws IncorrectQueryException
+     * @expectedExceptionMessage  Incorrect SELECT
+     */
+    public function testIncorrectSelect()
+    {
+        $this->expectException(IncorrectQueryException::class);
+        $query = new Query();
+        $query->select($query);
+        $query->getParams();
+    }
+
+    /**
+     * @throws IncorrectQueryException
+     * @expectedExceptionMessage  Cannot add a select statement
+     */
+    public function testDuplicateSelect()
+    {
+        $this->expectException(IncorrectQueryException::class);
+        $query = new Query();
+        $query->select()->select();
         $query->getParams();
     }
 
@@ -73,7 +98,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $query->select()
-                ->from($articles_model)
+                ->from('articles')
                 ->getParams(),
             ['statement' => 'SELECT * FROM articles ']
         );
@@ -87,8 +112,8 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $this->expectException(IncorrectQueryException::class);
         $query = new Query();
-        $query->from('articles');
-        $query->getParams();
+        $query->from('articles')
+            ->getParams();
     }
 
     public function testFrom()
@@ -107,11 +132,51 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(
             $query->delete()
                 ->from($articles_model)
-                ->where(['statement' => 'id = :id', 'values' => ])
+                ->where(['conditions' => 'id = :id', 'values' => [':id' => 2]])
                 ->getParams(),
-            ['statement' => 'SELECT * FROM articles ']
+            ['statement' => 'DELETE FROM articles WHERE id = :id ', 'values' => [':id' => 2]]
         );
     }
+
+    /**
+     * @throws IncorrectQueryException
+     * @expectedExceptionMessage Empty WHERE statement
+     */
+    public function testEmptyWhere()
+    {
+        $this->expectException(IncorrectQueryException::class);
+        $query = new Query();
+        $query->select()->from('articles')->where();
+    }
+
+    /**
+     * @throws IncorrectQueryException
+     * @expectedExceptionMessage Cannot add a WHERE statement
+     */
+    public function testInvalidWhere()
+    {
+        $this->expectException(IncorrectQueryException::class);
+        $query = new Query();
+        $query->where();
+    }
+
+    public function testWhere()
+    {
+        $query = new Query();
+        $query->select()->from('articles')->where(['conditions' => 'id = :id', 'values' => [':id' => 2]]);
+        $this->assertEquals($query->getParams(), ['statement' => 'SELECT * FROM articles WHERE id = :id ', 'values' => [':id' => 2]]);
+
+        $query = new Query();
+        $entity = new ArticlesEntity();
+
+        $query->update('articles')->set($entity)->where(['conditions' => 'id = :id', 'values' => [':id' => 2]]);
+        $this->assertEquals($query->getParams(), ['statement' => 'DELETE FROM articles WHERE id = :id ', 'values' => [':id' => 2]]);
+
+        $query = new Query();
+        $query->delete()->from('articles')->where(['conditions' => 'id = :id', 'values' => [':id' => 2]]);
+        $this->assertEquals($query->getParams(), ['statement' => 'DELETE FROM articles WHERE id = :id ', 'values' => [':id' => 2]]);
+    }
+
 
     //TODO : update, delete, add queries
 }

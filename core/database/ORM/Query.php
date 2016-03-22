@@ -261,7 +261,7 @@ class Query
      */
     public function set($data): self
     {
-        if (isset($this->update_set) || !isset($this->query_type) || $this->query_type !== self::INSERT) {
+        if (isset($this->update_set) || !isset($this->query_type) || $this->query_type !== self::UPDATE) {
             throw new IncorrectQueryException('Cannot add SET statement');
         }
 
@@ -317,6 +317,10 @@ class Query
         }
 
         $this->where = 'WHERE ' . $params[self::CONDITIONS] . ' ';
+
+        if (!isset($params[self::VALUES])) {
+            $params[self::VALUES] = [];
+        }
 
         if (self::UPDATE === $this->query_type) {
             array_merge($this->params[self::VALUES], $params[self::VALUES]);
