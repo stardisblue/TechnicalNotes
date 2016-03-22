@@ -168,9 +168,15 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
         $query = new Query();
         $entity = new ArticlesEntity();
+        $entity->title= 'Titre';
 
         $query->update('articles')->set($entity)->where(['conditions' => 'id = :id', 'values' => [':id' => 2]]);
-        $this->assertEquals($query->getParams(), ['statement' => 'DELETE FROM articles WHERE id = :id ', 'values' => [':id' => 2]]);
+        $this->assertEquals($query->getParams(), ['statement' => 'UPDATE articles SET id = :id, user_id = :user_id, title = :title, content = :content, date_creation = :date_creation WHERE id = :id ', 'values' => ['id' => null,
+            'user_id' => null,
+            'title' => 'Titre',
+            'content' => '',
+            'date_creation' => null]
+        ]);
 
         $query = new Query();
         $query->delete()->from('articles')->where(['conditions' => 'id = :id', 'values' => [':id' => 2]]);

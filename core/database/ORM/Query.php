@@ -244,9 +244,9 @@ class Query
         $this->update = 'UPDATE ';
 
         if (is_string($model)) {
-            $this->update .= $model;
+            $this->update .= $model . ' ';
         } elseif (is_subclass_of($model, Model::class, false)) {
-            $this->update .= $model->getTable();
+            $this->update .= $model->getTable() . ' ';
         } else {
             throw new IncorrectQueryException('Incorrect class');
         }
@@ -276,14 +276,14 @@ class Query
         $set = '';
 
         foreach ($rows as $key => $value) {
-            $set .= $key . '= :' . $key . ', ';
+            $set .= $key . ' = :' . $key . ', ';
             stripcslashes($value);
             trim($value);
         }
 
         $set = rtrim($set, ', ');
 
-        $this->update_set = 'SET ' . $set;
+        $this->update_set = 'SET ' . $set . ' ';
 
         $this->params[self::VALUES] = $rows;
 

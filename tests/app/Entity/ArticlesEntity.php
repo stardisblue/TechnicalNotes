@@ -31,7 +31,7 @@ class ArticlesEntity extends Entity
             'user_id' => null,
             'title' => '',
             'content' => '',
-            'date' => null,
+            'date_creation' => null,
         ];
 
         $options = [
