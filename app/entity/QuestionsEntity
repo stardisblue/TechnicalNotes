@@ -26,7 +26,7 @@ use techweb\core\database\ORM\Entity;
  * Class TechnoteEntity
  * @package techweb\app\entity
  */
-class TechnoteEntity extends Entity
+class QuestionsEntity extends Entity
 {
     /**
      * TechnoteEntity constructor.
@@ -39,14 +39,16 @@ class TechnoteEntity extends Entity
             'title' => '',
             'content' => '',
             'creation_date' => null,
+            'statut' => ''
         ];
+
+
 
         $options = ['primary' => 'id', 
             'belongTo' => ['table' => 'users', 'foreing_key' => 'user_id'],
             'hasMany' => [
-                ['table' => 'technote_comments'],
                 ['table' => 'tags',
-                    'through' => 'tags_technotes']
+                    'through' => 'questions_tags']
             ]
         ];
 
