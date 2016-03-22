@@ -255,7 +255,7 @@ CREATE TABLE `users` (
   `name`         VARCHAR(50)      NOT NULL,
   `firstname`    VARCHAR(50)      NOT NULL,
   `password`     CHAR(50)         NOT NULL,
-  `mail`         VARCHAR(50)      NOT NULL,
+  `mail`         VARCHAR(50)      NOT NULL UNIQUE,
   `verification` VARCHAR(32)      NOT NULL,
   `isadmin`      TINYINT(1)                DEFAULT '0',
   PRIMARY KEY (`id`)

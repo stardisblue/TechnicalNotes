@@ -26,4 +26,21 @@ use techweb\core\database\ORM\Model;
 class UsersModel extends Model
 {
     protected static $table = 'users';
+   // protected static $primary = 'id';
+
+
+    public function selectUserQuestionComments(UsersEntity $user_entity)
+    {
+    	$questions_table = QuestionsModel::getTable();
+    	$users_table =UsersModel::getTable();
+    	$this->newQuery()
+    		->select()
+    		->from([$users_table, $questions_table])
+    		->where(['condition' => $users_table. '.' . $this->primary  . '=' . $questions_table .'.user_id AND '. 
+    			$users_table . '.' . $this->primary .' = :id', 
+    			'values'=> [':id' => $user_entity->id]]);
+
+    		$this->getDep(QuestionModel)
+
+    }
 }

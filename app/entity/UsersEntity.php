@@ -45,8 +45,7 @@ class UsersEntity extends Entity
  
 
 
-        $options = ['primary' => 'id',      
-        ];
+        $options = ['primary' => 'id',];
 
         parent::__construct($columns, $options);
     }

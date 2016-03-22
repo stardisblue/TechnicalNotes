@@ -47,7 +47,6 @@ class QuestionsEntity extends Entity
         $options = ['primary' => 'id', 
             'belongTo' => ['table' => 'users', 'foreing_key' => 'user_id'],
             'hasMany' => [
-                ['table' => 'questions_comments'],
                 ['table' => 'tags',
                     'through' => 'questions_tags']
             ]
