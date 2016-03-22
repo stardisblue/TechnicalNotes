@@ -38,14 +38,13 @@ class TechnoteEntity extends Entity
             'user_id' => null,
             'title' => '',
             'content' => '',
-            'creation_date' => '',
+            'creation_date' => null,
         ];
 
         $options = ['primary' => 'id', 
             'belongTo' => ['table' => 'users', 'foreing_key' => 'user_id'],
             'hasMany' => [
-                ['table' => 'comments',
-                    'through' => 'technote_comments'],
+                ['table' => 'technote_comments'],
                 ['table' => 'tags',
                     'through' => 'tags_technotes']
             ]
