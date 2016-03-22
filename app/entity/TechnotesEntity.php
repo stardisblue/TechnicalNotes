@@ -41,8 +41,8 @@ class TechnoteEntity extends Entity
             'creation_date' => '',
         ];
 
-        $options = ['primary' => 'id', 'foreing_key' => 'user_id',
-            'belongTo' => ['table' => 'users'],
+        $options = ['primary' => 'id', 
+            'belongTo' => ['table' => 'users', 'foreing_key' => 'user_id'],
             'hasMany' => [
                 ['table' => 'comments',
                     'through' => 'technote_comments'],
