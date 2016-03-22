@@ -4,8 +4,4 @@ language: php
 # list any PHP version you want to test against
 php: 7.0
 
-before_script:
-    - composer install
-    - composer dump-autoload
-
 script: phpunit --bootstrap bootstrap.php --configuration phpunit.xml
