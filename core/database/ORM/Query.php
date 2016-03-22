@@ -392,7 +392,7 @@ class Query
             $this->params[self::STATEMENT] = $this->delete . $this->from . $this->where;
         }
 
-        $this->params[self::STATEMENT] .= $this->more . ';';
+        $this->params[self::STATEMENT] .= $this->more;
     }
 
     /**
@@ -424,7 +424,7 @@ class Query
      */
     public function setQuery(string $statement, array $values = [])
     {
-        $this->query_type = 0;
+        $this->query_type = self::CUSTOM;
         $this->params[self::STATEMENT] = $statement;
         $this->params[self::VALUES] = $values;
     }
