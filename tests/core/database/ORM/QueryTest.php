@@ -168,21 +168,47 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
         $query = new Query();
         $entity = new ArticlesEntity();
-        $entity->title= 'Titre';
+        $entity->title = 'Titre';
+        $entity->id = 1;
 
-        $query->update('articles')->set($entity)->where(['conditions' => 'id = :id', 'values' => [':id' => 2]]);
-        $this->assertEquals($query->getParams(), ['statement' => 'UPDATE articles SET id = :id, user_id = :user_id, title = :title, content = :content, date_creation = :date_creation WHERE id = :id ', 'values' => ['id' => null,
-            'user_id' => null,
-            'title' => 'Titre',
-            'content' => '',
-            'date_creation' => null]
+        $query->update('articles')->set($entity)->where(['conditions' => ['id', '=', 2]]);
+        $this->assertEquals($query->getParams(), ['statement' => 'UPDATE articles SET id = :id, user_id = :user_id, title = :title, content = :content, date_creation = :date_creation WHERE id = :id0 ',
+            'values' => ['id' => 1,
+                'user_id' => null,
+                'title' => 'Titre',
+                'content' => '',
+                'date_creation' => null,
+                'id0' => 2]
         ]);
 
         $query = new Query();
         $query->delete()->from('articles')->where(['conditions' => 'id = :id', 'values' => [':id' => 2]]);
         $this->assertEquals($query->getParams(), ['statement' => 'DELETE FROM articles WHERE id = :id ', 'values' => [':id' => 2]]);
+
+        $query = new Query();
+
+        $query->select()
+            ->from('articles')
+            ->where(['conditions' => [
+                'AND' => [
+                    ['id', '=', 2],
+                    ['title', '=', 'salut les geeks'],
+                    'OR' => [
+                        ['id', '=', 3],
+                        ['id', '=', 4]
+                    ]
+                ]]
+            ]);
+
+        $this->assertEquals($query->getParams(),
+            [
+                'statement' =>
+                    'SELECT * FROM articles WHERE (id = :id AND title = :title AND (id = :id0 OR id = :id1)) ',
+                'values' => ['id' => 2,
+                    'title' => 'salut les geeks', 'id0' => 3, 'id1' => 4]
+            ]
+        );
     }
 
-
-    //TODO : update, delete, add queries
+//TODO : update, delete, add queries
 }

@@ -78,8 +78,6 @@ class Query
         } else {
             throw new IncorrectQueryException('Incorrect class');
         }
-
-        return $this;
     }
 
     /**
@@ -316,19 +314,63 @@ class Query
 
         }
 
-        $this->where = 'WHERE ' . $params[self::CONDITIONS] . ' ';
+        if (is_string($params[self::CONDITIONS])) {
+            $this->where = 'WHERE ' . $params[self::CONDITIONS] . ' ';
 
-        if (!isset($params[self::VALUES])) {
-            $params[self::VALUES] = [];
-        }
+            if (!isset($params[self::VALUES])) {
+                $params[self::VALUES] = [];
+            }
 
-        if (self::UPDATE === $this->query_type) {
-            array_merge($this->params[self::VALUES], $params[self::VALUES]);
-        } else {
-            $this->params[self::VALUES] = $params[self::VALUES];
+            if (self::UPDATE === $this->query_type) {
+                $this->params[self::VALUES] = array_merge($this->params[self::VALUES], $params[self::VALUES]);
+            } else {
+                $this->params[self::VALUES] = $params[self::VALUES];
+            }
+        } elseif (is_array($params[self::CONDITIONS])) {
+            $this->where = 'WHERE ' . $this->createWhere($params[self::CONDITIONS]) . ' ';
         }
 
         return $this;
+    }
+
+    private function createWhere(array $conditions, &$count = 0)
+    {
+        if (isset($conditions['AND'])) {
+            foreach ($conditions['AND'] as $key => $condition) {
+                if (is_string($key)) {
+                    $conditions['AND'][$key] = $this->createWhere([$key => $condition], $count);
+                } else {
+                    $conditions['AND'][$key] = $this->createWhere($condition, $count);
+                }
+            }
+            $where = '(' . implode(' AND ', $conditions['AND']) . ')';
+
+        } elseif
+        (isset($conditions['OR'])) {
+
+            foreach ($conditions['OR'] as $key => $condition) {
+                if (is_string($key)) {
+                    $conditions['OR'][$key] = $this->createWhere([$key => $condition], $count);
+                } else {
+                    $conditions['OR'][$key] = $this->createWhere($condition, $count);
+                }
+
+            }
+            $where = '(' . implode(' OR ', $conditions['OR']) . ')';
+
+        } else {
+            $where = $conditions[0] . ' ' . $conditions[1] . ' :';
+
+            if (isset($this->params[self::VALUES][$conditions[0]])) {
+                $conditions[0] .= $count;
+                ++$count;
+            }
+
+            $where .= $conditions[0];
+            $this->params[self::VALUES][$conditions[0]] = $conditions[2];
+        }
+
+        return $where;
     }
 
     /**
