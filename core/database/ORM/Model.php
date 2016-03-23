@@ -41,7 +41,11 @@ abstract class Model
 
     private $driver;
 
-    public function __construct(Config $config)
+    /**
+     * Model constructor.
+     * @param Config $config
+     */
+    public function __construct($config)
     {
         $this->driver = DriverFactory::get($config->getDatabase(self::DRIVER));
     }

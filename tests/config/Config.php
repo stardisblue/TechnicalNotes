@@ -18,17 +18,72 @@
  *
  */
 
-/**
- * Created by PhpStorm.
- * User: stardisblue
- * Date: 23/03/16
- * Time: 01:26
- */
-
 namespace techweb\tests\config;
 
+use techweb\core\database\DriverFactory;
+use techweb\core\Error;
 
-class Config extends \techweb\config\Config
+class Config
 {
+    private static $_debug = true;
+
+    private static $_database = [
+        'driver' => DriverFactory::MYSQL_PDO,
+        'host' => 'localhost',
+        'database' => '',
+        'login' => '',
+        'password' => ''
+    ];
+
+    private static $_error = [
+        '500' => '/internal-server-error',
+        '404' => '/not-found',
+        '403' => '/forbidden'
+    ];
+
+    private static $_encryption = [
+        'mode' => MCRYPT_MODE_CBC,
+        'cypher' => MCRYPT_RIJNDAEL_256,
+        'key' => 'CHANGEME', //TODO
+        'iv' => 'CHANGEME' //TODO
+    ];
+
+    public static function isDebug(): bool
+    {
+        return self::$_debug;
+    }
+
+    public static function getDatabase(string $key): string
+    {
+        if (isset(self::$_database[$key])) {
+            return self::$_database[$key];
+        } else {
+            Error::create('Unknown database key : ' . $key, 500);
+        }
+
+        return null;
+    }
+
+    public static function getEncryption(string $key): string
+    {
+        if (isset(self::$_encryption[$key])) {
+            return self::$_encryption[$key];
+        } else {
+            Error::create('Unknown encryption key : ' . $key, 500);
+        }
+
+        return null;
+    }
+
+    public static function getError(string $key): string
+    {
+        if (isset(self::$_error[$key])) {
+            return self::$_error[$key];
+        } else {
+            Error::create('Unknown error key : ' . $key, 404);
+        }
+
+        return null;
+    }
 
 }
