@@ -18,20 +18,17 @@
  *
  */
 
+/**
+ * Created by PhpStorm.
+ * User: stardisblue
+ * Date: 23/03/16
+ * Time: 01:26
+ */
 
-namespace techweb\tests\app\model;
+namespace techweb\tests\config;
 
 
-use techweb\core\database\ORM\Model;
-use techweb\tests\config\Config;
-
-class ArticlesModel extends Model
+class Config extends \techweb\config\Config
 {
-    protected static $table = 'articles';
 
-    public function __construct()
-    {
-        $config = new Config();
-        parent::__construct($config);
-    }
 }
