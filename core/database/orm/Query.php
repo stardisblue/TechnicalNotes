@@ -113,8 +113,8 @@ class Query
         foreach ($rows as $key => $value) {
             if (!is_null($value)) {
                 $columns .= $key . ', ';
-                $values .= ':' . $key . ', ';
-                $clean[':' . $key] = $value;
+                $values .= '?, ';
+                $clean[] = $value;
                 stripcslashes($value);
                 trim($value);
             }
@@ -311,6 +311,10 @@ class Query
     {
         if (isset($this->where) || !isset($this->query_type) || $this->query_type === self::INSERT) {
             throw new IncorrectQueryException('Cannot add a WHERE statement');
+        }
+
+        if (empty($params)) {
+            throw new IncorrectQueryException('Empty WHERE statement');
         }
 
         if (is_string($params[self::CONDITIONS])) {

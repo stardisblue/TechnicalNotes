@@ -146,18 +146,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $this->expectException(IncorrectQueryException::class);
         $query = new Query();
-        $query->select()->from('articles')->where();
-    }
-
-    /**
-     * @throws IncorrectQueryException
-     * @expectedExceptionMessage Cannot add a WHERE statement
-     */
-    public function testInvalidWhere()
-    {
-        $this->expectException(IncorrectQueryException::class);
-        $query = new Query();
-        $query->where();
+        $query->select()->from('articles')->where([]);
     }
 
     public function testWhere()
