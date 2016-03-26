@@ -23,6 +23,7 @@ session_start();
 /**
  * Include the autoloader
  */
+
 require_once 'bootstrap.php';
 
-require_once ROOT . ' /routes.php';
+require_once 'routes.php';

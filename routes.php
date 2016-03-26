@@ -26,9 +26,13 @@ use techweb\core\router\Router;
 /**
  * Instantiation of the Router object
  */
-$router = new Router($_GET['url'] ?? '/');
+$router = new Router(isset($_GET['url']) ? $_GET['url'] : '/');
 
 $router->get('/', ['Main' => 'index']);
+
+$router->get('/users', ['UserManagement' => 'list_users']);
+$router->get('/user/add', ['UserManagement' => 'add_user']);
+$router->post('/user/add', ['UserManagement' => 'add_user']);
 
 /**
  * Error routes

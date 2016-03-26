@@ -21,7 +21,7 @@
 namespace techweb\tests\core\database\ORM;
 
 use PHPUnit_Framework_TestCase;
-use techweb\core\database\ORM\Query;
+use techweb\core\database\orm\Query;
 use techweb\core\exception\IncorrectQueryException;
 use techweb\tests\app\Entity\ArticlesEntity;
 use techweb\tests\app\model\ArticlesModel;
@@ -195,7 +195,8 @@ class QueryTest extends PHPUnit_Framework_TestCase
                     ['title', '=', 'salut les geeks'],
                     'OR' => [
                         ['id', '=', 3],
-                        ['id', '=', 4]
+                        ['id', '=', 4],
+                        ['id', '=', 5],
                     ]
                 ]]
             ]);
@@ -203,9 +204,9 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($query->getParams(),
             [
                 'statement' =>
-                    'SELECT * FROM articles WHERE (id = :id AND title = :title AND (id = :id0 OR id = :id1)) ',
+                    'SELECT * FROM articles WHERE (id = :id AND title = :title AND (id = :id0 OR id = :id1 OR id = :id2)) ',
                 'values' => ['id' => 2,
-                    'title' => 'salut les geeks', 'id0' => 3, 'id1' => 4]
+                    'title' => 'salut les geeks', 'id0' => 3, 'id1' => 4, 'id2' => 5]
             ]
         );
     }

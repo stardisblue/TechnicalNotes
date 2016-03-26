@@ -21,22 +21,16 @@
 
 namespace techweb\app\model;
 
-use techweb\app\entity\UsersEntity;
-use techweb\core\database\ORM\Model;
+use techweb\core\database\orm\Model;
 
 class UsersModel extends Model
 {
     protected static $table = 'users';
 
-    // protected static $primary = 'id';
-
-
-    public function selectUserQuestionComments(UsersEntity $user_entity)
+    public function userExist($email):bool
     {
-        $this->newQuery()
-            ->select()
-            ->from(['users', 'questions'])
-            ->where(['condition' => 'users.id = questions.id AND user.id = :id',
-                'values' => [':id' => $user_entity->id]]);
+        $this->newQuery()->select()->from($this)->where(['conditions' => ['mail', '=', $email]]);
+
+        return $this->first() ? true : false;
     }
 }

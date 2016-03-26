@@ -27,7 +27,7 @@ abstract class FrontEndController extends Controller
 
     public function __construct()
     {
-        $this->setLayout('default');
+        $this->setLayout('frontend');
     }
 
 }

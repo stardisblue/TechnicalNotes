@@ -20,7 +20,7 @@
 
 namespace techweb\app\entity;
 
-use techweb\core\database\ORM\Entity;
+use techweb\core\database\orm\Entity;
 
 /**
  * Class TechnoteEntity

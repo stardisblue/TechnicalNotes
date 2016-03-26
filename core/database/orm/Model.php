@@ -18,7 +18,7 @@
  *
  */
 
-namespace techweb\core\database\ORM;
+namespace techweb\core\database\orm;
 
 use techweb\config\Config;
 use techweb\core\database\DriverFactory;
@@ -151,7 +151,7 @@ abstract class Model
             ->insertInto(static::$table)
             ->values($entity);
 
-        $this->driver->query($this->query);
+        $this->driver->execute($this->query);
     }
 
 

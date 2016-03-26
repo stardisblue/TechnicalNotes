@@ -2,7 +2,5 @@
 [![GitHub release](https://img.shields.io/github/release/stardisblue/technicalnotes.svg?style=flat-square)](https://github.com/stardisblue/TechnicalNotes/releases/latest)
 [![Travis](https://img.shields.io/travis/stardisblue/TechnicalNotes.svg?style=flat-square)](https://travis-ci.org/stardisblue/TechnicalNotes)
 
-
-
 # TechnicalNotes
 

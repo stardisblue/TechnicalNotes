@@ -21,7 +21,7 @@
 
 namespace techweb\app\model;
 
-use techweb\core\database\ORM\Model;
+use techweb\core\database\orm\Model;
 
 class QuestionsModel extends Model
 {

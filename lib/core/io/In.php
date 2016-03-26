@@ -78,7 +78,7 @@ class In
     /**
      * Checks if data isset
      *
-     * @param \string[] ...$post
+     * @param string[] ...$post
      * @return bool
      */
     public static function isSetPost(string ...$post): bool

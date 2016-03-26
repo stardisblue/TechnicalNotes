@@ -20,7 +20,7 @@
 
 namespace techweb\app\entity;
 
-use techweb\core\database\ORM\Entity;
+use techweb\core\database\orm\Entity;
 
 /**
  * Class TechnoteEntity
@@ -28,6 +28,9 @@ use techweb\core\database\ORM\Entity;
  */
 class UsersEntity extends Entity
 {
+
+
+
     /**
      * TechnoteEntity constructor.
      */
@@ -39,10 +42,9 @@ class UsersEntity extends Entity
             'firstname' => '',
             'password' => '',
             'mail' => '',
-            'verification' => ''
-            'isadmin' => ''
+            'verification' => '',
+            'isadmin' => 0
         ];
- 
 
 
         $options = ['primary' => 'id',];

@@ -20,7 +20,7 @@
 
 namespace techweb\tests\app\Entity;
 
-use techweb\core\database\ORM\Entity;
+use techweb\core\database\orm\Entity;
 
 class ArticlesEntity extends Entity
 {

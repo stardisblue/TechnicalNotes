@@ -18,7 +18,7 @@
  *
  */
 
-namespace techweb\core\database\ORM;
+namespace techweb\core\database\orm;
 
 use techweb\core\exception\IncorrectQueryException;
 
@@ -78,6 +78,8 @@ class Query
         } else {
             throw new IncorrectQueryException('Incorrect class');
         }
+
+        return $this;
     }
 
     /**
@@ -106,20 +108,22 @@ class Query
 
         $columns = '';
         $values = '';
+        $clean = [];
 
         foreach ($rows as $key => $value) {
-            $columns .= $key . ', ';
-            $values .= ':' . $key . ', ';
-            stripcslashes($value);
-            trim($value);
+            if (!is_null($value)) {
+                $columns .= $key . ', ';
+                $values .= ':' . $key . ', ';
+                $clean[':' . $key] = $value;
+                stripcslashes($value);
+                trim($value);
+            }
         }
-
-        $this->params[self::VALUES] = $rows;
 
         $columns = rtrim($columns, ', ');
         $values = rtrim($values, ', ');
-
-        $this->insert_into_values = $columns . ') VALUES (' . $values . ')';
+        $this->insert_into_values .= $columns . ') VALUES (' . $values . ')';
+        $this->params[self::VALUES] = $clean;
 
         return $this;
     }
@@ -299,19 +303,14 @@ class Query
      * ]
      * ```
      *
-     * @param array $params [optional]
+     * @param array $params
      * @return Query
      * @throws IncorrectQueryException
      */
-    public function where(array $params = []): self
+    public function where(array $params): self
     {
         if (isset($this->where) || !isset($this->query_type) || $this->query_type === self::INSERT) {
             throw new IncorrectQueryException('Cannot add a WHERE statement');
-        }
-
-        if (empty($params)) {
-            throw new IncorrectQueryException('Empty WHERE statement');
-
         }
 
         if (is_string($params[self::CONDITIONS])) {
@@ -336,27 +335,21 @@ class Query
     private function createWhere(array $conditions, &$count = 0)
     {
         if (isset($conditions['AND'])) {
-            foreach ($conditions['AND'] as $key => $condition) {
-                if (is_string($key)) {
-                    $conditions['AND'][$key] = $this->createWhere([$key => $condition], $count);
+            $option = 'AND';
+        } elseif (isset($conditions['OR'])) {
+            $option = 'OR';
+        }
+
+        if (isset($option)) {
+
+            foreach ($conditions[$option] as $key => $condition) {
+                if (!is_int($key)) {
+                    $conditions[$option][$key] = $this->createWhere([$key => $condition], $count);
                 } else {
-                    $conditions['AND'][$key] = $this->createWhere($condition, $count);
+                    $conditions[$option][$key] = $this->createWhere($condition, $count);
                 }
             }
-            $where = '(' . implode(' AND ', $conditions['AND']) . ')';
-
-        } elseif
-        (isset($conditions['OR'])) {
-
-            foreach ($conditions['OR'] as $key => $condition) {
-                if (is_string($key)) {
-                    $conditions['OR'][$key] = $this->createWhere([$key => $condition], $count);
-                } else {
-                    $conditions['OR'][$key] = $this->createWhere($condition, $count);
-                }
-
-            }
-            $where = '(' . implode(' OR ', $conditions['OR']) . ')';
+            $where = '(' . implode(' ' . $option . ' ', $conditions[$option]) . ')';
 
         } else {
             $where = $conditions[0] . ' ' . $conditions[1] . ' :';
@@ -456,9 +449,9 @@ class Query
     /**
      * Returns the values
      *
-     * @return array
+     * @return array|null
      */
-    public function getValues(): array
+    public function getValues()
     {
         return $this->params[self::VALUES];
     }

@@ -18,7 +18,7 @@
  *
  */
 
-namespace techweb\core\database\ORM;
+namespace techweb\core\database\orm;
 
 use techweb\core\exception\UnknownPropertyException;
 
@@ -47,7 +47,9 @@ abstract class Entity
     public function __construct(array $properties, array $options = [])
     {
         foreach ($properties as $property => $value) {
-            $this->$property = $value;
+            if (!isset($this->$property)) {
+                $this->$property = $value;
+            }
         }
 
         $this->options = $options;
