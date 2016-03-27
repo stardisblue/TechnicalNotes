@@ -49,7 +49,7 @@ class UserManagement extends BackEndController
             if ($user_model->userExist($user_entity->mail)) {
                 $message = 'User already registred with this name';
             } else {
-                $user_model->add($user_entity);
+                $user_model->save($user_entity);
                 $message = 'utilisateur ajouté';
             }
 

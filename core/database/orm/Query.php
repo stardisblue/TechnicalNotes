@@ -303,6 +303,20 @@ class Query
      * ]
      * ```
      *
+     * or
+     *
+     * ```
+     * [
+     *   'conditions' => [
+     *      'AND'=>[
+     *          ['id', '=', $id],
+     *          ['title', '!=', $title],
+     *          OR => [['apple','=',$red]]
+     *      ]
+     *      ]
+     * ]
+     * ```
+     *
      * @param array $params
      * @return Query
      * @throws IncorrectQueryException

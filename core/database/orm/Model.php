@@ -77,7 +77,7 @@ abstract class Model
      *
      * @return Model
      */
-    public function query(string $statement, array $values = []): self
+    public function setQuery(string $statement, array $values = []): self
     {
         $this->newQuery()->setQuery($statement, $values);
 
@@ -214,6 +214,17 @@ abstract class Model
         }
 
         return $this->driver->queryOne($this->query);
+    }
+
+    /**
+     * Executes the query, without returning the result
+     * Create a new query using newQuery() before !
+     */
+    public function execute()
+    {
+        if (isset($this->query)) {
+            $this->driver->execute($this->query);
+        }
     }
 
     /**
