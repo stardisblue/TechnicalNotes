@@ -1,7 +1,7 @@
 <?php
 /**
- * TechnicalNotes <https://www.github.com/stardisblue/TechnicalNotes>
- * Copyright (C) 2016  TechnicalNotes Team
+ * Rave <https://github.com/Classicodr/rave-core>
+ * Copyright (C) 2016 Rave Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,18 +15,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
-use techweb\config\Config;
-use techweb\core\Error;
-use techweb\core\exception\RouterException;
-use techweb\core\router\Router;
+use rave\core\Config;
+use rave\core\Error;
+use rave\core\exception\RouterException;
+use rave\core\router\Router;
 
 /**
  * Instantiation of the Router object
  */
 $router = new Router(isset($_GET['url']) ? $_GET['url'] : '/');
+
+$router->get('/', ['Main' => 'index']);
 
 $router->get('/', ['Main' => 'index']);
 

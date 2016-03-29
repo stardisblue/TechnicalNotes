@@ -4,9 +4,62 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9643f64f53b424a2dcc4e5491de85c61",
-    "content-hash": "f5b548a0cbaf4b2dbc7219a6cbea6609",
-    "packages": [],
+    "hash": "4e3fa98a88784c706a181a5d9c5ba215",
+    "content-hash": "9fd035d77dacb4f80e067ea0af791e6e",
+    "packages": [
+        {
+            "name": "classicodr/rave-core",
+            "version": "v0.1.1-alpha",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Classicodr/rave-core.git",
+                "reference": "324ab8e6b233d6fe7647e735875aae88a402f5f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Classicodr/rave-core/zipball/324ab8e6b233d6fe7647e735875aae88a402f5f4",
+                "reference": "324ab8e6b233d6fe7647e735875aae88a402f5f4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "rave\\core\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "rave\\tests\\": "tests/"
+                }
+            },
+            "license": [
+                "GNU GPLv3"
+            ],
+            "authors": [
+                {
+                    "name": "KaiserCoder"
+                },
+                {
+                    "name": "Stardisblue"
+                }
+            ],
+            "description": "Rave framework",
+            "keywords": [
+                "framework"
+            ],
+            "support": {
+                "source": "https://github.com/Classicodr/rave-core/tree/v0.1.1-alpha",
+                "issues": "https://github.com/Classicodr/rave-core/issues"
+            },
+            "time": "2016-03-29 13:55:45"
+        }
+    ],
     "packages-dev": [
         {
             "name": "doctrine/instantiator",
@@ -532,16 +585,16 @@
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "3.0.6",
+            "version": "3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "49bc700750196c04dd6bc2c4c99cb632b893836b"
+                "reference": "7c34c9bdde4131b824086457a3145e27dba10ca1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/49bc700750196c04dd6bc2c4c99cb632b893836b",
-                "reference": "49bc700750196c04dd6bc2c4c99cb632b893836b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/7c34c9bdde4131b824086457a3145e27dba10ca1",
+                "reference": "7c34c9bdde4131b824086457a3145e27dba10ca1",
                 "shasum": ""
             },
             "require": {
@@ -559,7 +612,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0.x-dev"
+                    "dev-master": "3.1.x-dev"
                 }
             },
             "autoload": {
@@ -584,7 +637,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-12-08 08:47:06"
+            "time": "2016-03-24 05:58:25"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -1104,7 +1157,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "classicodr/rave-core": 15
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

@@ -1,8 +1,7 @@
 {
   "name": "TechnicalNotes/TechnicalNotes",
   "description": "Technotes Manager",
-  "minimum-stability": "stable",
-  "license": "GNU GPL",
+  "license": "GNU GPLv3",
   "authors": [
     {
       "name": "Fati CHEN",
@@ -13,7 +12,28 @@
       "email": "adam.garcia@etu.umontpellier.fr"
     }
   ],
+  "require": {
+    "classicodr/rave-core": "*@alpha"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:Classicodr/rave-core.git"
+    }
+  ],
   "require-dev": {
-    "phpunit/phpunit": "^5.2"
+    "phpunit/phpunit": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "app\\": "src",
+      "rave\\lib\\core\\": "lib/core"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "app\\tests\\": "tests/app",
+      "rave\\tests\\": "vendor/classicodr/rave-core/tests"
+    }
   }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
- * TechnicalNotes <https://www.github.com/stardisblue/TechnicalNotes>
- * Copyright (C) 2016  TechnicalNotes Team
+ * Rave <https://github.com/Classicodr/rave-core>
+ * Copyright (C) 2016 Rave Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,31 +15,33 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
-use techweb\core\AutoLoader;
+
+use rave\core\Config;
+use rave\core\database\DriverFactory;
+use rave\core\DB;
 
 /**
  * Some useful constants
  */
-define('ROOT', __DIR__);
-
-$webRoot = dirname(filter_input(INPUT_SERVER, 'SCRIPT_NAME'));
-
-if ($webRoot === '/') {
-    define('WEB_ROOT', null);
-} else {
-    define('WEB_ROOT', $webRoot);
-}
+define('DS', DIRECTORY_SEPARATOR);
+define('ROOT', dirname(__DIR__));
+define('APP', ROOT . DS . 'app' . DS);
 
 /**
- * Include the autoloader
+ * Includes the autoloader
  */
-require_once ROOT . '/core/AutoLoader.php';
-
 require_once ROOT . '/vendor/autoload.php';
 
 /**
- * Enable the autoloader
+ * You can add multiple config files using addArray()
  */
-AutoLoader::register();
+Config::addArray(require 'app.php');
+
+/**
+ * By default, the application uses the default datasource
+ *
+ * You can use only one datasource at the time
+ */
+//BD::set(DriverFactory::get($custom_name));
+DB::set(DriverFactory::get());
