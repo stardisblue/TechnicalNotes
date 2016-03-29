@@ -26,4 +26,37 @@ use rave\core\database\orm\Model;
 class TechnotesModel extends Model
 {
     protected static $table = 'technotes';
+
+    public function getUserForTechnotesId($id)
+    {
+        $query = $this->newQuery()->select('user_id')->from($this)->where(['id', '=', $id]);
+
+        $user = new UserModel();
+        if ($query->first()]){
+        	$user_entity = $user->get(['id'=> $query->first()]);
+        }
+        
+        return $user_entity;
+    }
+
+    public function getTechnotesComments($id){
+
+    	$query = $this->newQuery()->select()->from(['technote_comments'])->where(['tec_id', '=', $id]);
+
+    	return $query->all();
+
+    }
+
+    public function getTechnotesTags($id){
+
+    	$query = $this->newQuery()->select()->from(['tags_technotes', 'tags'])->where(
+    	[	'AND' => [
+    			['tags_technotes.tag_id', '=', 'tags.id']
+    			['tags_technotes.technote_id', '=', $id]
+    		]
+    	]);
+    	return $query->all();
+
+    }
+
 }

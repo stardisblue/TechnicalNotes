@@ -23,39 +23,15 @@ namespace techweb\app\model;
 
 use rave\core\database\orm\Model;
 
-class UsersModel extends Model
+class ProposedTagsModel extends Model
 {
-    protected static $table = 'users';
+    protected static $table = 'Proposed_tags';
 
-    public function userExistCheckByMail($email):bool
+    public function wordExist($word):bool
     {
-        $query = $this->newQuery()->select()->from($this)->where(['mail', '=', $email]);
-
+        $query = $this->newQuery()->select()->from($this)->where(['word', '=', $word]);
         return  $query->first() ? true : false;
     }
 
-    public function userExistCheckById($id):bool
-    {
-        $query = $this->newQuery()->select()->from($this)->where(['id', '=', $id]);
-
-        return  $query->first() ? true : false;
-    }
-
-    public function userIdentityById($id)
-    {
-        $query = $this->newQuery()->select()->from($this)->where(['id', '=', $id]);
-/*
-        [
-        'OR' => [
-            'AND' = >[
-                ['id', '=', $id],
-                ['id', '=', $id],
-                ['id', '=', $id],
-            ],
-            ['title', '=', $title]]
-              
-        ]
-*/
-        return  $query->first();
-    }
+    
 }
