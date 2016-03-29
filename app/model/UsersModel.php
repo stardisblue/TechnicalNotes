@@ -27,10 +27,23 @@ class UsersModel extends Model
 {
     protected static $table = 'users';
 
-    public function userExist($email):bool
+    public function userExistCheckByMail($email):bool
     {
         $this->newQuery()->select()->from($this)->where(['conditions' => ['mail', '=', $email]]);
 
         return $this->first() ? true : false;
+    }
+
+    public function userExistCheckById($id):bool
+    {
+        $this->newQuery()->select()->from($this)->where(['conditions' => ['id', '=', $id]]);
+
+        return $this->first() ? true : false;
+    }
+
+    public function userIdentityById($email)
+    {
+        $this->newQuery()->select()->from($this)->where(['conditions' => ['id', '=', $id]]);
+        return $this->first();
     }
 }
