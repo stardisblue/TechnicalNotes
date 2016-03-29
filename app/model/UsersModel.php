@@ -41,9 +41,7 @@ class UsersModel extends Model
         return  $query->first() ? true : false;
     }
 
-    public function userIdentityById($id)
-    {
-        $query = $this->newQuery()->select()->from($this)->where(['id', '=', $id]);
+
 /*
         [
         'OR' => [
@@ -56,6 +54,5 @@ class UsersModel extends Model
               
         ]
 */
-        return  $query->first();
-    }
+    
 }

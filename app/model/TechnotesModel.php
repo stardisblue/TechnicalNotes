@@ -49,7 +49,7 @@ class TechnotesModel extends Model
 
     public function getTechnotesTags($id){
 
-    	$query = $this->newQuery()->select()->from(['tags_technotes', 'tags'])->where(
+    	$query = $this->newQuery()->select('tags.*')->from(['tags_technotes', 'tags'])->where(
     	[	'AND' => [
     			['tags_technotes.tag_id', '=', 'tags.id']
     			['tags_technotes.technote_id', '=', $id]
