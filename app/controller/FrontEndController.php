@@ -20,7 +20,7 @@
 
 namespace techweb\app\controller;
 
-use techweb\core\Controller;
+use rave\core\Controller;
 
 abstract class FrontEndController extends Controller
 {

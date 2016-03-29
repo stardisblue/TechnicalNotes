@@ -20,8 +20,8 @@
 
 namespace techweb\tests\config;
 
-use techweb\core\database\DriverFactory;
-use techweb\core\Error;
+use rave\core\database\DriverFactory;
+use rave\core\Error;
 
 class Config
 {

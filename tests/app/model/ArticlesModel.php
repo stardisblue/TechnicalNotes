@@ -22,7 +22,7 @@
 namespace techweb\tests\app\model;
 
 
-use techweb\core\database\orm\Model;
+use rave\core\database\orm\Model;
 use techweb\tests\config\Config;
 
 class ArticlesModel extends Model

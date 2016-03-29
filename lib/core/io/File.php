@@ -20,9 +20,9 @@
 
 namespace techweb\lib\core\io;
 
-use techweb\core\exception\FileTypeException;
-use techweb\core\exception\IOException;
-use techweb\core\exception\UploadException;
+use rave\core\exception\FileTypeException;
+use rave\core\exception\IOException;
+use rave\core\exception\UploadException;
 
 class File
 {

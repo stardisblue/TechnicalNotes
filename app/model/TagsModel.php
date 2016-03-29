@@ -21,7 +21,7 @@
 
 namespace techweb\app\model;
 
-use techweb\core\database\orm\Model;
+use rave\core\database\orm\Model;
 
 class TagsModel extends Model
 {

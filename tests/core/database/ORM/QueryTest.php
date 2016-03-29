@@ -21,8 +21,8 @@
 namespace techweb\tests\core\database\ORM;
 
 use PHPUnit_Framework_TestCase;
-use techweb\core\database\orm\Query;
-use techweb\core\exception\IncorrectQueryException;
+use rave\core\database\orm\Query;
+use rave\core\exception\IncorrectQueryException;
 use techweb\tests\app\Entity\ArticlesEntity;
 use techweb\tests\app\model\ArticlesModel;
 

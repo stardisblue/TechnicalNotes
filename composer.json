@@ -26,13 +26,13 @@
   },
   "autoload": {
     "psr-4": {
-      "app\\": "src",
+      "techweb\\app\\": "app",
       "rave\\lib\\core\\": "lib/core"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "app\\tests\\": "tests/app",
+      "techweb\\tests\\": "tests/app",
       "rave\\tests\\": "vendor/classicodr/rave-core/tests"
     }
   }
