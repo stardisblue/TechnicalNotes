@@ -20,14 +20,8 @@
 
 namespace techweb\app\controller;
 
-
 class Main extends FrontEndController
 {
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     public function index()
     {

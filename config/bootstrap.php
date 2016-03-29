@@ -26,7 +26,7 @@ use rave\core\DB;
  */
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(__DIR__));
-define('APP', ROOT . DS . 'app' . DS);
+define('APP', ROOT . DS . 'app');
 
 /**
  * Includes the autoloader

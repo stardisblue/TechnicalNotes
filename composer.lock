@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4ff797e06899eedc50b6cd284e0bbb33",
+    "hash": "7812625177dcfbca6fd146716ea90b43",
     "content-hash": "9fd035d77dacb4f80e067ea0af791e6e",
     "packages": [
         {
             "name": "classicodr/rave-core",
-            "version": "v0.1.1-alpha",
+            "version": "v0.1.2-alpha",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Classicodr/rave-core.git",
-                "reference": "324ab8e6b233d6fe7647e735875aae88a402f5f4"
+                "reference": "6570d8021e9f2281ba2394328ad0cb264508260f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Classicodr/rave-core/zipball/324ab8e6b233d6fe7647e735875aae88a402f5f4",
-                "reference": "324ab8e6b233d6fe7647e735875aae88a402f5f4",
+                "url": "https://api.github.com/repos/Classicodr/rave-core/zipball/6570d8021e9f2281ba2394328ad0cb264508260f",
+                "reference": "6570d8021e9f2281ba2394328ad0cb264508260f",
                 "shasum": ""
             },
             "require": {
@@ -54,10 +54,10 @@
                 "framework"
             ],
             "support": {
-                "source": "https://github.com/Classicodr/rave-core/tree/v0.1.1-alpha",
+                "source": "https://github.com/Classicodr/rave-core/tree/v0.1.2-alpha",
                 "issues": "https://github.com/Classicodr/rave-core/issues"
             },
-            "time": "2016-03-29 13:55:45"
+            "time": "2016-03-29 14:45:19"
         }
     ],
     "packages-dev": [
