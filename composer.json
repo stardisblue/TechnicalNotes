@@ -13,12 +13,17 @@
     }
   ],
   "require": {
-    "classicodr/rave-core": "*@alpha"
+    "classicodr/rave-core": "*@alpha",
+    "classicodr/rave-lib": "*"
   },
   "repositories": [
     {
       "type": "vcs",
       "url": "git@github.com:Classicodr/rave-core.git"
+    },
+    {
+      "type": "vcs",
+      "url": "git@github.com:Classicodr/rave-lib.git"
     }
   ],
   "require-dev": {
@@ -26,8 +31,7 @@
   },
   "autoload": {
     "psr-4": {
-      "techweb\\app\\": "app",
-      "rave\\lib\\core\\": "lib/core"
+      "techweb\\app\\": "app"
     }
   },
   "autoload-dev": {

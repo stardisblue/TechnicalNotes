@@ -18,41 +18,38 @@
  *
  */
 
-
 namespace techweb\app\model;
 
 use rave\core\database\orm\Model;
+use rave\core\database\orm\Query;
 
 class UsersModel extends Model
 {
     protected static $table = 'users';
 
-    public function userExistCheckByMail($email):bool
+    public static function userIsAdmin($id):bool
     {
-        $query = $this->newQuery()->select()->from($this)->where(['mail', '=', $email]);
-
-        return  $query->first() ? true : false;
+        return Query::create()->select()->from(static::$table)->where(
+            [
+                'AND' => [
+                    ['id', '=', $id],
+                    ['isadmin', '=', 1]
+                ]
+            ])->first() ? true : false;
     }
 
-    public function userExistCheckById($id):bool
+    public static function userExistCheckByMail($email):bool
     {
-        $query = $this->newQuery()->select()->from($this)->where(['id', '=', $id]);
+        $query = Query::create()->select()->from('users')->where(['mail', '=', $email]);
 
-        return  $query->first() ? true : false;
+        return $query->first() ? true : false;
     }
 
+    public static function userExistCheckById($id):bool
+    {
+        $query = Query::create()->select()->from(static::$table)->where(['id', '=', $id]);
 
-/*
-        [
-        'OR' => [
-            'AND' = >[
-                ['id', '=', $id],
-                ['id', '=', $id],
-                ['id', '=', $id],
-            ],
-            ['title', '=', $title]]
-              
-        ]
-*/
-    
+        return $query->first() ? true : false;
+    }
+
 }

@@ -46,7 +46,6 @@ class UsersEntity extends Entity
             'isadmin' => 0
         ];
 
-
         $options = ['primary' => 'id',];
 
         parent::__construct($columns, $options);

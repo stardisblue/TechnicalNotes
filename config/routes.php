@@ -31,9 +31,9 @@ $router->get('/', ['Main' => 'index']);
 
 $router->get('/', ['Main' => 'index']);
 
-$router->get('/users', ['UserManagement' => 'list_users']);
-$router->get('/user/add', ['UserManagement' => 'add_user']);
-$router->post('/user/add', ['UserManagement' => 'add_user']);
+$router->get('/users', ['Users' => 'listUsers']);
+$router->get('/user/add', ['Users' => 'addUser']);
+$router->post('/user/add', ['Users' => 'addUser']);
 
 /**
  * Error routes

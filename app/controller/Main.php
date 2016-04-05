@@ -26,6 +26,11 @@ class Main extends FrontEndController
     public function index()
     {
         $this->loadView('main');
+        /*
+         * - 20 dernieres technotes
+         * - 20 dernieres Question
+         * connexion
+         */
     }
 
 }

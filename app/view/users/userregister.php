@@ -10,6 +10,9 @@
 
     <label for="password">Mot de passe</label>
     <input type="password" name="password" id="password" required>
+    <?php if (isset($message) && $message === 'password') {
+        echo "Mdp incorrect";
+    } ?>
 
     <label for="verifypassword">Confirmer le mot de passe</label>
     <input type="password" name="verifypassword" id="verifypassword" required>

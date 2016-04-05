@@ -21,13 +21,27 @@
 namespace techweb\app\controller;
 
 use rave\core\Controller;
+use rave\lib\core\security\Auth;
 
 abstract class BackEndController extends Controller
 {
-
     public function __construct()
     {
         $this->setLayout('backend');
+    }
+
+    public function beforeCall(string $method)
+    {
+        if ($method != 'login' && $method != 'logout') {
+            $this->checkAdmin();
+        }
+    }
+
+    protected function checkAdmin()
+    {
+        if (!Auth::check('admin')) {
+            $this->redirect('admin/login');
+        }
     }
 
 }
