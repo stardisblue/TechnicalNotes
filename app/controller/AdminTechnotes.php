@@ -23,7 +23,6 @@ use rave\lib\core\io\In;
 use rave\lib\core\io\Out;
 use rave\lib\core\security\Text;
 use techweb\app\entity\TechnotesEntity;
-use techweb\app\model\TagsModel;
 use techweb\app\model\TechnotesModel;
 use techweb\app\model\UsersModel;
 
@@ -51,20 +50,22 @@ class AdminTechnotes extends AdminController
     {
         if (In::isSetPost(['user_id', 'title', 'content'])) {
             $this->checkCSRF('admin/technotes');
+
             $title = Text::clean(In::post('title'));
             $content = Text::clean(In::post('content'));
 
+            $technote = new TechnotesEntity();
             $technote->title = $title;
             $technote->content = $content;
 
             if (empty($title) || empty($content)) {
+                // TODO : ajax users
                 $this->loadView('create',
                     ['technote' => $technote, 'users' => UsersModel::all(), 'warning' => 'empty']);
 
                 return;
             }
 
-            $technote = new TechnotesEntity();
             $technote->user_id = In::post('user_id', FILTER_SANITIZE_NUMBER_INT);
             $technote->slug = Text::slug($title);
 
@@ -105,12 +106,13 @@ class AdminTechnotes extends AdminController
             $this->redirect('admin/technotes');
         }
 
-        $user = UsersModel::get(['id' => $technote->user_id]);
-        $tags = TagsModel::all();
+        $technote_user = UsersModel::get(['id' => $technote->user_id]);
+
         $technote_tags = TechnotesModel::getTechnotesTags($id);
 
         if (In::isSetPost(['user_id', 'title', 'content'])) {
             $this->checkCSRF('admin/technotes');
+
             $title = Text::clean(In::post('title'));
             $content = Text::clean(In::post('content'));
 
@@ -118,10 +120,8 @@ class AdminTechnotes extends AdminController
                 $this->loadView('update',
                     [
                         'technote' => $technote,
-                        'user' => $user,
+                        'technote_user' => $technote_user,
                         'technote_tags' => $technote_tags,
-                        'tags' => $tags,
-                        'users' => UsersModel::all(),
                         'warning' => 'empty'
                     ]);
 
@@ -131,6 +131,7 @@ class AdminTechnotes extends AdminController
             $technote->title = $title;
             $technote->content = $content;
             $technote->user_id = In::post('user_id', FILTER_SANITIZE_NUMBER_INT);
+            $technote->slug = Text::slug($title);
             $technote->creation_date = date("Y-m-d H:i:s");
 
             TechnotesModel::save($technote);
@@ -140,7 +141,7 @@ class AdminTechnotes extends AdminController
         }
 
         $this->loadView('update',
-            ['technote' => $technote, 'user' => $user, 'tags' => $tags, 'technote_tags' => $technote_tags]);
+            ['technote' => $technote, 'technote_user' => $technote_user, 'technote_tags' => $technote_tags]);
 
     }
 

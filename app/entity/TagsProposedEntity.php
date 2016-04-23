@@ -17,19 +17,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace techweb\app\model;
+namespace techweb\app\entity;
 
-use rave\core\database\orm\Model;
+use rave\core\database\orm\Entity;
 
-class RefusedTagsModel extends Model
+/**
+ * Class TechnoteEntity
+ *
+ * @package techweb\app\entity
+ */
+class TagsProposedEntity extends Entity
 {
-    protected static $table = 'Refused_tags';
-
-    public function wordExist($word):bool
+    /**
+     * TechnoteEntity constructor.
+     */
+    public function __construct()
     {
-        $query = $this->newQuery()->select()->from($this)->where(['word', '=', $word]);
+        $columns = [
+            'id' => null,
+            'word' => '',
+            'positive_votes' => '',
+            'total_votes' => '',
+        ];
 
-        return $query->first() ? true : false;
+        $options = [
+            'primary' => 'id',
+        ];
+
+        parent::__construct($columns, $options);
     }
 
 }

@@ -1,4 +1,6 @@
 <?php
+var_dump(get_defined_vars());
+
 if (isset($warning)) {
     var_dump($warning);
 }

@@ -36,7 +36,6 @@ class TechnotesModel extends Model
 
     public static function getTechnotesTags($id)
     {
-
         return self::newQuery()->select('tags.*')->from(['tags_technotes', 'tags'])->where(
             [
                 'AND' => [
@@ -54,7 +53,8 @@ class TechnotesModel extends Model
 
     public static function page($page = 0, $pagination = 10)
     {
-        return self::newQuery()->select()->from(static::$table)->appendSQL('LIMIT ' . $page * $pagination . ','
+        return self::newQuery()->select()->from(static::$table)->appendSQL('ORDER BY creation_date DESC LIMIT ' . $page
+            * $pagination . ','
             . $pagination)->find(null, static::getEntityName());
     }
 }

@@ -24,4 +24,27 @@ use rave\core\database\orm\Model;
 class QuestionsModel extends Model
 {
     protected static $table = 'questions';
+
+    public static function getQuestionTags($id)
+    {
+        return self::newQuery()->select('tags.*')->from(['tags_technotes', 'tags'])->where(
+            [
+                'AND' => [
+                    ['questions_tags.tag_id', '=', 'tags.id'],
+                    ['questions_tags.question_id', '=', $id]
+                ]
+            ])->find();
+    }
+
+    public static function count()
+    {
+        return self::newQuery()->select('COUNT(*) as count')->from(static::$table)->first()->count;
+    }
+
+    public static function page($page = 0, $pagination = 10)
+    {
+        return self::newQuery()->select()->from(static::$table)->appendSQL('ORDER BY creation_date DESC LIMIT ' . $page
+            * $pagination . ','
+            . $pagination)->find(null, static::getEntityName());
+    }
 }

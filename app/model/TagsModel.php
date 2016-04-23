@@ -24,4 +24,11 @@ use rave\core\database\orm\Model;
 class TagsModel extends Model
 {
     protected static $table = 'tags';
+
+    public static function getByWord($word)
+    {
+        $query = self::newQuery()->select()->from(static::$table)->where(['word', '=', $word]);
+
+        return $query->first();
+    }
 }

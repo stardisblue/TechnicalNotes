@@ -17,32 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace techweb\app\entity;
+namespace techweb\app\model;
 
-use rave\core\database\orm\Entity;
-
-/**
- * Class TechnoteEntity
- *
- * @package techweb\app\entity
- */
-class RefusedTagsEntity extends Entity
+class TagsProposedModel extends TagsModel
 {
-    /**
-     * TechnoteEntity constructor.
-     */
-    public function __construct()
-    {
-        $columns = [
-            'id' => null,
-            'word' => '',
-        ];
-
-        $options = [
-            'primary' => 'id',
-        ];
-
-        parent::__construct($columns, $options);
-    }
-
+    protected static $table = 'tags_proposed';
 }

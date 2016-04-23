@@ -4,10 +4,10 @@ var_dump(get_defined_vars());
 
 <ol class="breadcrumb">
     <li><a href="<?= WEB_ROOT . '/admin' ?>">Home</a></li>
-    <li class="active">Users</li>
+    <li class="active">Technotes</li>
 </ol>
 
-<a href="<?= WEB_ROOT . '/admin/user/create' ?>">Creer</a>
+<a href="<?= WEB_ROOT . '/admin/technote/create' ?>">Creer</a>
 <a href="<?= WEB_ROOT . '/admin/' ?>">home</a>
 <table class="table table-striped">
 
@@ -25,7 +25,7 @@ var_dump(get_defined_vars());
         <tr>
             <td><?= $technote->id ?></td>
             <td><?= $technote->title ?></td>
-            <td><?= date('d F Y H:m', strtotime($technote->creation_date)); ?></td>
+            <td><?= date('d/m/Y H:i', strtotime($technote->creation_date)); ?></td>
 
             <td><a class="btn btn-success" href="<?= WEB_ROOT ?>/admin/technote/<?= $technote->id ?>/update"><i
                         class="glyphicon glyphicon-edit"></i> Modifier</a>

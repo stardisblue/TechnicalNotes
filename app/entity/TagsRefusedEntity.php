@@ -17,28 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace techweb\app\model;
+namespace techweb\app\entity;
 
-use rave\core\database\orm\Model;
+use rave\core\database\orm\Entity;
 
-class AnwsersModel extends Model
+/**
+ * Class TechnoteEntity
+ *
+ * @package techweb\app\entity
+ */
+class TagsRefusedEntity extends Entity
 {
-    protected static $table = 'anwsers';
-
-    public static function getAnswerComments($id)
+    /**
+     * TechnoteEntity constructor.
+     */
+    public function __construct()
     {
-        return self::newQuery()->select()->from('answer_comments')->where(['answer_id', '=', $id]);
+        $columns = [
+            'id' => null,
+            'word' => '',
+        ];
+
+        $options = [
+            'primary' => 'id',
+        ];
+
+        parent::__construct($columns, $options);
     }
 
-    public static function count()
-    {
-        return self::newQuery()->select('COUNT(*) as count')->from(static::$table)->first()->count;
-    }
-
-    public static function page($page = 0, $pagination = 10)
-    {
-        return self::newQuery()->select()->from(static::$table)->appendSQL('ORDER BY creation_date DESC LIMIT ' . $page
-            * $pagination . ','
-            . $pagination)->find(null, static::getEntityName());
-    }
 }

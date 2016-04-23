@@ -17,19 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace techweb\app\model;
+namespace techweb\app\controller;
 
-use rave\core\database\orm\Model;
+use techweb\app\model\QuestionsModel;
 
-class ProposedTagsModel extends Model
+class AdminQuestions extends AdminController
 {
-    protected static $table = 'Proposed_tags';
-
-    public function wordExist($word):bool
+    public function index()
     {
-        $query = $this->newQuery()->select()->from($this)->where(['word', '=', $word]);
-
-        return $query->first() ? true : false;
+        $this->loadView('index', ['questions' => QuestionsModel::all()]);
     }
-
 }
