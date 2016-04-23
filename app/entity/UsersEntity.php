@@ -15,7 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 namespace techweb\app\entity;
@@ -24,12 +23,11 @@ use rave\core\database\orm\Entity;
 
 /**
  * Class TechnoteEntity
+ *
  * @package techweb\app\entity
  */
 class UsersEntity extends Entity
 {
-
-
 
     /**
      * TechnoteEntity constructor.
@@ -41,12 +39,12 @@ class UsersEntity extends Entity
             'name' => '',
             'firstname' => '',
             'password' => '',
-            'mail' => '',
-            'verification' => '',
-            'isadmin' => 0
+            'email' => '',
+            'token' => '',
+            'isadmin' => null
         ];
 
-        $options = ['primary' => 'id',];
+        $options = ['primary' => 'id'];
 
         parent::__construct($columns, $options);
     }

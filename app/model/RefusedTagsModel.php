@@ -15,9 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
-
 
 namespace techweb\app\model;
 
@@ -30,8 +28,8 @@ class RefusedTagsModel extends Model
     public function wordExist($word):bool
     {
         $query = $this->newQuery()->select()->from($this)->where(['word', '=', $word]);
-        return  $query->first() ? true : false;
+
+        return $query->first() ? true : false;
     }
 
-    
 }

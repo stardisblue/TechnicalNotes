@@ -15,9 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
-
 
 namespace techweb\app\model;
 
@@ -27,36 +25,36 @@ class TechnotesModel extends Model
 {
     protected static $table = 'technotes';
 
-    public function getUserForTechnotesId($id)
+    public static function getTechnotesComments($id)
     {
-        $query = $this->newQuery()->select('user_id')->from($this)->where(['id', '=', $id]);
 
-        $user = new UserModel();
-        if ($query->first()]){
-        	$user_entity = $user->get(['id'=> $query->first()]);
-        }
-        
-        return $user_entity;
-    }
+        $query = self::newQuery()->select()->from('technote_comments')->where(['tec_id', '=', $id]);
 
-    public function getTechnotesComments($id){
-
-    	$query = $this->newQuery()->select()->from(['technote_comments'])->where(['tec_id', '=', $id]);
-
-    	return $query->all();
+        return $query->find();
 
     }
 
-    public function getTechnotesTags($id){
+    public static function getTechnotesTags($id)
+    {
 
-    	$query = $this->newQuery()->select('tags.*')->from(['tags_technotes', 'tags'])->where(
-    	[	'AND' => [
-    			['tags_technotes.tag_id', '=', 'tags.id']
-    			['tags_technotes.technote_id', '=', $id]
-    		]
-    	]);
-    	return $query->all();
+        return self::newQuery()->select('tags.*')->from(['tags_technotes', 'tags'])->where(
+            [
+                'AND' => [
+                    ['tags_technotes.tag_id', '=', 'tags.id'],
+                    ['tags_technotes.technote_id', '=', $id]
+                ]
+            ])->find();
 
     }
 
+    public static function count()
+    {
+        return self::newQuery()->select('COUNT(*) as count')->from(static::$table)->first()->count;
+    }
+
+    public static function page($page = 0, $pagination = 10)
+    {
+        return self::newQuery()->select()->from(static::$table)->appendSQL('LIMIT ' . $page * $pagination . ','
+            . $pagination)->find(null, static::getEntityName());
+    }
 }

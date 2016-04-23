@@ -15,7 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 namespace techweb\app\entity;
@@ -24,9 +23,10 @@ use rave\core\database\orm\Entity;
 
 /**
  * Class TechnoteEntity
+ *
  * @package techweb\app\entity
  */
-class TechnoteEntity extends Entity
+class TechnotesEntity extends Entity
 {
     /**
      * TechnoteEntity constructor.
@@ -37,18 +37,12 @@ class TechnoteEntity extends Entity
             'id' => null,
             'user_id' => null,
             'title' => '',
+            'slug' => '',
             'content' => '',
             'creation_date' => null,
         ];
 
-        $options = ['primary' => 'id', 
-            'belongTo' => ['table' => 'users', 'foreing_key' => 'user_id'],
-            'hasMany' => [
-                ['table' => 'technote_comments'],
-                ['table' => 'tags',
-                    'through' => 'tags_technotes']
-            ]
-        ];
+        $options = ['primary' => 'id',];
 
         parent::__construct($columns, $options);
     }

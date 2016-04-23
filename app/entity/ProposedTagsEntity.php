@@ -15,7 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 namespace techweb\app\entity;
@@ -24,6 +23,7 @@ use rave\core\database\orm\Entity;
 
 /**
  * Class TechnoteEntity
+ *
  * @package techweb\app\entity
  */
 class ProposedTagsEntity extends Entity
@@ -40,7 +40,8 @@ class ProposedTagsEntity extends Entity
             'total_votes' => '',
         ];
 
-        $options = ['primary' => 'id', 
+        $options = [
+            'primary' => 'id',
         ];
 
         parent::__construct($columns, $options);

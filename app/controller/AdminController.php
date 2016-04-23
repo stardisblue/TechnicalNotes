@@ -19,27 +19,30 @@
 
 namespace techweb\app\controller;
 
-class Error extends FrontEndController
-{
+use rave\lib\core\security\Auth;
 
+abstract class AdminController extends AppController
+{
     public function __construct()
     {
         parent::__construct();
+        //todo update framework
+        $this->setLayout('backend', $this->data);
+
     }
 
-    public function internalServerError()
+    public function beforeCall($method)
     {
-        $this->loadView('internal_server_error');
+        if ($method !== 'login') {
+            $this->checkAdmin();
+        }
     }
 
-    public function forbidden()
+    protected function checkAdmin()
     {
-        $this->loadView('forbidden');
-    }
-
-    public function notFound()
-    {
-        $this->loadView('not_found');
+        if (!Auth::check('admin')) {
+            $this->redirect('admin/login');
+        }
     }
 
 }

@@ -15,33 +15,33 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 namespace techweb\app\controller;
 
 use rave\core\Controller;
-use rave\lib\core\security\Auth;
+use rave\lib\core\io\In;
+use rave\lib\core\io\Out;
+use rave\lib\core\security\CSRF;
 
-abstract class BackEndController extends Controller
+abstract class AppController extends Controller
 {
+
     public function __construct()
     {
-        $this->setLayout('backend');
+        $token = CSRF::getToken();
+        $this->data['csrf'] = $token;
+        setcookie('csrf', $token, 0, '/admin', null, false, true);
+
     }
 
-    public function beforeCall(string $method)
+    protected function checkCSRF($redirect = '', $message = 'csrf', $method = 'post', $name = 'csrf')
     {
-        if ($method != 'login' && $method != 'logout') {
-            $this->checkAdmin();
+        if ($method === 'post' || $method === 'get') {
+            if (In::$method($name) !== In::cookie('csrf')) {
+                Out::session('warning', $message);
+                $this->redirect($redirect);
+            }
         }
     }
-
-    protected function checkAdmin()
-    {
-        if (!Auth::check('admin')) {
-            $this->redirect('admin/login');
-        }
-    }
-
 }

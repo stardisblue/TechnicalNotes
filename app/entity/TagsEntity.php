@@ -15,7 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 namespace techweb\app\entity;
@@ -24,6 +23,7 @@ use rave\core\database\orm\Entity;
 
 /**
  * Class TechnoteEntity
+ *
  * @package techweb\app\entity
  */
 class TagsEntity extends Entity
@@ -38,7 +38,8 @@ class TagsEntity extends Entity
             'word' => '',
         ];
 
-        $options = ['primary' => 'id', 
+        $options = [
+            'primary' => 'id',
             'hasMany' => [
                 ['table' => 'questions_tags'],
                 ['table' => 'tags_technotes']

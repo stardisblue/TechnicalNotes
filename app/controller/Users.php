@@ -15,12 +15,48 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 namespace techweb\app\controller;
 
-class Users extends BackEndController
-{
+use rave\lib\core\io\In;
+use rave\lib\core\security\Password;
+use techweb\app\entity\UsersEntity;
+use techweb\app\model\UsersModel;
 
+class Users extends FrontEndController
+{
+    public function addUser()
+    {
+        if (In::isSetPost(['name', 'firstname', 'password', 'verifypassword', 'mail'])) {
+            if (In::post('password') !== In::post('verifypassword')) {
+
+                $this->redirect('/admin/user/add');
+
+                return;
+            } elseif (!In::post('mail', FILTER_SANITIZE_EMAIL)) {
+                $this->redirect('/admin/user/add');
+
+                return;
+            }
+
+            $user_entity = new UsersEntity();
+            $user_entity->name = In::post('name');
+            $user_entity->firstname = In::post('firstname');
+            $user_entity->password = Password::hash(In::post('password'));
+            $user_entity->mail = In::post('mail', FILTER_SANITIZE_EMAIL);
+            $user_entity->verification = 'test';
+
+            if (UsersModel::userExistCheckByEmail($user_entity->mail)) {
+                $message = 'User already registred with this name';
+            } else {
+                UsersModel::save($user_entity);
+                $message = 'utilisateur ajouté';
+            }
+
+            $this->loadView('useradd', ['message' => $message]);
+        } else {
+            $this->loadView('userregister');
+        }
+    }
 }
