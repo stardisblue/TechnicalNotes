@@ -23,8 +23,8 @@ use techweb\app\model\QuestionsModel;
 
 class AdminQuestions extends AdminController
 {
-    public function index()
+    public function index($page = 0)
     {
-        $this->loadView('index', ['questions' => QuestionsModel::all()]);
+        $this->loadView('index', ['questions' => QuestionsModel::page($page)]);
     }
 }

@@ -51,7 +51,7 @@ class TechnotesModel extends Model
         return self::newQuery()->select('COUNT(*) as count')->from(static::$table)->first()->count;
     }
 
-    public static function page($page = 0, $pagination = 10)
+    public static function page($page = 0, $pagination = PAGINATION)
     {
         return self::newQuery()->select()->from(static::$table)->appendSQL('ORDER BY creation_date DESC LIMIT ' . $page
             * $pagination . ','

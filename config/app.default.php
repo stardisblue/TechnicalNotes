@@ -28,6 +28,24 @@ return [
     'debug' => true,
 
     /**
+     * Basic application infos
+     */
+    'app' => [
+        'name' => 'TechNotes',
+        // 'url' => 'http://example.com/subfolder',
+        'url' => null,
+        /**
+         * If you wish to change the default number of rows
+         */
+        //'pagination' => 20,
+    ],
+
+    /**
+     * Application namespace
+     */
+    'namespace' => 'techweb\\app\\',
+
+    /**
      * You can have as many datasources, as long as the names are different
      *
      * The supported datasources are Mysql, SQLite, PostgreSQL

@@ -24,6 +24,7 @@ use rave\core\DB;
 /**
  * Some useful constants
  */
+
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(__DIR__));
 define('APP', ROOT . DS . 'app' . DS);
@@ -37,6 +38,18 @@ require_once ROOT . '/vendor/autoload.php';
  * You can add multiple config files using addArray()
  */
 Config::addArray(require 'app.php');
+
+$webRoot = dirname(filter_input(INPUT_SERVER, 'SCRIPT_NAME'));
+
+if (isset(Config::get('app')['url'])) {
+    define('WEB_ROOT', Config::get('app')['url']);
+} elseif ($webRoot === '/') {
+    define('WEB_ROOT', null);
+} else {
+    define('WEB_ROOT', $webRoot);
+}
+
+define('PAGINATION', isset(Config::get('app')['pagination']) ? Config::get('app')['pagination'] : 20);
 
 /**
  * By default, the application uses the default datasource

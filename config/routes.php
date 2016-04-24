@@ -67,6 +67,22 @@ $router->post('/admin/user/:id/upgrade', ['AdminUsers' => 'upgrade'])->with('id'
 $router->post('/admin/user/:id/downgrade', ['AdminUsers' => 'downgrade'])->with('id', '([0-9]+)');
 
 /*
+ * TAGS
+ */
+$router->get('/admin/tags', ['AdminTags' => 'index']);
+$router->get('/admin/tags/:page', ['AdminTags' => 'index'])->with('page', '([0-9]+)');
+
+$router->get('/admin/tag/create', ['AdminTags' => 'create']);
+$router->post('/admin/tag/create', ['AdminTags' => 'create']);
+
+$router->get('/admin/tag/:id', ['AdminTags' => 'view'])->with('id', '([0-9]+)');
+
+$router->get('/admin/tag/:id/update', ['AdminTags' => 'update'])->with('id', '([0-9]+)');
+$router->post('/admin/tag/:id/update', ['AdminTags' => 'update'])->with('id', '([0-9]+)');
+
+$router->post('/admin/tag/:id/delete', ['AdminTags' => 'delete'])->with('id', '([0-9]+)');
+
+/*
  * Technotes
  */
 $router->get('/admin/technotes', ['AdminTechnotes' => 'index']);
@@ -81,6 +97,7 @@ $router->get('/admin/technote/:id/update', ['AdminTechnotes' => 'update'])->with
 $router->post('/admin/technote/:id/update', ['AdminTechnotes' => 'update'])->with('id', '([0-9]+)');
 
 $router->post('/admin/technote/:id/delete', ['AdminTechnotes' => 'delete'])->with('id', '([0-9]+)');
+
 /*
  * Error routes
  */

@@ -45,9 +45,10 @@
         </div><!--/.navbar-collapse -->
     </div>
 </nav>
-
-<?= /** @var string $content */
-$content ?>
+<div class="container">
+    <?= /** @var string $content */
+    $content ?>
+</div>
 
 <!-- Jquery 2.2.2 -->
 <script src="https://code.jquery.com/jquery-2.2.2.min.js"

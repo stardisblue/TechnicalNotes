@@ -6,14 +6,6 @@ error_reporting(-1);
 
 session_start();
 
-$webRoot = dirname(filter_input(INPUT_SERVER, 'SCRIPT_NAME'));
-
-if ($webRoot === '/') {
-    define('WEB_ROOT', null);
-} else {
-    define('WEB_ROOT', $webRoot);
-}
-
 /**
  * Init Autoloader
  */

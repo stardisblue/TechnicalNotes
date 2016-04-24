@@ -25,10 +25,36 @@ class TagsModel extends Model
 {
     protected static $table = 'tags';
 
+    public static function tagExist($word)
+    {
+        $query = self::newQuery()->select()->from(['tags', 'tags_proposed', 'tags_refused'])->where([
+            'AND' => [
+                ['tags.word', '=', $word],
+                ['tags_proposed.word', '=', $word],
+                ['tags_refused.word', '=', $word],
+
+            ]
+        ]);
+
+        return $query->first() ? true : false;
+    }
+
     public static function getByWord($word)
     {
         $query = self::newQuery()->select()->from(static::$table)->where(['word', '=', $word]);
 
         return $query->first();
+    }
+
+    public static function count()
+    {
+        return self::newQuery()->select('COUNT(*) as count')->from(static::$table)->first()->count;
+    }
+
+    public static function page($page = 0, $pagination = PAGINATION)
+    {
+        return self::newQuery()->select()->from(static::$table)->appendSQL('ORDER BY word ASC LIMIT ' . $page
+            * $pagination . ','
+            . $pagination)->find(null, static::getEntityName());
     }
 }

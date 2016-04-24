@@ -36,8 +36,8 @@ class TagsProposedEntity extends Entity
         $columns = [
             'id' => null,
             'word' => '',
-            'positive_votes' => '',
-            'total_votes' => '',
+            'positive_votes' => 0,
+            'total_votes' => 0,
         ];
 
         $options = [

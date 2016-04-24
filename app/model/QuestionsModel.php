@@ -19,6 +19,7 @@
 
 namespace techweb\app\model;
 
+use rave\core\Config;
 use rave\core\database\orm\Model;
 
 class QuestionsModel extends Model
@@ -41,7 +42,7 @@ class QuestionsModel extends Model
         return self::newQuery()->select('COUNT(*) as count')->from(static::$table)->first()->count;
     }
 
-    public static function page($page = 0, $pagination = 10)
+    public static function page($page = 0, $pagination = PAGINATION)
     {
         return self::newQuery()->select()->from(static::$table)->appendSQL('ORDER BY creation_date DESC LIMIT ' . $page
             * $pagination . ','

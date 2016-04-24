@@ -67,7 +67,7 @@ class AdminTechnotes extends AdminController
             }
 
             $technote->user_id = In::post('user_id', FILTER_SANITIZE_NUMBER_INT);
-            $technote->slug = Text::slug($title);
+            $technote->slug = Text::slug(In::post('title'));
 
             TechnotesModel::save($technote);
             Out::session('success', 'note_added');
@@ -131,7 +131,7 @@ class AdminTechnotes extends AdminController
             $technote->title = $title;
             $technote->content = $content;
             $technote->user_id = In::post('user_id', FILTER_SANITIZE_NUMBER_INT);
-            $technote->slug = Text::slug($title);
+            $technote->slug = Text::slug(In::post('title', FILTER_DEFAULT));
             $technote->creation_date = date("Y-m-d H:i:s");
 
             TechnotesModel::save($technote);
