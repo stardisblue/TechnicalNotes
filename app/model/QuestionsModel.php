@@ -19,7 +19,6 @@
 
 namespace techweb\app\model;
 
-use rave\core\Config;
 use rave\core\database\orm\Model;
 
 class QuestionsModel extends Model

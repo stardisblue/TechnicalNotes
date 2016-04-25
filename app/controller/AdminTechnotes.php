@@ -59,7 +59,6 @@ class AdminTechnotes extends AdminController
             $technote->content = $content;
 
             if (empty($title) || empty($content)) {
-                // TODO : ajax users
                 $this->loadView('create',
                     ['technote' => $technote, 'users' => UsersModel::all(), 'warning' => 'empty']);
 

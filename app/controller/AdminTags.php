@@ -134,17 +134,14 @@ class AdminTags extends AdminController
             if (empty($word)) {
                 Out::session('warning', 'tag_empty');
                 $this->redirect('admin / tag / ' . $id . ' / update');
-            }
-
-            if ($tag->word === $word) {
+            } elseif ($tag->word === $word) {
                 Out::session('info', 'not_changed');
                 $this->redirect('admin / tag / ' . $id . ' / update');
-            }
-
-            if (TagsModel::tagExist($word)) {
+            } elseif (TagsModel::tagExist($word)) {
                 Out::session('info', 'already_exist');
                 $this->redirect('admin / tag / ' . $id . ' / update');
             }
+
             $tag->word = $word;
 
             TagsModel::save($tag);
@@ -162,10 +159,20 @@ class AdminTags extends AdminController
         Out::unsetSession('success');
     }
 
+    public function updateProposed($id)
+    {
+        //TODO
+    }
+
+    public function updateRefused($id)
+    {
+        //TODO
+    }
+
     public function acceptExisting()
     {
         if (In::isSetPost(['word'])) {
-            $this->checkCSRF('admin / tags');
+            $this->checkCSRF('admin/tags');
 
             if ($tagOrigin = TagsProposedModel::getByWord(In::post('word'))) {
                 $origin = 'proposed';
@@ -197,7 +204,7 @@ class AdminTags extends AdminController
     {
 
         if (In::isSetPost(['word'])) {
-            $this->checkCSRF('admin / tags');
+            $this->checkCSRF('admin/tags');
 
             if ($tagOrigin = TagsModel::getByWord(In::post('word'))) {
                 $origin = 'tags';
@@ -231,7 +238,6 @@ class AdminTags extends AdminController
 
         if (In::isSetPost(['word'])) {
             $this->checkCSRF('admin / tags');
-            //TODO : finish and optimize
             if ($tagOrigin = TagsRefusedModel::getByWord(In::post('word'))) {
                 $origin = 'refused';
             } elseif ($tagOrigin = TagsModel::getByWord(In::post('word'))) {
