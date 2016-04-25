@@ -28,7 +28,7 @@ return [
     'debug' => true,
 
     /**
-     * Basic application infos
+     * Basic application Configuration
      */
     'app' => [
         'name' => 'TechNotes',
@@ -38,6 +38,14 @@ return [
          * If you wish to change the default number of rows
          */
         //'pagination' => 20,
+        /**
+         * Vote options
+         */
+        'votes' => [
+            'min' => 15,
+            'approuval_ratio' => 0.75,
+            'refusal_ratio' => 0.75
+        ]
     ],
 
     /**
@@ -61,7 +69,7 @@ return [
             /**
              * Uncomment if the datasource is not on the default port
              */
-            //'port'=> 'non_standart_port_number'
+            //'port'=> 'non_standart_port_number eg:1234'
         ]
     ],
 

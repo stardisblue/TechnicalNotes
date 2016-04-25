@@ -19,7 +19,53 @@
 
 namespace techweb\app\model;
 
+use rave\core\Config;
+use rave\core\database\orm\Entity;
+use techweb\app\entity\TagsEntity;
+
 class TagsProposedModel extends TagsModel
 {
     protected static $table = 'tags_proposed';
+
+    public static function save(Entity $entity)
+    {
+        $votes_config = Config::get('app')['votes'];
+        $total = $entity->total_votes;
+
+        if ($votes_config['min'] <= 0) {
+            $tags_entity = new TagsEntity();
+            $tags_entity->word = $entity->word;
+
+            TagsModel::save($tags_entity);
+
+            if (isset($entity->id)) {
+                TagsProposedModel::delete($entity);
+            }
+
+        } elseif ($total >= $votes_config['min']) {
+            $positive = $entity->positive_votes;
+
+            if (($positive / $total) >= $votes_config['approuval_ratio']) {
+                $tags_entity = new TagsEntity();
+                $tags_entity->word = $entity->word;
+
+                TagsModel::save($tags_entity);
+                if (isset($entity->id)) {
+                    TagsProposedModel::delete($entity);
+                }
+            } elseif (($positive / $total) <= $votes_config['refusal_ratio']) {
+                $tags_entity = new TagsEntity();
+                $tags_entity->word = $entity->word;
+
+                TagsRefusedModel::save($tags_entity);
+                if (isset($entity->id)) {
+                    TagsProposedModel::delete($entity);
+                }
+            } else {
+                parent::save($entity);
+            }
+        } else {
+            parent::save($entity);
+        }
+    }
 }

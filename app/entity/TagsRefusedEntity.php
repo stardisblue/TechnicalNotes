@@ -19,30 +19,12 @@
 
 namespace techweb\app\entity;
 
-use rave\core\database\orm\Entity;
-
 /**
- * Class TechnoteEntity
+ * Class TechnoteRefusedEntity
  *
  * @package techweb\app\entity
  */
-class TagsRefusedEntity extends Entity
+class TagsRefusedEntity extends TagsEntity
 {
-    /**
-     * TechnoteEntity constructor.
-     */
-    public function __construct()
-    {
-        $columns = [
-            'id' => null,
-            'word' => '',
-        ];
-
-        $options = [
-            'primary' => 'id',
-        ];
-
-        parent::__construct($columns, $options);
-    }
 
 }

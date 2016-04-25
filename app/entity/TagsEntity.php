@@ -30,21 +30,20 @@ class TagsEntity extends Entity
 {
     /**
      * TechnoteEntity constructor.
+     *
+     * @param array $columns
+     * @param array $options
      */
-    public function __construct()
+    public function __construct($columns = [], $options = [])
     {
         $columns = [
-            'id' => null,
-            'word' => '',
-        ];
+                'id' => null,
+                'word' => '',
+            ] + $columns;
 
         $options = [
-            'primary' => 'id',
-            'hasMany' => [
-                ['table' => 'questions_tags'],
-                ['table' => 'tags_technotes']
-            ]
-        ];
+                'primary' => 'id',
+            ] + $options;
 
         parent::__construct($columns, $options);
     }

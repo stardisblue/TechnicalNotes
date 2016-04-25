@@ -27,16 +27,11 @@ class TagsModel extends Model
 
     public static function tagExist($word)
     {
-        $query = self::newQuery()->select()->from(['tags', 'tags_proposed', 'tags_refused'])->where([
-            'AND' => [
-                ['tags.word', '=', $word],
-                ['tags_proposed.word', '=', $word],
-                ['tags_refused.word', '=', $word],
+        if (self::getByWord($word) || TagsRefusedModel::getByWord($word) || TagsProposedModel::getByWord($word)) {
+            return true;
+        }
 
-            ]
-        ]);
-
-        return $query->first() ? true : false;
+        return false;
     }
 
     public static function getByWord($word)
