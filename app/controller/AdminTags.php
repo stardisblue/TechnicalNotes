@@ -30,33 +30,28 @@ use techweb\app\model\TagsRefusedModel;
 
 class AdminTags extends AdminController
 {
-    public function index($page = 0)
+    public function index($type = '', $page = 0)
     {
         $info = In::session('info');
         $warning = In::session('warning');
         $success = In::session('success');
-        $this->loadView('index', [
-            'tags' => TagsModel::page($page),
-            'count' => TagsModel::count(),
-            'info' => $info,
-            'warning' => $warning,
-            'success' => $success,
-        ]);
+
+        if ($type === '/p') {
+            $send = ['tags' => TagsProposedModel::page($page), 'count' => TagsProposedModel::count()];
+        } elseif ($type === '/r') {
+            $send = ['tags' => TagsRefusedModel::page($page), 'count' => TagsRefusedModel::count()];
+        } else {
+            $send = ['tags' => TagsModel::page($page), 'count' => TagsModel::count()];
+        }
+
+        $this->loadView('index', $send + [
+                'info' => $info,
+                'warning' => $warning,
+                'success' => $success,
+            ]);
         Out::unsetSession('info');
         Out::unsetSession('warning');
         Out::unsetSession('success');
-    }
-
-    public function indexProposed($page = 0)
-    {
-        $this->loadView('index_proposed',
-            ['tags' => TagsProposedModel::page($page), 'count' => TagsProposedModel::count()]);
-    }
-
-    public function indexRefused($page = 0)
-    {
-        $this->loadView('index_refused',
-            ['tags' => TagsRefusedModel::page($page), 'count' => TagsRefusedModel::count()]);
     }
 
     public function create()
@@ -87,9 +82,6 @@ class AdminTags extends AdminController
                 }
 
                 TagsProposedModel::save($tagProposed);
-
-                Out::session('success', 'tag_created');
-                $this->redirect('admin/tags');
             } else {
                 $tag = new TagsEntity();
                 $tag->word = $word;
@@ -102,10 +94,10 @@ class AdminTags extends AdminController
                     Out::session('warning', 'invalid_type');
                     $this->redirect('admin/tag/create');
                 }
-
-                Out::session('success', 'tag_created');
-                $this->redirect('admin/tags');
             }
+
+            Out::session('success', 'tag_created');
+            $this->redirect('admin/tags');
         }
 
         $info = In::session('info');
@@ -117,37 +109,103 @@ class AdminTags extends AdminController
         Out::unsetSession('success');
     }
 
-    public function update($id)
+    public function view($type = '', $id)
     {
-        $tag = TagsModel::get(['id' => $id]);
+        if ($type === 'r/') {
+            $tag = TagsRefusedModel::get(['id' => $id]);
 
-        if (!isset($tag)) {
+            if (!isset($tag)) {
+                Out::session('warning', 'not_exist');
+                $this->redirect('admin/tags/r');
+            }
+
+            $this->loadView('view', ['tag' => $tag]);
+
+            return;
+        } elseif ($type === 'p/') {
+            $tag = TagsProposedModel::get(['id' => $id]);
+
+            if (!isset($tag)) {
+                Out::session('warning', 'not_exist');
+                $this->redirect('admin/tags/p');
+            }
+
+            $tagVotes = TagsProposedModel::getUsersVotes($id);
+
+            $this->loadView('view', ['tag' => $tag, 'votes' => $tagVotes]);
+
+            return;
+        } else {
+            $tag = TagsModel::get(['id' => $id]);
+
+            if (!isset($tag)) {
+                Out::session('warning', 'not_exist');
+                $this->redirect('admin/tags');
+            }
+
+            $questions = TagsModel::getQuestions($id);
+            $technotes = TagsModel::getTechnotes($id);
+
+            $this->loadView('view', ['tag' => $tag, 'questions' => $questions, 'technotes' => $technotes]);
+
+            return;
+        }
+    }
+
+    public function update($type = '', $id)
+    {
+        if ($type === 'p/') {
+            $tag = TagsProposedModel::get(['id' => $id]);
+        } elseif ($type == 'r/') {
+            $tag = TagsRefusedModel::get(['id' => $id]);
+        } else {
+            $tag = TagsModel::get(['id' => $id]);
+        }
+
+        if (!isset($tag)) { // $tag === null
             Out::session('tag', 'not_exist');
-            $this->redirect('admin / tags');
+            $this->redirect('admin/tags');
         }
 
         if (In::isSetPost(['word'])) {
-            $this->checkCSRF('admin / tags');
+            $this->checkCSRF('admin/tags');
 
             $word = Text::clean(In::post('word'));
 
             if (empty($word)) {
                 Out::session('warning', 'tag_empty');
-                $this->redirect('admin / tag / ' . $id . ' / update');
+                $this->redirect('admin/tag/' . $type . $id . '/update');
             } elseif ($tag->word === $word) {
                 Out::session('info', 'not_changed');
-                $this->redirect('admin / tag / ' . $id . ' / update');
+                $this->redirect('admin/tag/' . $type . $id . '/update');
             } elseif (TagsModel::tagExist($word)) {
                 Out::session('info', 'already_exist');
-                $this->redirect('admin / tag / ' . $id . ' / update');
+                $this->redirect('admin/tag/' . $type . $id . '/update');
             }
 
             $tag->word = $word;
 
-            TagsModel::save($tag);
+            if ($type === 'p/' && In::isSetPost(['positive', 'total'])) {
+                $tag->positive_votes = In::post('positive', FILTER_SANITIZE_NUMBER_INT);
+                $tag->total_votes = In::post('total', FILTER_SANITIZE_NUMBER_INT);
 
-            Out::session('success', 'tag_updated');
-            $this->redirect('admin / tags');
+                if ($tag->positive_votes < 0 || $tag->total_votes < 0) {
+                    Out::session('warning', 'incorrect_votes');
+                    $this->redirect('admin/tags');
+                }
+
+                TagsProposedModel::save($tag);
+            } elseif ($type === '') {
+                TagsModel::save($tag);
+            } elseif ($type === 'r/') {
+                TagsRefusedModel::save($tag);
+            } else {
+                Out::session('warning', 'invalid_type');
+                $this->redirect('admin/tags');
+            }
+
+            Out::session('success', 'tag_created');
+            $this->redirect('admin/tags');
         }
 
         $info = In::session('info');
@@ -159,14 +217,34 @@ class AdminTags extends AdminController
         Out::unsetSession('success');
     }
 
-    public function updateProposed($id)
+    public function remove($type = '', $id)
     {
-        //TODO
-    }
+        if ($type === 'r/') {
+            $tag = TagsRefusedModel::get(['id' => $id]);
+        } elseif ($type === 'p/') {
+            $tag = TagsProposedModel::get(['id' => $id]);
+        } else {
+            $tag = TagsModel::get(['id' => $id]);
+        }
 
-    public function updateRefused($id)
-    {
-        //TODO
+        if (!isset($tag)) {
+            Out::session('warning', 'not_exist');
+            $this->redirect('admin/tags');
+        }
+
+        $this->checkCSRF('admin/tags');
+
+        if ($type === 'r/') {
+            TagsRefusedModel::delete($tag);
+        } elseif ($type === 'p/') {
+            TagsProposedModel::delete($tag);
+        } else {
+            TagsModel::delete($tag);
+        }
+
+        Out::session('success', 'deleted');
+        $this->redirect('admin/tags' . $type);
+
     }
 
     public function acceptExisting()
@@ -180,7 +258,7 @@ class AdminTags extends AdminController
                 $origin = 'refused';
             } else {
                 Out::session('warning', 'not_exist');
-                $this->redirect('admin / tags');
+                $this->redirect('admin /tags');
 
                 return;
             }
@@ -196,7 +274,7 @@ class AdminTags extends AdminController
             }
 
             Out::session('success', 'tag_accepted');
-            $this->redirect('admin / tags');
+            $this->redirect('admin/tags');
         }
     }
 
@@ -212,7 +290,7 @@ class AdminTags extends AdminController
                 $origin = 'proposed';
             } else {
                 Out::session('warning', 'not_exist');
-                $this->redirect('admin / tags');
+                $this->redirect('admin/tags');
 
                 return;
             }
@@ -229,7 +307,7 @@ class AdminTags extends AdminController
             }
 
             Out::session('success', 'tag_refused');
-            $this->redirect('admin / tags');
+            $this->redirect('admin/tags');
         }
     }
 
@@ -237,14 +315,14 @@ class AdminTags extends AdminController
     {
 
         if (In::isSetPost(['word'])) {
-            $this->checkCSRF('admin / tags');
+            $this->checkCSRF('admin/tags');
             if ($tagOrigin = TagsRefusedModel::getByWord(In::post('word'))) {
                 $origin = 'refused';
             } elseif ($tagOrigin = TagsModel::getByWord(In::post('word'))) {
                 $origin = 'tags';
             } else {
                 Out::session('warning', 'not_exist');
-                $this->redirect('admin / tags');
+                $this->redirect('admin/tags');
 
                 return;
             }
@@ -261,7 +339,7 @@ class AdminTags extends AdminController
             }
 
             Out::session('success', 'tag_proposed');
-            $this->redirect('admin / tags');
+            $this->redirect('admin/tags');
         }
     }
 }

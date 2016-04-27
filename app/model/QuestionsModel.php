@@ -27,11 +27,11 @@ class QuestionsModel extends Model
 
     public static function getQuestionTags($id)
     {
-        return self::newQuery()->select('tags.*')->from(['tags_technotes', 'tags'])->where(
+        return self::newQuery()->select('tags.*')->from(['questions_tags', 'tags'])->where(
             [
                 'AND' => [
-                    ['questions_tags.tag_id', '=', 'tags.id'],
-                    ['questions_tags.question_id', '=', $id]
+                    ['tags.id', '=', 'tag_id'],
+                    ['question_id', '=', $id]
                 ]
             ])->find();
     }

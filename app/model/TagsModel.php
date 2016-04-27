@@ -41,6 +41,36 @@ class TagsModel extends Model
         return $query->first();
     }
 
+    public static function getTechnotes($id)
+    {
+        $query = self::newQuery()
+            ->select()
+            ->from(['tags_technotes', 'technotes'])
+            ->where([
+                'AND' => [
+                    ['technotes.id', '=', 'technote_id'],
+                    ['tag_id', '=', $id]
+                ]
+            ]);
+
+        return $query->find();
+    }
+
+    public static function getQuestions($id)
+    {
+        $query = self::newQuery()
+            ->select()
+            ->from(['questions_tags', 'questions'])
+            ->where([
+                'AND' => [
+                    ['questions.id', '=', 'question_id'],
+                    ['tag_id', '=', $id]
+                ]
+            ]);
+
+        return $query->find();
+    }
+
     public static function count()
     {
         return self::newQuery()->select('COUNT(*) as count')->from(static::$table)->first()->count;

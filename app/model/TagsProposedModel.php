@@ -27,6 +27,21 @@ class TagsProposedModel extends TagsModel
 {
     protected static $table = 'tags_proposed';
 
+    public static function getUsersVotes($id)
+    {
+        $query = self::newQuery()
+            ->select()
+            ->from(['users', 'tags_proposed_users'])
+            ->where([
+                'AND' => [
+                    ['users.id', '=', 'user_id'],
+                    ['tag_proposed_id', '=', $id]
+                ]
+            ]);
+
+        return $query->find();
+    }
+
     public static function save(Entity $entity)
     {
         $votes_config = Config::get('app')['votes'];

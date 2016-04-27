@@ -40,7 +40,7 @@ class UsersModel extends Model
 
     /**
      * @param $email
-     * @return bool|Entity
+     * @return null|Entity
      * @throws \rave\core\exception\EntityException
      * @throws \rave\core\exception\IncorrectQueryException
      */
@@ -49,7 +49,19 @@ class UsersModel extends Model
         $user = Query::create()->select()->from(static::$table)->where(['email', '=', $email])
             ->first(static::getEntityName());
 
-        return $user ? $user : false;
+        return $user;
+    }
+
+    public static function searchByEmail($email, $page = 0, $pagination = PAGINATION)
+    {
+        $user = Query::create()
+            ->select('id, email')
+            ->from(static::$table)
+            ->where(['email', 'LIKE', '%' . $email . '%'])
+            ->appendSQL('LIMIT ' . $page * $pagination . ',' . $pagination)
+            ->find();
+
+        return $user;
     }
 
     public static function userExistCheckByEmail($email)

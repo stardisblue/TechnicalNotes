@@ -19,12 +19,71 @@
 
 namespace techweb\app\controller;
 
+use rave\lib\core\io\In;
+use rave\lib\core\io\Out;
+use rave\lib\core\security\Text;
+use techweb\app\entity\QuestionsEntity;
 use techweb\app\model\QuestionsModel;
+use techweb\app\model\UsersModel;
 
 class AdminQuestions extends AdminController
 {
     public function index($page = 0)
     {
-        $this->loadView('index', ['questions' => QuestionsModel::page($page)]);
+        $info = In::session('info');
+        $warning = In::session('warning');
+        $success = In::session('success');
+        $this->loadView('index', [
+            'questions' => QuestionsModel::page($page),
+            'info' => $info,
+            'warning' => $warning,
+            'success' => $success,
+        ]);
+        Out::unsetSession('info');
+        Out::unsetSession('warning');
+        Out::unsetSession('success');
+    }
+
+    public function view($id)
+    {
+        $question = QuestionsModel::get(['id' => $id]);
+
+        if (!isset($question)) {
+            Out::session('warning', 'not_exist');
+            $this->redirect('admin/questions');
+        }
+
+        $this->loadView('view', ['question' => $question, 'tags' => QuestionsModel::getQuestionTags($id)]);
+
+    }
+
+    public function create()
+    {
+        if (In::isSetPost(['title', 'content'])) {
+            $this->checkCSRF('admin/questions');
+
+            $title = Text::clean(In::post('title'));
+            $content = Text::clean(In::post('content'));
+
+            $question = new QuestionsEntity();
+            $question->title = $title;
+            $question->content = $content;
+
+            if (empty($title) || empty($content)) {
+                $this->loadView('create',
+                    ['question' => $question, 'users' => QuestionsModel::all(), 'warning' => 'empty']);
+
+                return;
+            }
+
+            $question->user_id = In::post('user_id', FILTER_SANITIZE_NUMBER_INT);
+            $question->slug = Text::slug(In::post('title'));
+
+            QuestionsModel::save($question);
+            Out::session('success', 'question_added');
+            $this->redirect('admin/questions');
+        }
+
+        $this->loadView('create', ['users' => UsersModel::all()]);
     }
 }

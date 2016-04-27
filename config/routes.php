@@ -35,8 +35,11 @@ $router->get('/users', ['Users' => 'listUsers']);
 $router->get('/user/add', ['Users' => 'addUser']);
 $router->post('/user/add', ['Users' => 'addUser']);
 
-/*
- * Admin routes
+/* #########################################
+ * ###                                  ####
+ * ###          Admin routes            ####
+ * ###                                  ####
+ * #########################################
  */
 
 $router->get('/admin', ['AdminInterface' => 'index']);
@@ -49,38 +52,51 @@ $router->get('/admin/logout', ['AdminInterface' => 'logout']);
  * Users
  */
 $router->get('/admin/users', ['AdminUsers' => 'index']);
-$router->get('/admin/users/:page', ['AdminUsers' => 'index'])->with('page', '([0-9]+)');
+$router->get('/admin/users/:page', ['AdminUsers' => 'index'])->with('page', '(\d+)');
 
 $router->get('/admin/user/create', ['AdminUsers' => 'create']);
 $router->post('/admin/user/create', ['AdminUsers' => 'create']);
 
-$router->get('/admin/user/:id', ['AdminUsers' => 'view'])->with('id', '([0-9]+)');
+$router->get('/admin/user/:id', ['AdminUsers' => 'view'])->with('id', '(\d+)');
 
-$router->get('/admin/user/:id/update', ['AdminUsers' => 'update'])->with('id', '([0-9]+)');
-$router->post('/admin/user/:id/update', ['AdminUsers' => 'update'])->with('id', '([0-9]+)');
+$router->get('/admin/user/:id/update', ['AdminUsers' => 'update'])->with('id', '(\d+)');
+$router->post('/admin/user/:id/update', ['AdminUsers' => 'update'])->with('id', '(\d+)');
 
-$router->post('/admin/user/:id/delete', ['AdminUsers' => 'delete'])->with('id', '([0-9]+)');
+$router->post('/admin/user/:id/delete', ['AdminUsers' => 'delete'])->with('id', '(\d+)');
 
-$router->post('/admin/user/:id/validate', ['AdminUsers' => 'validate'])->with('id', '([0-9]+)');
+$router->post('/admin/user/:id/validate', ['AdminUsers' => 'validate'])->with('id', '(\d+)');
 
-$router->post('/admin/user/:id/upgrade', ['AdminUsers' => 'upgrade'])->with('id', '([0-9]+)');
-$router->post('/admin/user/:id/downgrade', ['AdminUsers' => 'downgrade'])->with('id', '([0-9]+)');
+$router->post('/admin/user/:id/upgrade', ['AdminUsers' => 'upgrade'])->with('id', '(\d+)');
+$router->post('/admin/user/:id/downgrade', ['AdminUsers' => 'downgrade'])->with('id', '(\d+)');
+
+$router->post('/ajax/admin/users', ['AdminUsers' => 'ajaxIndex']);
 
 /*
  * TAGS
  */
-$router->get('/admin/tags', ['AdminTags' => 'index']);
-$router->get('/admin/tags/:page', ['AdminTags' => 'index'])->with('page', '([0-9]+)');
+$router->get('/admin/tags:type', ['AdminTags' => 'index'])
+    ->with('type', '((\/[rp])?)');
+$router->get('/admin/tags:type/:page', ['AdminTags' => 'index'])
+    ->with('page', '(\d+)')
+    ->with('type', '((\/[rp])?)');
 
 $router->get('/admin/tag/create', ['AdminTags' => 'create']);
 $router->post('/admin/tag/create', ['AdminTags' => 'create']);
 
-$router->get('/admin/tag/:id', ['AdminTags' => 'view'])->with('id', '([0-9]+)');
+$router->get('/admin/tag/:type:id', ['AdminTags' => 'view'])
+    ->with('id', '(\d+)')
+    ->with('type', '(([rp]\/)?)');
 
-$router->get('/admin/tag/:id/update', ['AdminTags' => 'update'])->with('id', '([0-9]+)');
-$router->post('/admin/tag/:id/update', ['AdminTags' => 'update'])->with('id', '([0-9]+)');
+$router->get('/admin/tag/:type:id/update', ['AdminTags' => 'update'])
+    ->with('id', '(\d+)')
+    ->with('type', '(([rp]\/)?)');
+$router->post('/admin/tag/:type:id/update', ['AdminTags' => 'update'])
+    ->with('id', '(\d+)')
+    ->with('type', '(([rp]\/)?)');
 
-$router->post('/admin/tag/:id/delete', ['AdminTags' => 'delete'])->with('id', '([0-9]+)');
+$router->post('/admin/tag/:type:id/delete', ['AdminTags' => 'delete'])
+    ->with('id', '(\d+)')
+    ->with('type', '(([rp]\/)?)');
 
 /*
  * Technotes
@@ -91,12 +107,27 @@ $router->get('/admin/technotes/:page', ['AdminTechnotes' => 'index']);
 $router->get('/admin/technote/create', ['AdminTechnotes' => 'create']);
 $router->post('/admin/technote/create', ['AdminTechnotes' => 'create']);
 
-$router->get('/admin/technote/:id', ['AdminTechnotes' => 'view'])->with('id', '([0-9]+)');
+$router->get('/admin/technote/:id', ['AdminTechnotes' => 'view'])->with('id', '(\d+)');
 
-$router->get('/admin/technote/:id/update', ['AdminTechnotes' => 'update'])->with('id', '([0-9]+)');
-$router->post('/admin/technote/:id/update', ['AdminTechnotes' => 'update'])->with('id', '([0-9]+)');
+$router->get('/admin/technote/:id/update', ['AdminTechnotes' => 'update'])->with('id', '(\d+)');
+$router->post('/admin/technote/:id/update', ['AdminTechnotes' => 'update'])->with('id', '(\d+)');
 
-$router->post('/admin/technote/:id/delete', ['AdminTechnotes' => 'delete'])->with('id', '([0-9]+)');
+$router->post('/admin/technote/:id/delete', ['AdminTechnotes' => 'delete'])->with('id', '(\d+)');
+
+/**
+ * Questions
+ */
+//list
+$router->get('admin/questions', ['AdminQuestions' => 'index']);
+$router->get('admin/questions/:page', ['AdminQuestions' => 'index'])
+    ->with('page', '(\d+)');
+
+//create
+$router->get('/admin/question/create', ['AdminQuestions' => 'create']);
+$router->post('/admin/question/create', ['AdminQuestions' => 'create']);
+
+// view
+$router->get('/admin/question/:id', ['AdminQuestions' => 'view'])->with('id', '(\d+)');
 
 /*
  * Error routes

@@ -237,4 +237,18 @@ class AdminUsers extends AdminController
         Out::session('success', 'user_downgraded');
         $this->redirect('admin/users');
     }
+
+    public function ajaxIndex()
+    {
+        if (In::isSetPost(['search'])) {
+            $this->checkCSRF('ajax/');
+            $this->setLayout('ajax');
+            $email = Text::clean(In::post('search', FILTER_SANITIZE_EMAIL));
+            $page = In::post('page') ? In::post('page', FILTER_SANITIZE_NUMBER_INT) : 0;
+
+            $result = UsersModel::searchByEmail($email, $page);
+            $this->loadView('ajax', ['json' => $result]);
+
+        }
+    }
 }

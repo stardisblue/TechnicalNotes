@@ -39,18 +39,11 @@ class QuestionsEntity extends Entity
             'title' => '',
             'content' => '',
             'creation_date' => null,
-            'statut' => ''
+            'statut' => 0
         ];
 
         $options = [
             'primary' => 'id',
-            'belongTo' => ['table' => 'users', 'foreing_key' => 'user_id'],
-            'hasMany' => [
-                [
-                    'table' => 'tags',
-                    'through' => 'questions_tags'
-                ]
-            ]
         ];
 
         parent::__construct($columns, $options);

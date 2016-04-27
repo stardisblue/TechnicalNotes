@@ -56,7 +56,7 @@ class AdminInterface extends AdminController
 
         $user = UsersModel::getByEmail(In::post('email'));
         // check if the user is an admin
-        if (!$user || !UsersModel::userIsAdmin($user->id)) {
+        if (!isset($user) || !UsersModel::userIsAdmin($user->id)) {
             $this->loadView('login', ['warning' => 'login_error', 'info' => null]);
 
             return;

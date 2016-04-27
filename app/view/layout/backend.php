@@ -11,10 +11,19 @@
 
     <!-- Bootstrap 3.3.6 -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+          crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
-          integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+          integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r"
+          crossorigin="anonymous">
     <!-- Bootstrap end-->
+    <!-- Select2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/select2/4.0.2/css/select2.min.css"
+          integrity="sha256-fCvsF0xsnCxll1wsahPQTSOuvghR/s3EUivgvueC+iE="
+          crossorigin="anonymous">
+    <!-- Jquery 2.2.2 -->
+    <script src="https://code.jquery.com/jquery-2.2.2.min.js"
+            integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
 </head>
 
 <body role="document">
@@ -50,13 +59,16 @@
     $content ?>
 </div>
 
-<!-- Jquery 2.2.2 -->
-<script src="https://code.jquery.com/jquery-2.2.2.min.js"
-        integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
 <!-- Bootstrap.js 3.3.6 -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
         integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
         crossorigin="anonymous"></script>
+<!-- Select 2 -->
+<script src="https://cdn.jsdelivr.net/select2/4.0.2/js/select2.min.js"
+        integrity="sha256-04G2Dnj+apKwEmFACpe+2vz/yh4YM6+FDQ2qhLyQX/s="
+        crossorigin="anonymous"></script>
+<script src="<?= WEB_ROOT ?>/js/js.cookie-2.1.1.min.js"></script>
+<script src="<?= WEB_ROOT ?>/js/main.js"></script>
 </body>
 </html>
 

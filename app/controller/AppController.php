@@ -31,7 +31,7 @@ abstract class AppController extends Controller
     {
         $token = CSRF::getToken();
         $this->data['csrf'] = $token;
-        setcookie('csrf', $token, 0, '/admin', null, false, true);
+        setcookie('csrf', $token, 0, WEB_ROOT . '/');
 
     }
 

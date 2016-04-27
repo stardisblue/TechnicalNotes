@@ -19,7 +19,9 @@
 
 namespace techweb\app\controller;
 
+use rave\lib\core\io\In;
 use rave\lib\core\security\Auth;
+use techweb\app\model\UsersModel;
 
 abstract class AdminController extends AppController
 {
@@ -43,6 +45,8 @@ abstract class AdminController extends AppController
         if (!Auth::check('admin')) {
             $this->redirect('admin/login');
         }
+
+        $this->data['logged'] = UsersModel::get(['id' => In::session('login')]);
     }
 
 }
