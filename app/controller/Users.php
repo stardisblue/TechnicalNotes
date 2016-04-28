@@ -21,6 +21,7 @@ namespace techweb\app\controller;
 
 use rave\lib\core\io\In;
 use rave\lib\core\security\Password;
+use techweb\app\controller\abstracts\FrontEndController;
 use techweb\app\entity\UsersEntity;
 use techweb\app\model\UsersModel;
 

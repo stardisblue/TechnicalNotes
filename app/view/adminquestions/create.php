@@ -20,46 +20,22 @@ var_dump(get_defined_vars());
 
 <script>
     $(document).ready(function () {
-        $("#user_id").select2({
-            ajax: {
-                url: "<?= WEB_ROOT ?>/ajax/admin/users/",
-                type: 'POST',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
+        $("#user_id").select2(
+            ajaxBuilder(
+                '<?=WEB_ROOT?>/ajax/admin/users',
+                function (params) {
                     return {
-                        csrf: Cookies.get('csrf'),
+                        csrf_ajax: Cookies.get('csrf_ajax'),
                         search: params.term, // search term
                         page: params.page
                     };
                 },
-                processResults: function (data, params) {
-                    // parse the results into the format expected by Select2
-                    // since we are using custom formatting functions we do not need to
-                    // alter the remote JSON data, except to indicate that infinite
-                    // scrolling can be used
-                    params.page = params.page || 0;
-
-                    return {
-                        results: data,
-                        pagination: {
-                            more: (params.page * 20) < data.total_count
-                        }
-                    };
+                function (user) {
+                    return user.email;
                 },
-                cache: true
-            },
-            escapeMarkup: function (markup) {
-                return markup;
-            }, // let our custom formatter work
-            templateResult: function (user) {
-                return user.email;
-            },
-            templateSelection: function (user) {
-                return user.title || user.text;
-            },
-            minimumInputLength: 3
-        });
-
+                function (user) {
+                    return user.title || user.text;
+                })
+        );
     })
 </script>

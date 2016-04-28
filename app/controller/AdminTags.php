@@ -22,15 +22,17 @@ namespace techweb\app\controller;
 use rave\lib\core\io\In;
 use rave\lib\core\io\Out;
 use rave\lib\core\security\Text;
+use techweb\app\controller\abstracts\AdminController;
+use techweb\app\controller\interfaces\CRUDInterface;
 use techweb\app\entity\TagsEntity;
 use techweb\app\entity\TagsProposedEntity;
 use techweb\app\model\TagsModel;
 use techweb\app\model\TagsProposedModel;
 use techweb\app\model\TagsRefusedModel;
 
-class AdminTags extends AdminController
+class AdminTags extends AdminController implements CRUDInterface
 {
-    public function index($type = '', $page = 0)
+    public function index($page = 0, $type = '')
     {
         $info = In::session('info');
         $warning = In::session('warning');
@@ -109,7 +111,7 @@ class AdminTags extends AdminController
         Out::unsetSession('success');
     }
 
-    public function view($type = '', $id)
+    public function view($id, $type = '')
     {
         if ($type === 'r/') {
             $tag = TagsRefusedModel::get(['id' => $id]);
@@ -152,7 +154,7 @@ class AdminTags extends AdminController
         }
     }
 
-    public function update($type = '', $id)
+    public function update($id, $type = '')
     {
         if ($type === 'p/') {
             $tag = TagsProposedModel::get(['id' => $id]);
@@ -217,7 +219,7 @@ class AdminTags extends AdminController
         Out::unsetSession('success');
     }
 
-    public function remove($type = '', $id)
+    public function delete($id, $type = '')
     {
         if ($type === 'r/') {
             $tag = TagsRefusedModel::get(['id' => $id]);

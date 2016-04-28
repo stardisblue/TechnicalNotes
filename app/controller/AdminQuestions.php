@@ -22,11 +22,13 @@ namespace techweb\app\controller;
 use rave\lib\core\io\In;
 use rave\lib\core\io\Out;
 use rave\lib\core\security\Text;
+use techweb\app\controller\abstracts\AdminController;
+use techweb\app\controller\interfaces\CRUDInterface;
 use techweb\app\entity\QuestionsEntity;
 use techweb\app\model\QuestionsModel;
 use techweb\app\model\UsersModel;
 
-class AdminQuestions extends AdminController
+class AdminQuestions extends AdminController implements CRUDInterface
 {
     public function index($page = 0)
     {
@@ -53,7 +55,7 @@ class AdminQuestions extends AdminController
             $this->redirect('admin/questions');
         }
 
-        $this->loadView('view', ['question' => $question, 'tags' => QuestionsModel::getQuestionTags($id)]);
+        $this->loadView('view', ['question' => $question, 'tags' => QuestionsModel::getTags($id)]);
 
     }
 
@@ -85,5 +87,15 @@ class AdminQuestions extends AdminController
         }
 
         $this->loadView('create', ['users' => UsersModel::all()]);
+    }
+
+    public function update($id)
+    {
+        // TODO: Implement update() method.
+    }
+
+    public function delete($id)
+    {
+        // TODO: Implement delete() method.
     }
 }

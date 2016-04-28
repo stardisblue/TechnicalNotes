@@ -21,7 +21,6 @@ namespace techweb\app\model;
 
 use rave\core\database\orm\Entity;
 use rave\core\database\orm\Model;
-use rave\core\database\orm\Query;
 
 class UsersModel extends Model
 {
@@ -29,7 +28,7 @@ class UsersModel extends Model
 
     public static function userIsAdmin($id)
     {
-        return Query::create()->select()->from(static::$table)->where(
+        return self::newQuery()->select()->from(static::$table)->where(
             [
                 'AND' => [
                     ['id', '=', $id],
@@ -46,41 +45,47 @@ class UsersModel extends Model
      */
     public static function getByEmail($email)
     {
-        $user = Query::create()->select()->from(static::$table)->where(['email', '=', $email])
+        $user = self::newQuery()->select()->from(static::$table)->where(['email', '=', $email])
             ->first(static::getEntityName());
 
         return $user;
     }
 
-    public static function searchByEmail($email, $page = 0, $pagination = PAGINATION)
+    public static function getByUsername($username)
     {
-        $user = Query::create()
-            ->select('id, email')
+        $user = self::newQuery()->select()->from(static::$table)->where(['username', '=', $username])
+            ->first(static::getEntityName());
+
+        return $user;
+    }
+
+    public static function searchByUsername($username, $page = 0, $pagination = PAGINATION)
+    {
+        $user = self::newQuery()
+            ->select('id, username')
             ->from(static::$table)
-            ->where(['email', 'LIKE', '%' . $email . '%'])
+            ->where(['username', 'LIKE', '%' . $username . '%'])
             ->appendSQL('LIMIT ' . $page * $pagination . ',' . $pagination)
             ->find();
 
         return $user;
     }
 
-    public static function userExistCheckByEmail($email)
+    public static function userExist(Entity $user_entity)
     {
-        $query = Query::create()->select()->from(static::$table)->where(['email', '=', $email]);
-
-        return $query->first() ? true : false;
-    }
-
-    public static function userExistCheckById($id)
-    {
-        $query = Query::create()->select()->from(static::$table)->where(['id', '=', $id]);
+        $query = self::newQuery()->select()->from(static::$table)->where([
+            'OR' => [
+                ['email', '=', $user_entity->email],
+                ['username', '=', $user_entity->username]
+            ]
+        ]);
 
         return $query->first() ? true : false;
     }
 
     public static function checkTokenByEmail($email)
     {
-        return Query::create()
+        return self::newQuery()
             ->select('token')
             ->from(static::$table)
             ->where(['email', '=', $email])->first()->token
@@ -90,17 +95,12 @@ class UsersModel extends Model
 
     public static function checkTokenById($id)
     {
-        return Query::create()
+        return self::newQuery()
             ->select('token')
             ->from(static::$table)
-            ->where(['id', '=', $email])->first()->token
+            ->where(['id', '=', $id])->first()->token
         === '';
 
-    }
-
-    public static function count()
-    {
-        return self::newQuery()->select('COUNT(*) as count')->from(static::$table)->first()->count;
     }
 
     public static function page($page = 0, $pagination = PAGINATION)

@@ -17,14 +17,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace techweb\app\controller;
+namespace techweb\app\controller\abstracts;
 
-abstract class FrontEndController extends AppController
+use rave\lib\core\io\In;
+use rave\lib\core\security\Auth;
+use techweb\app\model\UsersModel;
+
+abstract class AdminController extends AppController
 {
-
     public function __construct()
     {
-        $this->setLayout('frontend');
+        parent::__construct();
+        //todo update framework
+        $this->setLayout('backend', $this->data);
+
+    }
+
+    public function beforeCall($method)
+    {
+        if ($method !== 'login') {
+            $this->checkAdmin();
+        }
+    }
+
+    protected function checkAdmin()
+    {
+        if (!Auth::check('admin')) {
+            $this->redirect('admin/login');
+        }
+
+        $this->data['logged'] = UsersModel::get(['id' => In::session('login')]);
     }
 
 }

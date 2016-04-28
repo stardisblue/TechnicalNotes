@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "classicodr/rave-core",
-            "version": "v0.1.8-alpha",
+            "version": "v0.1.9-alpha",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Classicodr/rave-core.git",
-                "reference": "2e9597cb1845653682112c362e667ef171e5bc5a"
+                "reference": "2d6532d8135e7e8e63a1a197abcaa0a0d5e8e927"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Classicodr/rave-core/zipball/2e9597cb1845653682112c362e667ef171e5bc5a",
-                "reference": "2e9597cb1845653682112c362e667ef171e5bc5a",
+                "url": "https://api.github.com/repos/Classicodr/rave-core/zipball/2d6532d8135e7e8e63a1a197abcaa0a0d5e8e927",
+                "reference": "2d6532d8135e7e8e63a1a197abcaa0a0d5e8e927",
                 "shasum": ""
             },
             "require": {
@@ -54,23 +54,23 @@
                 "framework"
             ],
             "support": {
-                "source": "https://github.com/Classicodr/rave-core/tree/v0.1.8-alpha",
+                "source": "https://github.com/Classicodr/rave-core/tree/v0.1.9-alpha",
                 "issues": "https://github.com/Classicodr/rave-core/issues"
             },
-            "time": "2016-04-23 15:13:45"
+            "time": "2016-04-28 19:33:09"
         },
         {
             "name": "classicodr/rave-lib",
-            "version": "v0.1.4",
+            "version": "v0.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Classicodr/rave-lib.git",
-                "reference": "fd8c6e9d5f543b5f60ea7f714ac456c658174e4f"
+                "reference": "0b04cc351bef65a9638544514b9f973ac7113cff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Classicodr/rave-lib/zipball/fd8c6e9d5f543b5f60ea7f714ac456c658174e4f",
-                "reference": "fd8c6e9d5f543b5f60ea7f714ac456c658174e4f",
+                "url": "https://api.github.com/repos/Classicodr/rave-lib/zipball/0b04cc351bef65a9638544514b9f973ac7113cff",
+                "reference": "0b04cc351bef65a9638544514b9f973ac7113cff",
                 "shasum": ""
             },
             "require": {
@@ -106,10 +106,10 @@
                 "framework"
             ],
             "support": {
-                "source": "https://github.com/Classicodr/rave-lib/tree/v0.1.4",
+                "source": "https://github.com/Classicodr/rave-lib/tree/v0.1.5",
                 "issues": "https://github.com/Classicodr/rave-lib/issues"
             },
-            "time": "2016-04-22 22:41:04"
+            "time": "2016-04-28 13:04:13"
         }
     ],
     "packages-dev": [

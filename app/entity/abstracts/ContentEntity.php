@@ -17,36 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace techweb\app\controller;
+namespace techweb\app\entity\abstracts;
 
-use rave\lib\core\io\In;
-use rave\lib\core\security\Auth;
-use techweb\app\model\UsersModel;
+use rave\core\database\orm\Entity;
 
-abstract class AdminController extends AppController
+abstract class ContentEntity extends Entity
 {
-    public function __construct()
+    public function __construct($columns = [], $options = [])
     {
-        parent::__construct();
-        //todo update framework
-        $this->setLayout('backend', $this->data);
+        $columns = [
+                'id' => null,
+                'user_id' => null,
+                'content' => '',
+                'creation_date' => null
+            ] + $columns;
 
+        $options = ['primary' => 'id'];
+        parent::__construct($columns, $options);
     }
-
-    public function beforeCall($method)
-    {
-        if ($method !== 'login') {
-            $this->checkAdmin();
-        }
-    }
-
-    protected function checkAdmin()
-    {
-        if (!Auth::check('admin')) {
-            $this->redirect('admin/login');
-        }
-
-        $this->data['logged'] = UsersModel::get(['id' => In::session('login')]);
-    }
-
 }

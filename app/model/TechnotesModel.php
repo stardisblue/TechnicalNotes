@@ -20,30 +20,52 @@
 namespace techweb\app\model;
 
 use rave\core\database\orm\Model;
+use techweb\app\model\interfaces\QuestionTechnotesModelInterface;
 
-class TechnotesModel extends Model
+class TechnotesModel extends Model implements QuestionTechnotesModelInterface
 {
     protected static $table = 'technotes';
 
-    public static function getTechnotesComments($id)
+    public static function getComments($id)
     {
 
-        $query = self::newQuery()->select()->from('technote_comments')->where(['tec_id', '=', $id]);
+        $query = self::newQuery()->select()->from('technote_comments')->where(['technote_id', '=', $id]);
 
         return $query->find();
 
     }
 
-    public static function getTechnotesTags($id)
+    public static function getTags($id)
     {
-        return self::newQuery()->select('tags.*')->from(['tags_technotes', 'tags'])->where(
-            [
-                'AND' => [
-                    ['tags_technotes.tag_id', '=', 'tags.id'],
-                    ['tags_technotes.technote_id', '=', $id]
-                ]
-            ])->find();
+        return self::newQuery()->select('tags.*')->from(['tags_technotes', 'tags'])->where([
+            'conditions' => 'tag_id = tags.id AND technote_id = :id',
+            'values' => [':id' => $id]
+        ])->find();
 
+    }
+
+    public static function addTag($id, $tag_id)
+    {
+        $query = self::newQuery()
+            ->insertInto('tags_technotes')
+            ->values(['technote_id' => $id, 'tag_id' => $tag_id]);
+
+        return $query->execute();
+    }
+
+    public static function removeTag($id, $tag_id)
+    {
+        $query = self::newQuery()
+            ->delete()
+            ->from('tags_technotes')
+            ->where([
+                'AND' => [
+                    ['tag_id', '=', $tag_id],
+                    ['technote_id', '=', $id]
+                ]
+            ]);
+
+        return $query->execute();
     }
 
     public static function count()

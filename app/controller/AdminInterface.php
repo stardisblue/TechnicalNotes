@@ -23,6 +23,7 @@ use rave\lib\core\io\In;
 use rave\lib\core\io\Out;
 use rave\lib\core\security\Auth;
 use rave\lib\core\security\Password;
+use techweb\app\controller\abstracts\AdminController;
 use techweb\app\model\UsersModel;
 
 class AdminInterface extends AdminController

@@ -12,6 +12,8 @@ var_dump(get_defined_vars());
     <input type="text" name="firstname" id="firstname" required>
     <label for="email">Email</label>
     <input type="email" name="email" id="email" required>
+
+    <label for="username">Pseudo</label><input type="text" name="username" id="username" required>
     <label for="password">password</label>
     <input type="password" name="password" id="password" required>
     <label for="verifypassword">retype password</label>

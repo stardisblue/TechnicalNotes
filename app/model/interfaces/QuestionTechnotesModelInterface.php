@@ -17,27 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace techweb\app\entity;
+namespace techweb\app\model\interfaces;
 
-use techweb\app\entity\abstracts\ContentEntity;
-
-/**
- * Class TechnoteEntity
- *
- * @package techweb\app\entity
- */
-class AnwsersEntity extends ContentEntity
+interface QuestionTechnotesModelInterface
 {
-    /**
-     * TechnoteEntity constructor.
-     */
-    public function __construct()
-    {
-        $columns = [
-            'question_id' => null,
-        ];
+    public static function getComments($id);
 
-        parent::__construct($columns);
-    }
+    public static function getTags($id);
 
+    public static function addTag($id, $tag_id);
+
+    public static function removeTag($id, $tag_id);
+
+    public static function count();
+
+    public static function page($page = 0, $pagination = PAGINATION);
 }

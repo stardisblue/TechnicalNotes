@@ -19,6 +19,8 @@
 
 namespace techweb\app\controller;
 
+use techweb\app\controller\abstracts\FrontEndController;
+
 class Main extends FrontEndController
 {
 

@@ -17,27 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace techweb\app\entity;
+namespace techweb\app\controller\abstracts;
 
-use techweb\app\entity\abstracts\ContentEntity;
-
-/**
- * Class TechnoteEntity
- *
- * @package techweb\app\entity
- */
-class AnwsersEntity extends ContentEntity
+abstract class FrontEndController extends AppController
 {
-    /**
-     * TechnoteEntity constructor.
-     */
+
     public function __construct()
     {
-        $columns = [
-            'question_id' => null,
-        ];
-
-        parent::__construct($columns);
+        parent::__construct();
+        $this->setLayout('frontend');
     }
 
 }

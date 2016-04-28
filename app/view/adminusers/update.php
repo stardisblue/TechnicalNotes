@@ -27,6 +27,11 @@ var_dump(get_defined_vars());
             <input class="form-control" type="email" name="email" id="email" value="<?= $user->email ?>"
                    placeholder="E-mail">
         </div>
+        <div class="form-group">
+            <label for="username">Pseudo :</label>
+            <input class="form-control" type="text" name="username" id="username" value="<?= $user->username ?>"
+                   placeholder="Pseudo">
+        </div>
         <button type="submit" class="btn btn-success"><i class="glyphicon glyphicon-ok"></i> Mettre a jour</button>
     </fieldset>
 </form>

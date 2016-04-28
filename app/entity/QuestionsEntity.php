@@ -19,14 +19,14 @@
 
 namespace techweb\app\entity;
 
-use rave\core\database\orm\Entity;
+use techweb\app\entity\abstracts\QuestionsTechnotesEntity;
 
 /**
  * Class TechnoteEntity
  *
  * @package techweb\app\entity
  */
-class QuestionsEntity extends Entity
+class QuestionsEntity extends QuestionsTechnotesEntity
 {
     /**
      * TechnoteEntity constructor.
@@ -34,19 +34,10 @@ class QuestionsEntity extends Entity
     public function __construct()
     {
         $columns = [
-            'id' => null,
-            'user_id' => null,
-            'title' => '',
-            'content' => '',
-            'creation_date' => null,
             'statut' => 0
         ];
 
-        $options = [
-            'primary' => 'id',
-        ];
-
-        parent::__construct($columns, $options);
+        parent::__construct($columns);
     }
 
 }

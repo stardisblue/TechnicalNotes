@@ -17,27 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace techweb\app\entity;
+namespace techweb\app\controller\abstracts;
 
-use techweb\app\entity\abstracts\ContentEntity;
+use rave\core\Controller;
+use rave\lib\core\io\In;
+use rave\lib\core\io\Out;
+use rave\lib\core\security\CSRF;
 
-/**
- * Class TechnoteEntity
- *
- * @package techweb\app\entity
- */
-class AnwsersEntity extends ContentEntity
+abstract class AppController extends Controller
 {
-    /**
-     * TechnoteEntity constructor.
-     */
+
     public function __construct()
     {
-        $columns = [
-            'question_id' => null,
-        ];
+        $token = CSRF::getToken();
+        $this->data['csrf'] = $token;
+        setcookie('csrf', $token, 0, WEB_ROOT . '/', null, null, true);
 
-        parent::__construct($columns);
     }
 
+    protected function checkCSRF($redirect = '', $message = 'csrf', $method = 'post', $name = 'csrf')
+    {
+        if ($method === 'post' || $method === 'get') {
+            if (In::$method($name) !== In::cookie('csrf')) {
+                Out::session('warning', $message);
+                $this->redirect($redirect);
+            }
+        }
+    }
 }

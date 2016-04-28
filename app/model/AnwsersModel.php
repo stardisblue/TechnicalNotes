@@ -25,7 +25,7 @@ class AnwsersModel extends Model
 {
     protected static $table = 'anwsers';
 
-    public static function getAnswerComments($id)
+    public static function getComments($id)
     {
         return self::newQuery()->select()->from('answer_comments')->where(['answer_id', '=', $id]);
     }

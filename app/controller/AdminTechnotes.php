@@ -22,11 +22,14 @@ namespace techweb\app\controller;
 use rave\lib\core\io\In;
 use rave\lib\core\io\Out;
 use rave\lib\core\security\Text;
+use techweb\app\controller\abstracts\AdminController;
+use techweb\app\controller\interfaces\CRUDInterface;
 use techweb\app\entity\TechnotesEntity;
+use techweb\app\model\TagsModel;
 use techweb\app\model\TechnotesModel;
 use techweb\app\model\UsersModel;
 
-class AdminTechnotes extends AdminController
+class AdminTechnotes extends AdminController implements CRUDInterface
 {
     public function index($page = 0)
     {
@@ -69,6 +72,15 @@ class AdminTechnotes extends AdminController
             $technote->slug = Text::slug(In::post('title'));
 
             TechnotesModel::save($technote);
+            $technote->id = TechnotesModel::lastInsertId();
+
+            $tags = In::post('tags', FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE | FILTER_FORCE_ARRAY);
+            foreach ($tags as $tagId) {
+                if ($tag = TagsModel::get($tagId)) {
+                    TechnotesModel::addTag($technote->id, $tag->id);
+                }
+            }
+
             Out::session('success', 'note_added');
             $this->redirect('admin/technotes');
         }
@@ -84,8 +96,8 @@ class AdminTechnotes extends AdminController
             $this->loadView('view', [
                 'technote' => $technote,
                 'user' => UsersModel::get(['id' => $technote->user_id]),
-                'technote_tags' => TechnotesModel::getTechnotesTags($id),
-                'technote_comments' => TechnotesModel::getTechnotesComments($id)
+                'technote_tags' => TechnotesModel::getTags($id),
+                'technote_comments' => TechnotesModel::getComments($id)
             ]);
 
             return;
@@ -105,9 +117,9 @@ class AdminTechnotes extends AdminController
             $this->redirect('admin/technotes');
         }
 
-        $technote_user = UsersModel::get(['id' => $technote->user_id]);
+        $technoteUser = UsersModel::get(['id' => $technote->user_id]);
 
-        $technote_tags = TechnotesModel::getTechnotesTags($id);
+        $technoteTags = TechnotesModel::getTags($id);
 
         if (In::isSetPost(['user_id', 'title', 'content'])) {
             $this->checkCSRF('admin/technotes');
@@ -115,12 +127,13 @@ class AdminTechnotes extends AdminController
             $title = Text::clean(In::post('title'));
             $content = Text::clean(In::post('content'));
 
+            //todo update In::post() and In::get() to add flags
             if (empty($title) || empty($content)) {
                 $this->loadView('update',
                     [
                         'technote' => $technote,
-                        'technote_user' => $technote_user,
-                        'technote_tags' => $technote_tags,
+                        'technoteUser' => $technoteUser,
+                        'technoteTags' => $technoteTags,
                         'warning' => 'empty'
                     ]);
 
@@ -135,12 +148,35 @@ class AdminTechnotes extends AdminController
 
             TechnotesModel::save($technote);
 
+            $tags = In::post('tags', FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE | FILTER_FORCE_ARRAY);
+
+            $technoteTagsId = [];
+
+            foreach ($technoteTags as $technoteTag) {
+                $technoteTagsId[] = $technoteTag->id;
+            }
+
+            $tagsToAdd = array_diff($tags, $technoteTagsId);
+            $tagsToRemove = array_diff($technoteTagsId, $tags);
+
+            foreach ($tagsToAdd as $tagId) {
+                if ($tag = TagsModel::get(['id' => $tagId])) {
+                    TechnotesModel::addTag($technote->id, $tag->id);
+                }
+            }
+
+            foreach ($tagsToRemove as $tagId) {
+                if ($tag = TagsModel::get(['id' => $tagId])) {
+                    TechnotesModel::removeTag($technote->id, $tag->id);
+                }
+            }
+
             Out::session('success', 'updated');
             $this->redirect('admin/technotes');
         }
 
         $this->loadView('update',
-            ['technote' => $technote, 'technote_user' => $technote_user, 'technote_tags' => $technote_tags]);
+            ['technote' => $technote, 'technoteUser' => $technoteUser, 'technoteTags' => $technoteTags]);
 
     }
 

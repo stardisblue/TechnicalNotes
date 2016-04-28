@@ -38,8 +38,9 @@ class UsersEntity extends Entity
             'id' => null,
             'name' => '',
             'firstname' => '',
-            'password' => '',
+            'username' => '',
             'email' => '',
+            'password' => '',
             'token' => '',
             'isadmin' => null
         ];

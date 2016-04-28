@@ -69,7 +69,8 @@ $router->post('/admin/user/:id/validate', ['AdminUsers' => 'validate'])->with('i
 $router->post('/admin/user/:id/upgrade', ['AdminUsers' => 'upgrade'])->with('id', '(\d+)');
 $router->post('/admin/user/:id/downgrade', ['AdminUsers' => 'downgrade'])->with('id', '(\d+)');
 
-$router->post('/ajax/admin/users', ['AdminUsers' => 'ajaxIndex']);
+//yup ajax ;)
+$router->post('/ajax/admin/users', ['Ajax' => 'usersIndex']);
 
 /*
  * TAGS
@@ -98,11 +99,14 @@ $router->post('/admin/tag/:type:id/delete', ['AdminTags' => 'delete'])
     ->with('id', '(\d+)')
     ->with('type', '(([rp]\/)?)');
 
+//re ajax
+$router->post('/ajax/admin/tags', ['Ajax' => 'tagsIndex']);
+
 /*
  * Technotes
  */
 $router->get('/admin/technotes', ['AdminTechnotes' => 'index']);
-$router->get('/admin/technotes/:page', ['AdminTechnotes' => 'index']);
+$router->get('/admin/technotes/:page', ['AdminTechnotes' => 'index'])->with('page', '(\d+)');
 
 $router->get('/admin/technote/create', ['AdminTechnotes' => 'create']);
 $router->post('/admin/technote/create', ['AdminTechnotes' => 'create']);

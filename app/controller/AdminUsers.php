@@ -23,10 +23,12 @@ use rave\lib\core\io\In;
 use rave\lib\core\io\Out;
 use rave\lib\core\security\Password;
 use rave\lib\core\security\Text;
+use techweb\app\controller\abstracts\AdminController;
+use techweb\app\controller\interfaces\CRUDInterface;
 use techweb\app\entity\UsersEntity;
 use techweb\app\model\UsersModel;
 
-class AdminUsers extends AdminController
+class AdminUsers extends AdminController implements CRUDInterface
 {
     public function index($page = 0)
     {
@@ -59,6 +61,10 @@ class AdminUsers extends AdminController
                 $this->loadView('create', ['warning' => 'email']);
 
                 return;
+            } elseif (!In::post('username')) {
+                $this->loadView('create', ['warning' => 'username']);
+
+                return;
             }
 
             $password = In::post('password');
@@ -74,9 +80,10 @@ class AdminUsers extends AdminController
             $user_entity->firstname = Text::clean(In::post('firstname'));
             $user_entity->password = Password::hash($password);
             $user_entity->email = Text::clean(In::post('email', FILTER_SANITIZE_EMAIL));
+            $user_entity->username = Text::clean(In::post('username'));
             $user_entity->token = ''; // pré-activé
 
-            if (UsersModel::userExistCheckByEmail($user_entity->email)) {
+            if (UsersModel::userExist($user_entity)) {
                 $warning = 'user_exist';
                 $info = null;
             } else {
@@ -111,17 +118,32 @@ class AdminUsers extends AdminController
             $this->redirect('admin/users');
         }
 
-        if (In::isSetPost(['name', 'firstname', 'email'])) {
+        if (In::isSetPost(['name', 'firstname', 'email', 'username'])) {
 
             $this->checkCSRF('admin/users');
 
             $user_entity->name = Text::clean(In::post('name'));
             $user_entity->firstname = Text::clean(In::post('firstname'));
+
+            $email = Text::clean(In::post('email', FILTER_SANITIZE_EMAIL));
+            $username = Text::clean(In::post('username'));
+
+            if ($email !== $user_entity->email && UsersModel::getByEmail($email)) {
+                $this->loadView('create', ['user' => $user_entity, 'warning' => 'email_used']);
+
+                return;
+            } elseif ($username !== $user_entity->username && UsersModel::getByUsername($username)) {
+                $this->loadView('create', ['user' => $user_entity, 'warning' => 'username_used']);
+
+                return;
+            }
+
             $user_entity->email = Text::clean(In::post('email'));
+            $user_entity->username = $username;
 
             UsersModel::save($user_entity);
             $this->loadView('update', ['user' => $user_entity, 'success' => 'updated']);
-        } elseif (In::isSetPost(['password', 'verifypassword', 'csrf'])) {
+        } elseif (In::isSetPost(['password', 'verifypassword'])) {
             $this->checkCSRF('admin/users');
 
             if (In::post('password') !== In::post('verifypassword')) {
@@ -236,19 +258,5 @@ class AdminUsers extends AdminController
 
         Out::session('success', 'user_downgraded');
         $this->redirect('admin/users');
-    }
-
-    public function ajaxIndex()
-    {
-        if (In::isSetPost(['search'])) {
-            $this->checkCSRF('ajax/');
-            $this->setLayout('ajax');
-            $email = Text::clean(In::post('search', FILTER_SANITIZE_EMAIL));
-            $page = In::post('page') ? In::post('page', FILTER_SANITIZE_NUMBER_INT) : 0;
-
-            $result = UsersModel::searchByEmail($email, $page);
-            $this->loadView('ajax', ['json' => $result]);
-
-        }
     }
 }

@@ -47,10 +47,8 @@ class TagsModel extends Model
             ->select()
             ->from(['tags_technotes', 'technotes'])
             ->where([
-                'AND' => [
-                    ['technotes.id', '=', 'technote_id'],
-                    ['tag_id', '=', $id]
-                ]
+                'conditions' => 'technotes.id = technote_id AND tag_id =: id',
+                'values' => [':id' => $id],
             ]);
 
         return $query->find();
@@ -62,10 +60,8 @@ class TagsModel extends Model
             ->select()
             ->from(['questions_tags', 'questions'])
             ->where([
-                'AND' => [
-                    ['questions.id', '=', 'question_id'],
-                    ['tag_id', '=', $id]
-                ]
+                'conditions' => 'questions.id = question_id AND tag_id = :id',
+                'values' => [':id' => $id]
             ]);
 
         return $query->find();
@@ -81,5 +77,17 @@ class TagsModel extends Model
         return self::newQuery()->select()->from(static::$table)->appendSQL('ORDER BY word ASC LIMIT ' . $page
             * $pagination . ','
             . $pagination)->find(null, static::getEntityName());
+    }
+
+    public static function searchByTag($tag, $page = 0, $pagination = PAGINATION)
+    {
+        $user = self::newQuery()
+            ->select()
+            ->from(static::$table)
+            ->where(['word', 'LIKE', '%' . $tag . '%'])
+            ->appendSQL('LIMIT ' . $page * $pagination . ',' . $pagination)
+            ->find();
+
+        return $user;
     }
 }

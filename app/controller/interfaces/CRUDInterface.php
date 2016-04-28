@@ -17,31 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace techweb\app\controller;
+namespace techweb\app\controller\interfaces;
 
-use rave\core\Controller;
-use rave\lib\core\io\In;
-use rave\lib\core\io\Out;
-use rave\lib\core\security\CSRF;
-
-abstract class AppController extends Controller
+interface CRUDInterface
 {
+    public function index($page = 0);
 
-    public function __construct()
-    {
-        $token = CSRF::getToken();
-        $this->data['csrf'] = $token;
-        setcookie('csrf', $token, 0, WEB_ROOT . '/');
+    public function create();
 
-    }
+    public function view($id);
 
-    protected function checkCSRF($redirect = '', $message = 'csrf', $method = 'post', $name = 'csrf')
-    {
-        if ($method === 'post' || $method === 'get') {
-            if (In::$method($name) !== In::cookie('csrf')) {
-                Out::session('warning', $message);
-                $this->redirect($redirect);
-            }
-        }
-    }
+    public function update($id);
+
+    public function delete($id);
 }

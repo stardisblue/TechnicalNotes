@@ -33,10 +33,8 @@ class TagsProposedModel extends TagsModel
             ->select()
             ->from(['users', 'tags_proposed_users'])
             ->where([
-                'AND' => [
-                    ['users.id', '=', 'user_id'],
-                    ['tag_proposed_id', '=', $id]
-                ]
+                'conditions' => 'users.id = user_id AND tag_proposed_id = :id',
+                'values' => [':id' => $id]
             ]);
 
         return $query->find();

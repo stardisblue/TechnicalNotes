@@ -20,20 +20,68 @@
 namespace techweb\app\model;
 
 use rave\core\database\orm\Model;
+use techweb\app\model\interfaces\QuestionTechnotesModelInterface;
 
-class QuestionsModel extends Model
+class QuestionsModel extends Model implements QuestionTechnotesModelInterface
 {
     protected static $table = 'questions';
 
-    public static function getQuestionTags($id)
+    public static function getAnswers($id)
     {
-        return self::newQuery()->select('tags.*')->from(['questions_tags', 'tags'])->where(
-            [
+        $query = self::newQuery()
+            ->select()
+            ->from('answers')
+            ->where(['question_id', '=', $id]);
+
+        return $query->find();
+    }
+
+    public static function getComments($id)
+    {
+        $query = self::newQuery()
+            ->select()
+            ->from('question_comments')
+            ->where(['question_id', '=', $id]);
+
+        return $query->find();
+
+    }
+
+    public static function getTags($id)
+    {
+        return self::newQuery()
+            ->select('tags.*')
+            ->from(['questions_tags', 'tags'])
+            ->where([
+                'conditions' => 'tag_id = tags.id AND question_id = :id',
+                'values' => [':id' => $id]
+            ])
+            ->find();
+
+    }
+
+    public static function addTag($id, $tag_id)
+    {
+        $query = self::newQuery()
+            ->insertInto('questions_tags')
+            ->values(['question_id' => $id, 'tag_id' => $tag_id]);
+
+        return $query->execute();
+    }
+
+    public static function removeTag($id, $tag_id)
+    {
+        $query = self::newQuery()
+            ->delete()
+            ->from('questions_tags')
+            ->where([
                 'AND' => [
-                    ['tags.id', '=', 'tag_id'],
+                    ['tag_id', '=', $tag_id],
                     ['question_id', '=', $id]
                 ]
-            ])->find();
+            ]);
+
+        return $query->execute();
     }
 
     public static function count()
