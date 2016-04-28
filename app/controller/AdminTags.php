@@ -26,6 +26,7 @@ use techweb\app\controller\abstracts\AdminController;
 use techweb\app\controller\interfaces\CRUDInterface;
 use techweb\app\entity\TagsEntity;
 use techweb\app\entity\TagsProposedEntity;
+use techweb\app\entity\TagsRefusedEntity;
 use techweb\app\model\TagsModel;
 use techweb\app\model\TagsProposedModel;
 use techweb\app\model\TagsRefusedModel;
@@ -113,7 +114,7 @@ class AdminTags extends AdminController implements CRUDInterface
 
     public function view($id, $type = '')
     {
-        if ($type === 'r/') {
+        if ($type === '/r') {
             $tag = TagsRefusedModel::get(['id' => $id]);
 
             if (!isset($tag)) {
@@ -124,7 +125,7 @@ class AdminTags extends AdminController implements CRUDInterface
             $this->loadView('view', ['tag' => $tag]);
 
             return;
-        } elseif ($type === 'p/') {
+        } elseif ($type === '/p') {
             $tag = TagsProposedModel::get(['id' => $id]);
 
             if (!isset($tag)) {
@@ -156,9 +157,9 @@ class AdminTags extends AdminController implements CRUDInterface
 
     public function update($id, $type = '')
     {
-        if ($type === 'p/') {
+        if ($type === '/p') {
             $tag = TagsProposedModel::get(['id' => $id]);
-        } elseif ($type == 'r/') {
+        } elseif ($type == '/r') {
             $tag = TagsRefusedModel::get(['id' => $id]);
         } else {
             $tag = TagsModel::get(['id' => $id]);
@@ -176,18 +177,18 @@ class AdminTags extends AdminController implements CRUDInterface
 
             if (empty($word)) {
                 Out::session('warning', 'tag_empty');
-                $this->redirect('admin/tag/' . $type . $id . '/update');
+                $this->redirect('admin/tag/' . $id . $type . '/update');
             } elseif ($tag->word === $word) {
                 Out::session('info', 'not_changed');
-                $this->redirect('admin/tag/' . $type . $id . '/update');
+                $this->redirect('admin/tag/' . $id . $type . '/update');
             } elseif (TagsModel::tagExist($word)) {
                 Out::session('info', 'already_exist');
-                $this->redirect('admin/tag/' . $type . $id . '/update');
+                $this->redirect('admin/tag/' . $id . $type . '/update');
             }
 
             $tag->word = $word;
 
-            if ($type === 'p/' && In::isSetPost(['positive', 'total'])) {
+            if ($type === '/p' && In::isSetPost(['positive', 'total'])) {
                 $tag->positive_votes = In::post('positive', FILTER_SANITIZE_NUMBER_INT);
                 $tag->total_votes = In::post('total', FILTER_SANITIZE_NUMBER_INT);
 
@@ -199,7 +200,7 @@ class AdminTags extends AdminController implements CRUDInterface
                 TagsProposedModel::save($tag);
             } elseif ($type === '') {
                 TagsModel::save($tag);
-            } elseif ($type === 'r/') {
+            } elseif ($type === '/r') {
                 TagsRefusedModel::save($tag);
             } else {
                 Out::session('warning', 'invalid_type');
@@ -221,9 +222,9 @@ class AdminTags extends AdminController implements CRUDInterface
 
     public function delete($id, $type = '')
     {
-        if ($type === 'r/') {
+        if ($type === '/r') {
             $tag = TagsRefusedModel::get(['id' => $id]);
-        } elseif ($type === 'p/') {
+        } elseif ($type === '/p') {
             $tag = TagsProposedModel::get(['id' => $id]);
         } else {
             $tag = TagsModel::get(['id' => $id]);
@@ -236,9 +237,9 @@ class AdminTags extends AdminController implements CRUDInterface
 
         $this->checkCSRF('admin/tags');
 
-        if ($type === 'r/') {
+        if ($type === '/r') {
             TagsRefusedModel::delete($tag);
-        } elseif ($type === 'p/') {
+        } elseif ($type === '/p') {
             TagsProposedModel::delete($tag);
         } else {
             TagsModel::delete($tag);
@@ -260,7 +261,7 @@ class AdminTags extends AdminController implements CRUDInterface
                 $origin = 'refused';
             } else {
                 Out::session('warning', 'not_exist');
-                $this->redirect('admin /tags');
+                $this->redirect('admin/tags');
 
                 return;
             }

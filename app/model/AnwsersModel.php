@@ -25,14 +25,30 @@ class AnwsersModel extends Model
 {
     protected static $table = 'anwsers';
 
+    public static function sortComments($id)
+    {
+        $array = static::getComments($id);
+
+        foreach ($array as $item) {
+            $itemsById[$item->id] = $item;
+        }
+
+        $itemsReversed = array_reverse(sort($itemsById));
+        $itemsTree = [];
+        foreach ($itemsReversed as $item) {
+            if ($item->parent_id) {
+                $itemsReversed[$item->parent_id]->items = $item;
+            } else {
+                $itemsTree[] = $item;
+            }
+        }
+
+        return $itemsTree;
+    }
+
     public static function getComments($id)
     {
         return self::newQuery()->select()->from('answer_comments')->where(['answer_id', '=', $id]);
-    }
-
-    public static function count()
-    {
-        return self::newQuery()->select('COUNT(*) as count')->from(static::$table)->first()->count;
     }
 
     public static function page($page = 0, $pagination = PAGINATION)

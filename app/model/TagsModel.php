@@ -47,7 +47,7 @@ class TagsModel extends Model
             ->select()
             ->from(['tags_technotes', 'technotes'])
             ->where([
-                'conditions' => 'technotes.id = technote_id AND tag_id =: id',
+                'conditions' => 'technotes.id = technote_id AND tag_id = :id',
                 'values' => [':id' => $id],
             ]);
 
@@ -65,11 +65,6 @@ class TagsModel extends Model
             ]);
 
         return $query->find();
-    }
-
-    public static function count()
-    {
-        return self::newQuery()->select('COUNT(*) as count')->from(static::$table)->first()->count;
     }
 
     public static function page($page = 0, $pagination = PAGINATION)

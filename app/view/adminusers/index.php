@@ -6,8 +6,7 @@ var_dump(get_defined_vars());
     <li class="active">Users</li>
 </ol>
 
-<a href="<?= WEB_ROOT . '/admin/user/create' ?>">Creer</a>
-<a href="<?= WEB_ROOT . '/admin/' ?>">home</a>
+<a href="<?= WEB_ROOT . '/admin/user/create' ?>"><i class="glyphicon glyphicon-plus"></i> Creer</a>
 <table class="table table-striped">
 
     <thead>

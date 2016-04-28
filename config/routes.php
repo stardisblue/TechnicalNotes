@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use rave\core\Config;
 use rave\core\Error;
 use rave\core\exception\RouterException;
 use rave\core\router\Router;
@@ -84,20 +83,24 @@ $router->get('/admin/tags:type/:page', ['AdminTags' => 'index'])
 $router->get('/admin/tag/create', ['AdminTags' => 'create']);
 $router->post('/admin/tag/create', ['AdminTags' => 'create']);
 
-$router->get('/admin/tag/:type:id', ['AdminTags' => 'view'])
+$router->get('/admin/tag/:id:type', ['AdminTags' => 'view'])
     ->with('id', '(\d+)')
-    ->with('type', '(([rp]\/)?)');
+    ->with('type', '((\/[rp])?)');
 
-$router->get('/admin/tag/:type:id/update', ['AdminTags' => 'update'])
+$router->get('/admin/tag/:id:type/update', ['AdminTags' => 'update'])
     ->with('id', '(\d+)')
-    ->with('type', '(([rp]\/)?)');
-$router->post('/admin/tag/:type:id/update', ['AdminTags' => 'update'])
+    ->with('type', '((\/[rp])?)');
+$router->post('/admin/tag/:id:type/update', ['AdminTags' => 'update'])
     ->with('id', '(\d+)')
-    ->with('type', '(([rp]\/)?)');
+    ->with('type', '((\/[rp])?)');
 
-$router->post('/admin/tag/:type:id/delete', ['AdminTags' => 'delete'])
+$router->post('/admin/tag/:id:type/delete', ['AdminTags' => 'delete'])
     ->with('id', '(\d+)')
-    ->with('type', '(([rp]\/)?)');
+    ->with('type', '((\/[rp])?)');
+
+$router->post('/admin/tag/accept', ['adminTags' => 'acceptExisting']);
+$router->post('/admin/tag/refuse', ['adminTags' => 'refuseExisting']);
+$router->post('/admin/tag/propose', ['adminTags' => 'proposeExisting']);
 
 //re ajax
 $router->post('/ajax/admin/tags', ['Ajax' => 'tagsIndex']);
@@ -122,26 +125,23 @@ $router->post('/admin/technote/:id/delete', ['AdminTechnotes' => 'delete'])->wit
  * Questions
  */
 //list
-$router->get('admin/questions', ['AdminQuestions' => 'index']);
-$router->get('admin/questions/:page', ['AdminQuestions' => 'index'])
-    ->with('page', '(\d+)');
+/*
+ * Technotes
+ */
+$router->get('/admin/questions', ['AdminQuestions' => 'index']);
+$router->get('/admin/questions/:page', ['AdminQuestions' => 'index'])->with('page', '(\d+)');
 
-//create
 $router->get('/admin/question/create', ['AdminQuestions' => 'create']);
 $router->post('/admin/question/create', ['AdminQuestions' => 'create']);
 
-// view
 $router->get('/admin/question/:id', ['AdminQuestions' => 'view'])->with('id', '(\d+)');
 
-/*
- * Error routes
- */
-$router->get(Config::getError('404'), ['Error' => 'notFound']);
+$router->get('/admin/question/:id/update', ['AdminQuestions' => 'update'])->with('id', '(\d+)');
+$router->post('/admin/question/:id/update', ['AdminQuestions' => 'update'])->with('id', '(\d+)');
 
-$router->get(Config::getError('403'), ['Error' => 'forbidden']);
-
-$router->get(Config::getError('500'), ['Error' => 'internalServerError']);
-
+$router->post('/admin/question/:id/delete', ['AdminQuestions' => 'delete'])->with('id', '(\d+)');
+$router->post('/admin/question/:id/close', ['AdminQuestions' => 'close'])->with('id', '(\d+)');
+$router->post('/admin/question/:id/open', ['AdminQuestions' => 'open'])->with('id', '(\d+)');
 /**
  * Run the router. If an exception is caught, the user
  * will be redirected to a 404 error page.

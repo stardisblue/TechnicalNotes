@@ -9,13 +9,13 @@ var_dump(get_defined_vars());
 
         <div class="form-group">
             <label for="title">Titre :</label>
-            <input type="text" name="title" id="title" class="form-control" value="<?= $technote->title ?>"
+            <input type="text" name="title" id="title" class="form-control" value="<?= $question->title ?>"
                    placeholder="Les meilleurs titres sont les plus courts">
         </div>
         <div class="form-group">
             <label for="content">Note :</label>
             <textarea name="content" id="content" cols="30" rows="10"
-                      class="form-control"><?= $technote->content ?></textarea>
+                      class="form-control"><?= $question->content ?></textarea>
         </div>
 
         <label for="tags">Mots-clés</label>
@@ -29,6 +29,9 @@ var_dump(get_defined_vars());
         <select class="form-control" name="user_id" id="user_id">
             <option value="<?= $user->id ?>" selected><?= $user->username ?></option>
         </select>
+
+        <label for="status">Résolu</label>
+        <input type="checkbox" name="status" id="status" value="closed" <?= $question->status ? 'checked' : null ?>>
 
         <button class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Mettre a jour</button>
     </fieldset>

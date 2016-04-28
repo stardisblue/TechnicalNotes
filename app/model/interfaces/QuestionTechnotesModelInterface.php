@@ -29,7 +29,5 @@ interface QuestionTechnotesModelInterface
 
     public static function removeTag($id, $tag_id);
 
-    public static function count();
-
     public static function page($page = 0, $pagination = PAGINATION);
 }

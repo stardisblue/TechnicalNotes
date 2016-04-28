@@ -26,6 +26,29 @@ class TechnotesModel extends Model implements QuestionTechnotesModelInterface
 {
     protected static $table = 'technotes';
 
+    public static function sortComments($id)
+    {
+        $array = static::getComments($id);
+
+        $itemsById = [];
+        foreach ($array as $item) {
+            $itemsById[$item->id] = $item;
+        }
+
+        sort($itemsById);
+        $itemsReversed = array_reverse($itemsById);
+        $itemsTree = [];
+        foreach ($itemsReversed as $item) {
+            if ($item->parent_id) {
+                $itemsReversed[$item->parent_id]->items = $item;
+            } else {
+                $itemsTree[] = $item;
+            }
+        }
+
+        return $itemsTree;
+    }
+
     public static function getComments($id)
     {
 
@@ -66,11 +89,6 @@ class TechnotesModel extends Model implements QuestionTechnotesModelInterface
             ]);
 
         return $query->execute();
-    }
-
-    public static function count()
-    {
-        return self::newQuery()->select('COUNT(*) as count')->from(static::$table)->first()->count;
     }
 
     public static function page($page = 0, $pagination = PAGINATION)

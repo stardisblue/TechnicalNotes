@@ -55,6 +55,27 @@
     </div>
 </nav>
 <div class="container">
+    <?php if (isset($info)): ?>
+        <div class="alert alert-info alert-dismissible fade in" role=alert>
+            <button type=button class=close data-dismiss=alert aria-label=Close><span aria-hidden=true>&times;</span>
+            </button>
+            <?= $info ?>
+        </div>
+    <?php endif; ?>
+    <?php if (isset($success)): ?>
+        <div class="alert alert-success alert-dismissible fade in" role=alert>
+            <button type=button class=close data-dismiss=alert aria-label=Close><span aria-hidden=true>&times;</span>
+            </button>
+            <?= $success ?>
+        </div>
+    <?php endif; ?>
+    <?php if (isset($warning)): ?>
+        <div class="alert alert-danger alert-dismissible fade in" role=alert>
+            <button type=button class=close data-dismiss=alert aria-label=Close><span aria-hidden=true>&times;</span>
+            </button>
+            <?= $warning ?>
+        </div>
+    <?php endif; ?>
     <?= /** @var string $content */
     $content ?>
 </div>
@@ -69,6 +90,14 @@
         crossorigin="anonymous"></script>
 <script src="<?= WEB_ROOT ?>/js/js.cookie-2.1.1.min.js"></script>
 <script src="<?= WEB_ROOT ?>/js/main.js"></script>
+
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
+
+</script>
 </body>
 </html>
 

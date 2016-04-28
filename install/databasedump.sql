@@ -35,9 +35,9 @@ CREATE TABLE `anwser_comments` (
   KEY `anwser_comments_ibfk_3` (`parent_id`),
   CONSTRAINT `anwser_comments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
     ON DELETE CASCADE,
-  CONSTRAINT `anwser_comments_ibfk_2` FOREIGN KEY (`anwser_id`) REFERENCES `anwsers` (`id`)
+  CONSTRAINT `anwser_comments_ibfk_2` FOREIGN KEY (`anwser_id`) REFERENCES answers (`id`)
     ON DELETE CASCADE,
-  CONSTRAINT `anwser_comments_ibfk_3` FOREIGN KEY (`parent_id`) REFERENCES `anwser_comments` (`id`)
+  CONSTRAINT `anwser_comments_ibfk_3` FOREIGN KEY (`parent_id`) REFERENCES answer_comments (`id`)
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

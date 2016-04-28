@@ -96,8 +96,8 @@ class AdminTechnotes extends AdminController implements CRUDInterface
             $this->loadView('view', [
                 'technote' => $technote,
                 'user' => UsersModel::get(['id' => $technote->user_id]),
-                'technote_tags' => TechnotesModel::getTags($id),
-                'technote_comments' => TechnotesModel::getComments($id)
+                'tags' => TechnotesModel::getTags($id),
+                'comments' => TechnotesModel::sortComments($id)
             ]);
 
             return;
@@ -132,8 +132,8 @@ class AdminTechnotes extends AdminController implements CRUDInterface
                 $this->loadView('update',
                     [
                         'technote' => $technote,
-                        'technoteUser' => $technoteUser,
-                        'technoteTags' => $technoteTags,
+                        'user' => $technoteUser,
+                        'tags' => $technoteTags,
                         'warning' => 'empty'
                     ]);
 
@@ -176,7 +176,7 @@ class AdminTechnotes extends AdminController implements CRUDInterface
         }
 
         $this->loadView('update',
-            ['technote' => $technote, 'technoteUser' => $technoteUser, 'technoteTags' => $technoteTags]);
+            ['technote' => $technote, 'user' => $technoteUser, 'tags' => $technoteTags]);
 
     }
 
