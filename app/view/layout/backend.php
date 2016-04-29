@@ -40,12 +40,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><?= Config::get('app')['name'] ?></a>
+            <a class="navbar-brand" href="#"><?= Config::get('app')['name'] ?> Admin</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <?php if (isset($logged)): ?>
                 <div class="navbar-left">
                     <ul class="nav navbar-nav">
+                        <li><a href="<?= WEB_ROOT ?>/"><i class="glyphicon glyphicon-open"></i>
+                                Site</a>
+                        </li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"
                                role="button" aria-haspopup="true" aria-expanded="false">Utilisateurs<span

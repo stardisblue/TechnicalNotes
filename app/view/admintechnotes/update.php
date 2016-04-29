@@ -34,7 +34,7 @@
     $(document).ready(function () {
         $('#tags').select2(
             ajaxBuilder(
-                '<?=WEB_ROOT?>/ajax/admin/tags',
+                '<?=WEB_ROOT?>/ajax/tags',
                 function (params) {
                     return {
                         csrf_ajax: Cookies.get('csrf_ajax'),

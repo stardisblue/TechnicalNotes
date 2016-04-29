@@ -19,13 +19,25 @@
 
 namespace techweb\app\controller\abstracts;
 
+use rave\lib\core\io\In;
+use rave\lib\core\io\Out;
+use techweb\app\model\UsersModel;
+
 abstract class FrontEndController extends AppController
 {
 
     public function __construct()
     {
         parent::__construct();
-        $this->setLayout('frontend');
+
+        $this->setLayout('frontend', $this->data);
+
+        $this->data['userLogged'] = UsersModel::get(['id' => In::session('login')]);
+        if ($this->data['userLogged'] === null) {
+            Out::unsetSession('admin');
+            Out::unsetSession('login');
+        }
+
     }
 
 }

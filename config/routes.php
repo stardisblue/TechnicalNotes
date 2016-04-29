@@ -26,13 +26,103 @@ use rave\core\router\Router;
  */
 $router = new Router(isset($_GET['url']) ? $_GET['url'] : '/');
 
-$router->get('/', ['Main' => 'index']);
+/* #########################################
+ * ###                                  ####
+ * ###          Ajax Routes             ####
+ * ###                                  ####
+ * #########################################
+ */
 
-$router->get('/', ['Main' => 'index']);
+$router->post('/ajax/admin/users', ['Ajax' => 'usersIndex']); #
+$router->post('/ajax/tags', ['Ajax' => 'tagsIndex']); #
 
-$router->get('/users', ['Users' => 'listUsers']);
-$router->get('/user/add', ['Users' => 'addUser']);
-$router->post('/user/add', ['Users' => 'addUser']);
+/* #########################################
+ * ###                                  ####
+ * ###          App Routes              ####
+ * ###                                  ####
+ * #########################################
+ */
+
+$router->get('/', ['Main' => 'index']); #
+$router->get('/login', ['Users' => 'login']); #
+$router->post('/login', ['Users' => 'login']); #
+$router->get('/logout', ['Users' => 'logout']); #
+
+// search, yep, SEARCH
+$router->get('/search/', ['Main' => 'search']);
+
+/*
+ * User
+ */
+$router->get('/register', ['Users' => 'create']); #
+
+$router->get('/validation', ['Users' => 'validate']); #
+
+$router->post('/register', ['Users' => 'create']);
+
+$router->get('/users', ['Users' => 'index']); #
+$router->get('/user', ['Users' => 'view']); #
+$router->get('/user/:id', ['Users' => 'view'])->with('id', '\d+'); #
+
+$router->get('/user/edit', ['Users' => 'update']); #
+$router->post('/user/edit', ['Users' => 'update']); #
+
+$router->post('/user/delete', ['Users' => 'delete']); #
+
+/*
+ * Technotes
+ */
+$router->get('/technotes', ['Technotes' => 'index']); #
+
+$router->get('/technote/create', ['Technotes' => 'create']); #
+$router->post('/technote/create', ['Technotes' => 'create']); #
+
+$router->get('/technote/:id-:slug', ['Technotes' => 'view'])->with('id', '(\d+)')->with('slug', '[\d\w-_]+'); #
+
+$router->get('/technote/:id/edit', ['Technotes' => 'update'])->with('id', '(\d+)'); #
+$router->post('/technote/:id/edit', ['Technotes' => 'update'])->with('id', '(\d+)'); #
+
+$router->post('/technote/:id/comment', ['Technotes' => 'addComment'])->with('id', '(\d+)');
+$router->post('/technote/:id/comment/delete', ['Technotes' => 'deleteComment'])->with('id', '(\d+)');
+
+$router->post('/technote/:id/delete', ['Technotes' => 'delete'])->with('id', '(\d+)');
+
+$router->post('/technote/:id/tag', ['Technotes' => 'addTag'])->with('id', '(\d+)');
+$router->post('/technote/:id/tag/delete', ['Technotes' => 'deleteTag'])->with('id', '(\d+)');
+
+/*
+ * Questions
+ */
+$router->get('/questions', ['Questions' => 'index']);
+
+$router->get('/question/:id-:slug', ['Questions' => 'view'])->with('id', '(\d+)')->with('slug', '[\d\w-_]+');
+
+$router->get('/question/:id/edit', ['Questions' => 'update'])->with('id', '(\d+)');
+$router->post('/question/:id/edit', ['Questions' => 'update'])->with('id', '(\d+)');
+
+$router->post('/question/:id/delete', ['Questions' => 'delete'])->with('id', '(\d+)');
+
+$router->post('/question/:id/comment', ['Questions' => 'addComment'])->with('id', '(\d+)');
+$router->post('/question/:id/comment/delete', ['Questions' => 'deleteComment'])->with('id', '(\d+)');
+
+$router->post('/question/:id/answer', ['Questions' => 'addAnswer'])->with('id', '(\d+)');
+$router->post('/question/:id/answer/delete', ['Questions' => 'deleteAnswer'])->with('id', '(\d+)');
+
+$router->post('/question/:id/:idanswer/comment', ['Questions' => 'addAnswerComment'])
+    ->with('id', '(\d+)')
+    ->with('idanswer', '\d+');
+$router->post('/question/:id/:idanswer/comment', ['Questions' => 'deleteAnswerComment'])
+    ->with('id', '(\d+)')
+    ->with('idanswer', '\d+');
+
+$router->post('/question/:id/close', ['Questions' => 'close'])->with('id', '(\d+)');
+$router->post('/question/:id/open', ['Questions' => 'open'])->with('id', '(\d+)');
+
+/*
+ * Tags
+ */
+$router->get('/tags', ['Tags' => 'index']);
+//TODO
 
 /* #########################################
  * ###                                  ####
@@ -41,11 +131,11 @@ $router->post('/user/add', ['Users' => 'addUser']);
  * #########################################
  */
 
-$router->get('/admin', ['AdminInterface' => 'index']);
+$router->get('/admin', ['AdminInterface' => 'index']); #
 
-$router->get('/admin/login', ['AdminInterface' => 'login']);
-$router->post('/admin/login', ['AdminInterface' => 'login']);
-$router->get('/admin/logout', ['AdminInterface' => 'logout']);
+$router->get('/admin/login', ['AdminInterface' => 'login']); #
+$router->post('/admin/login', ['AdminInterface' => 'login']); #
+$router->get('/admin/logout', ['AdminInterface' => 'logout']); #
 
 /*
  * Users
@@ -67,9 +157,6 @@ $router->post('/admin/user/:id/validate', ['AdminUsers' => 'validate'])->with('i
 
 $router->post('/admin/user/:id/upgrade', ['AdminUsers' => 'upgrade'])->with('id', '(\d+)');
 $router->post('/admin/user/:id/downgrade', ['AdminUsers' => 'downgrade'])->with('id', '(\d+)');
-
-//yup ajax ;)
-$router->post('/ajax/admin/users', ['Ajax' => 'usersIndex']);
 
 /*
  * TAGS
@@ -103,9 +190,6 @@ $router->post('/admin/tag/accept', ['adminTags' => 'acceptExisting']);
 $router->post('/admin/tag/refuse', ['adminTags' => 'refuseExisting']);
 $router->post('/admin/tag/propose', ['adminTags' => 'proposeExisting']);
 
-//re ajax
-$router->post('/ajax/admin/tags', ['Ajax' => 'tagsIndex']);
-
 /*
  * Technotes
  */
@@ -124,10 +208,6 @@ $router->post('/admin/technote/:id/delete', ['AdminTechnotes' => 'delete'])->wit
 
 /**
  * Questions
- */
-//list
-/*
- * Technotes
  */
 $router->get('/admin/questions', ['AdminQuestions' => 'index']);
 $router->get('/admin/questions/:page', ['AdminQuestions' => 'index'])->with('page', '(\d+)');

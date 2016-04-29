@@ -52,7 +52,12 @@ class TechnotesModel extends Model implements QuestionTechnotesModelInterface
     public static function getComments($id)
     {
 
-        $query = self::newQuery()->select()->from('technote_comments')->where(['technote_id', '=', $id]);
+        $query =
+            self::newQuery()->select('technote_comments.*, users.username')->from('technote_comments, users')
+                ->where([
+                    'conditions' => 'technote_id = :technote_id AND user_id = users.id',
+                    'values' => [':technote_id' => $id]
+                ]);
 
         return $query->find();
 
@@ -96,5 +101,15 @@ class TechnotesModel extends Model implements QuestionTechnotesModelInterface
         return self::newQuery()->select()->from(static::$table)->appendSQL('ORDER BY creation_date DESC LIMIT ' . $page
             * $pagination . ','
             . $pagination)->find(null, static::getEntityName());
+    }
+
+    public static function getByUser($id)
+    {
+        $query = self::newQuery()
+            ->select()
+            ->from(static::$table)
+            ->where(['user_id', '=', $id]);
+
+        return $query->find(null, static::getEntityName());
     }
 }

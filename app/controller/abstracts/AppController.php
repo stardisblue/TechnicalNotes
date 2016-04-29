@@ -23,6 +23,7 @@ use rave\core\Controller;
 use rave\lib\core\io\In;
 use rave\lib\core\io\Out;
 use rave\lib\core\security\CSRF;
+use techweb\app\model\UsersModel;
 
 abstract class AppController extends Controller
 {
@@ -32,7 +33,6 @@ abstract class AppController extends Controller
         $token = CSRF::getToken();
         $this->data['csrf'] = $token;
         setcookie('csrf', $token, 0, WEB_ROOT . '/', null, null, true);
-
     }
 
     protected function checkCSRF($redirect = '', $message = 'csrf', $method = 'post', $name = 'csrf')

@@ -34,6 +34,7 @@ class Ajax extends Controller
         $token = CSRF::getToken();
         $this->data['csrf_ajax'] = $token;
         setcookie('csrf_ajax', $token, 0, WEB_ROOT . '/');
+        $this->setLayout('ajax');
 
     }
 
@@ -55,7 +56,6 @@ class Ajax extends Controller
     public function usersIndex()
     {
         if (In::isSetPost(['search'])) {
-            $this->setLayout('ajax');
             $username = Text::clean(In::post('search', FILTER_SANITIZE_EMAIL));
             $page = In::post('page') ? In::post('page', FILTER_SANITIZE_NUMBER_INT) : 0;
 
@@ -70,7 +70,6 @@ class Ajax extends Controller
     public function tagsIndex()
     {
         if (In::isSetPost(['search'])) {
-            $this->setLayout('ajax');
             $word = Text::clean(In::post('search', FILTER_SANITIZE_EMAIL));
             $page = In::post('page') ? In::post('page', FILTER_SANITIZE_NUMBER_INT) : 0;
 

@@ -41,40 +41,44 @@ class AdminInterface extends AdminController
 
     public function login()
     {
-        if (!In::isSetPost(['email', 'password', 'csrf'])) {
-            $success = In::session('success');
-            $info = In::session('info');
-            $warning = In::session('warning');
-            $this->loadView('login', ['warning' => $warning, 'info' => $info, 'success' => $success]);
-            Out::unsetSession('success');
-            Out::unsetSession('info');
-            Out::unsetSession('warning');
+        if (!isset($this->data['logged'])) {
+            if (!In::isSetPost(['email', 'password', 'csrf'])) {
+                $success = In::session('success');
+                $info = In::session('info');
+                $warning = In::session('warning');
+                $this->loadView('login', ['warning' => $warning, 'info' => $info, 'success' => $success]);
+                Out::unsetSession('success');
+                Out::unsetSession('info');
+                Out::unsetSession('warning');
 
-            return;
+                return;
+            }
+
+            $this->checkCSRF('admin/login');
+
+            $user = UsersModel::getByEmail(In::post('email'));
+            // check if the user is an admin
+            if (!isset($user) || !UsersModel::userIsAdmin($user->id)) {
+                $this->loadView('login', ['warning' => 'login_error', 'info' => null]);
+
+                return;
+            }
+
+            // check if the password is the good one
+            if (!Password::verify(In::post('password'), $user->password)) {
+                $this->loadView('login', ['warning' => 'password_error', 'info' => null]);
+
+                return;
+            }
+
+            // the user is an admin
+            // the has this name :)
+            Auth::login('admin');
+            Out::session('login', $user->id);
         }
 
-        $this->checkCSRF('admin/login');
-
-        $user = UsersModel::getByEmail(In::post('email'));
-        // check if the user is an admin
-        if (!isset($user) || !UsersModel::userIsAdmin($user->id)) {
-            $this->loadView('login', ['warning' => 'login_error', 'info' => null]);
-
-            return;
-        }
-
-        // check if the password is the good one
-        if (!Password::verify(In::post('password'), $user->password)) {
-            $this->loadView('login', ['warning' => 'password_error', 'info' => null]);
-
-            return;
-        }
-
-        // the user is an admin
-        // the has this name :)
-        Auth::login('admin');
-        Out::session('login', $user->id);
         $this->redirect('admin/');
+
     }
 
     public function logout()

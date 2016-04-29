@@ -44,7 +44,7 @@ class QuestionsModel extends Model implements QuestionTechnotesModelInterface
         foreach ($array as $item) {
             $itemsById[$item->id] = $item;
         }
-        
+
         sort($itemsById);
         $itemsReversed = array_reverse($itemsById);
         $itemsTree = [];
@@ -112,5 +112,15 @@ class QuestionsModel extends Model implements QuestionTechnotesModelInterface
         return self::newQuery()->select()->from(static::$table)->appendSQL('ORDER BY creation_date DESC LIMIT ' . $page
             * $pagination . ','
             . $pagination)->find(null, static::getEntityName());
+    }
+
+    public static function getByUser($id)
+    {
+        $query = self::newQuery()
+            ->select()
+            ->from(static::$table)
+            ->where(['user_id', '=', $id]);
+
+        return $query->find(null, static::getEntityName());
     }
 }

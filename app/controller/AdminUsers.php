@@ -94,7 +94,13 @@ class AdminUsers extends AdminController implements CRUDInterface
 
             $this->loadView('create', ['warning' => $warning, 'info' => $info]);
         } else {
-            $this->loadView('create');
+            $info = In::session('info');
+            $warning = In::session('warning');
+            $success = In::session('success');
+            $this->loadView('create', ['warning' => $warning, 'info' => $info, 'success' => $success]);
+            Out::unsetSession('info');
+            Out::unsetSession('warning');
+            Out::unsetSession('success');
         }
     }
 
@@ -138,7 +144,7 @@ class AdminUsers extends AdminController implements CRUDInterface
                 return;
             }
 
-            $user_entity->email = Text::clean(In::post('email'));
+            $user_entity->email = $email;
             $user_entity->username = $username;
 
             UsersModel::save($user_entity);

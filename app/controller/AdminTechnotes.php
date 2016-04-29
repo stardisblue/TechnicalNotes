@@ -76,7 +76,7 @@ class AdminTechnotes extends AdminController implements CRUDInterface
 
             $tags = In::post('tags', FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE | FILTER_FORCE_ARRAY);
             foreach ($tags as $tagId) {
-                if ($tag = TagsModel::get($tagId)) {
+                if ($tag = TagsModel::get(['id' => $tagId])) {
                     TechnotesModel::addTag($technote->id, $tag->id);
                 }
             }
@@ -127,7 +127,6 @@ class AdminTechnotes extends AdminController implements CRUDInterface
             $title = Text::clean(In::post('title'));
             $content = Text::clean(In::post('content'));
 
-            //todo update In::post() and In::get() to add flags
             if (empty($title) || empty($content)) {
                 $this->loadView('update',
                     [

@@ -19,6 +19,8 @@
 
 namespace techweb\app\controller;
 
+use rave\lib\core\io\In;
+use rave\lib\core\io\Out;
 use techweb\app\controller\abstracts\FrontEndController;
 
 class Main extends FrontEndController
@@ -26,7 +28,17 @@ class Main extends FrontEndController
 
     public function index()
     {
-        $this->loadView('main');
+        $info = In::session('info');
+        $warning = In::session('warning');
+        $success = In::session('success');
+        $this->loadView('index', [
+            'info' => $info,
+            'warning' => $warning,
+            'success' => $success
+        ]);
+        Out::unsetSession('info');
+        Out::unsetSession('warning');
+        Out::unsetSession('success');
         /*
          * - 20 dernieres technotes
          * - 20 dernieres Question
