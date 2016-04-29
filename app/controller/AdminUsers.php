@@ -37,7 +37,7 @@ class AdminUsers extends AdminController implements CRUDInterface
         $success = In::session('success');
         $this->loadView('index',
             [
-                'users_count' => UsersModel::count(),
+                'count' => UsersModel::count(),
                 'users' => UsersModel::page($page),
                 'info' => $info,
                 'warning' => $warning,

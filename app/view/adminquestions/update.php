@@ -1,7 +1,3 @@
-<?php
-var_dump(get_defined_vars());
-?>
-
 <form method="post">
     <fieldset>
         <legend>Technote</legend>

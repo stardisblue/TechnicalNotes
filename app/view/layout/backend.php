@@ -1,3 +1,4 @@
+<?php use rave\core\Config; ?>
 <!DOCTYPE html>
 
 <html lang="fr">
@@ -39,18 +40,94 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Project name</a>
+            <a class="navbar-brand" href="#"><?= Config::get('app')['name'] ?></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            <form class="navbar-form navbar-right">
-                <div class="form-group">
-                    <input type="text" placeholder="Email" class="form-control">
+            <?php if (isset($logged)): ?>
+                <div class="navbar-left">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                               role="button" aria-haspopup="true" aria-expanded="false">Utilisateurs<span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?= WEB_ROOT ?>/admin/users"><i class="glyphicon glyphicon-list"></i>
+                                        Lister</a>
+                                </li>
+                                <li><a href="<?= WEB_ROOT ?>/admin/user/create"><i class="glyphicon glyphicon-plus"></i>
+                                        Creer</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                               role="button" aria-haspopup="true" aria-expanded="false">Technotes<span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?= WEB_ROOT ?>/admin/technotes"><i class="glyphicon glyphicon-list"></i>
+                                        Lister</a>
+                                </li>
+                                <li><a href="<?= WEB_ROOT ?>/admin/technote/create"><i
+                                            class="glyphicon glyphicon-plus"></i>
+                                        Creer</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                               role="button" aria-haspopup="true" aria-expanded="false">Questions<span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?= WEB_ROOT ?>/admin/questions"><i class="glyphicon glyphicon-list"></i>
+                                        Lister</a>
+                                </li>
+                                <li><a href="<?= WEB_ROOT ?>/admin/question/create"><i
+                                            class="glyphicon glyphicon-plus"></i>
+                                        Creer</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                               role="button" aria-haspopup="true" aria-expanded="false">Tags<span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?= WEB_ROOT ?>/admin/tags"><i class="glyphicon glyphicon-list"></i>
+                                        Lister</a>
+                                </li>
+                                <li><a href="<?= WEB_ROOT ?>/admin/tags/r"><i class="glyphicon glyphicon-list"></i>
+                                        Lister refusés</a>
+                                </li>
+                                <li><a href="<?= WEB_ROOT ?>/admin/tags/p"><i class="glyphicon glyphicon-list"></i>
+                                        Lister proposées</a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="<?= WEB_ROOT ?>/admin/tag/create"><i class="glyphicon glyphicon-plus"></i>
+                                        Creer</a></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
-                <div class="form-group">
-                    <input type="password" placeholder="Password" class="form-control">
-                </div>
-                <button type="submit" class="btn btn-success">Sign in</button>
-            </form>
+            <?php endif; ?>
+            <div class="navbar-right">
+                <?php if (isset($logged)): ?>
+                    <p class="navbar-text">
+                        Bienvenue <a class="navbar-link"
+                                     href="<?= WEB_ROOT ?>/admin/user/<?= $logged->id ?>"><?= $logged->name ?> <?= $logged->firstname ?></a>
+                    </p>
+                    <a class="navbar-text navbar-link" href="<?= WEB_ROOT ?>/admin/logout?csrf=<?= $csrf ?>">Se
+                        deconnecter</a>
+
+                <?php else: ?>
+                    <form class="navbar-form" method="post" action="<?= WEB_ROOT ?>/admin/login">
+                        <input type="hidden" name="csrf" value="<?= $csrf ?>">
+                        <div class="form-group">
+                            <input type="text" placeholder="Email" class="form-control" name="email">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" placeholder="Password" class="form-control" name="password">
+                        </div>
+                        <button type="submit" class="btn btn-success">Sign in</button>
+                    </form>
+                <?php endif; ?>
+            </div>
         </div><!--/.navbar-collapse -->
     </div>
 </nav>
@@ -95,10 +172,6 @@
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
-
-
 </script>
 </body>
 </html>
-
-

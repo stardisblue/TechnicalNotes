@@ -38,7 +38,7 @@ class AdminQuestions extends AdminController implements CRUDInterface
         $success = In::session('success');
         $this->loadView('index',
             [
-                'questions_count' => QuestionsModel::count(),
+                'count' => QuestionsModel::count(),
                 'questions' => QuestionsModel::page($page),
                 'info' => $info,
                 'warning' => $warning,

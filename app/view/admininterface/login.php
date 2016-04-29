@@ -1,24 +1,14 @@
-<?php
-var_dump(get_defined_vars());
-
-if (isset($warning)) {
-    var_dump($warning);
-}
-if (isset($info)) {
-    var_dump($info);
-}
-if (isset($success)) {
-    var_dump($success);
-}
-?>
-
-<form action="" method="post">
+<form class="form-signin" method="post">
+    <h2 class="form-signin-heading">Se connecter</h2>
     <input type="hidden" name="csrf" value="<?= $csrf ?>"/>
-    <label for="email">Email</label>
-    <input type="email" name="email" id="email" required>
 
-    <label for="password">Mot de passe</label>
-    <input type="password" name="password" id="password" required>
+    <label for="inputEmail" class="sr-only">Email</label>
 
-    <input type="submit" value="Se connecter">
+    <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required
+           autofocus>
+
+    <label for="inputPassword" class="sr-only">Mot de passe</label>
+    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 </form>

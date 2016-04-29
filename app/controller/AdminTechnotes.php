@@ -38,7 +38,7 @@ class AdminTechnotes extends AdminController implements CRUDInterface
         $success = In::session('success');
         $this->loadView('index',
             [
-                'technotes_count' => TechnotesModel::count(),
+                'count' => TechnotesModel::count(),
                 'technotes' => TechnotesModel::page($page),
                 'info' => $info,
                 'warning' => $warning,

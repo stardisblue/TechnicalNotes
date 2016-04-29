@@ -1,9 +1,3 @@
-<?php
-
-var_dump(get_defined_vars());
-
-?>
-
 <form action="" method="post">
     <input type="hidden" name="csrf" value="<?= $csrf ?>"/>
     <label for="name">name</label>

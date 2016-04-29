@@ -1,4 +1,3 @@
-<?php var_dump(get_defined_vars()); ?>
 <ol class="breadcrumb">
     <li><a href="<?= WEB_ROOT . '/admin' ?>">Home</a></li>
     <li class="active">Tags</li>

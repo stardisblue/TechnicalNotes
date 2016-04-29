@@ -1,32 +1,29 @@
-<?php
-var_dump(get_defined_vars());
-?>
 <ol class="breadcrumb">
     <li><a href="<?= WEB_ROOT . '/admin' ?>">Home</a></li>
     <li class="active">Users</li>
 </ol>
 
-<a href="<?= WEB_ROOT . '/admin/user/create' ?>"><i class="glyphicon glyphicon-plus"></i> Creer</a>
+<a class="btn btn-success" href="<?= WEB_ROOT . '/admin/user/create' ?>"><i class="glyphicon glyphicon-plus"></i> Creer</a>
+
 <table class="table table-striped">
 
     <thead>
     <tr>
-        <th>id</th>
         <th>nom</th>
         <th>prenom</th>
+        <th>Pseudo</th>
         <th>email</th>
         <th>actif</th>
         <th>admin</th>
-        <th>edit</th>
-        <th>supprimer</th>
+        <th>actions</th>
     </tr>
     </thead>
     <tbody>
     <?php foreach ($users as $user): ?>
         <tr>
-            <td><?= $user->id ?></td>
             <td><?= $user->name ?></td>
             <td><?= $user->firstname ?></td>
+            <td><?= $user->username ?></td>
             <td><?= $user->email ?></td>
 
             <td>
@@ -57,13 +54,24 @@ var_dump(get_defined_vars());
                     </form>
                 <?php endif; ?>
             </td>
-            <td><a class="btn btn-success" href="<?= WEB_ROOT . '/admin/user/' . $user->id . '/update' ?>"><i
-                        class="glyphicon glyphicon-edit"></i> Modifier</a>
-            </td>
             <td>
-                <form action="/admin/user/<?= $user->id ?>/delete" method="post">
-                    <input type="hidden" name="csrf" value="<?= $csrf ?>">
-                    <button type="submit" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i></button>
+                <form action="<?= WEB_ROOT ?>/admin/user/<?= $user->id ?>/delete" method="post">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a href="<?= WEB_ROOT ?>/admin/user/<?= $user->id ?>" class="btn btn-default"
+                           data-toggle="tooltip" title="Voir">
+                            <i class="glyphicon glyphicon-eye-open"></i>
+                        </a>
+                        <a href="<?= WEB_ROOT ?>/admin/user/<?= $user->id ?>/update"
+                           class="btn btn-default"
+                           data-toggle="tooltip" title="Modifier">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </a>
+
+                        <input type="hidden" name="csrf" value="<?= $csrf ?>">
+                        <button type="submit" class="btn btn-danger" data-toggle="tooltip" title="Supprimer">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </button>
+                    </div>
                 </form>
             </td>
         </tr>
