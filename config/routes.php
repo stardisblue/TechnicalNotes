@@ -74,10 +74,11 @@ $router->post('/ajax/admin/users', ['Ajax' => 'usersIndex']);
 /*
  * TAGS
  */
-$router->get('/admin/tags:type', ['AdminTags' => 'index'])
-    ->with('type', '((\/[rp])?)');
-$router->get('/admin/tags:type/:page', ['AdminTags' => 'index'])
-    ->with('page', '(\d+)')
+$router->get('/admin/tags:page:type', ['AdminTags' => 'index'])
+    ->with('page', '(\/\d*)?')
+    ->with('type', '(\/[rp])?');
+$router->get('/admin/tags/:page:type', ['AdminTags' => 'index'])
+    ->with('page', '((\d+)?)')
     ->with('type', '((\/[rp])?)');
 
 $router->get('/admin/tag/create', ['AdminTags' => 'create']);
@@ -140,8 +141,10 @@ $router->get('/admin/question/:id/update', ['AdminQuestions' => 'update'])->with
 $router->post('/admin/question/:id/update', ['AdminQuestions' => 'update'])->with('id', '(\d+)');
 
 $router->post('/admin/question/:id/delete', ['AdminQuestions' => 'delete'])->with('id', '(\d+)');
+
 $router->post('/admin/question/:id/close', ['AdminQuestions' => 'close'])->with('id', '(\d+)');
 $router->post('/admin/question/:id/open', ['AdminQuestions' => 'open'])->with('id', '(\d+)');
+
 /**
  * Run the router. If an exception is caught, the user
  * will be redirected to a 404 error page.

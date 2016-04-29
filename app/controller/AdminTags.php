@@ -35,6 +35,9 @@ class AdminTags extends AdminController implements CRUDInterface
 {
     public function index($page = 0, $type = '')
     {
+        if (!$page) {
+            $page = 0;
+        }
         $info = In::session('info');
         $warning = In::session('warning');
         $success = In::session('success');
@@ -48,6 +51,7 @@ class AdminTags extends AdminController implements CRUDInterface
         }
 
         $this->loadView('index', $send + [
+                'type' => $type,
                 'info' => $info,
                 'warning' => $warning,
                 'success' => $success,

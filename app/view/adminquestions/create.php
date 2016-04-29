@@ -31,10 +31,10 @@ var_dump(get_defined_vars());
                     };
                 },
                 function (user) {
-                    return user.email;
+                    return user.username;
                 },
                 function (user) {
-                    return user.title || user.text;
+                    return user.username || user.text;
                 })
         );
     })

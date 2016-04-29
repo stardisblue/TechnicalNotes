@@ -85,7 +85,7 @@ class AdminQuestions extends AdminController implements CRUDInterface
 
             if (empty($title) || empty($content)) {
                 $this->loadView('create',
-                    ['question' => $question, 'users' => UsersModel::all(), 'warning' => 'empty']);
+                    ['question' => $question, 'warning' => 'empty']);
 
                 return;
             }
@@ -107,7 +107,7 @@ class AdminQuestions extends AdminController implements CRUDInterface
             $this->redirect('admin/questions');
         }
 
-        $this->loadView('create', ['users' => UsersModel::all()]);
+        $this->loadView('create');
     }
 
     public function update($id)

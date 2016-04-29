@@ -12,30 +12,43 @@
             <td><?= $tag->word ?></td>
             <td>
                 <div class="form-inline">
-                    <form action="<?= WEB_ROOT ?>/admin/tag/propose" class="form-group">
-                        <input type="hidden" name="csrf" value="<?= $csrf ?>">
-                        <input type="hidden" name="word" value="<?= $tag->word ?>">
-                        <button class="btn btn-default" type="submit" data-toggle="tooltip" title=" re-Proposer">
-                            <i class="glyphicon glyphicon-question-sign"></i>
+                    <?php if ($type !== ''): ?>
+                        <form action="<?= WEB_ROOT ?>/admin/tag/accept" class="form-group">
+                            <input type="hidden" name="csrf" value="<?= $csrf ?>">
+                            <input type="hidden" name="word" value="<?= $tag->word ?>">
+                            <button class="btn btn-success" type="submit" data-toggle="tooltip" title="Accepter">
+                                <i class="glyphicon glyphicon-ok-sign"></i>
+                            </button>
+                        </form>
+                    <?php endif; ?>
+                    <?php if ($type !== '/p'): ?>
+                        <form action="<?= WEB_ROOT ?>/admin/tag/propose" class="form-group">
+                            <input type="hidden" name="csrf" value="<?= $csrf ?>">
+                            <input type="hidden" name="word" value="<?= $tag->word ?>">
+                            <button class="btn btn-default" type="submit" data-toggle="tooltip" title="re-Proposer">
+                                <i class="glyphicon glyphicon-question-sign"></i>
 
-                        </button>
-                    </form>
-                    <form action="<?= WEB_ROOT ?>/admin/tag/refuse" class="form-group">
-                        <input type="hidden" name="csrf" value="<?= $csrf ?>">
-                        <input type="hidden" name="word" value="<?= $tag->word ?>">
-                        <button class="btn btn-danger" type="submit" data-toggle="tooltip" title="Refuser">
-                            <i class="glyphicon glyphicon-ban-circle"></i></button>
-                    </form>
+                            </button>
+                        </form>
+                    <?php endif; ?>
+                    <?php if ($type !== '/r'): ?>
+                        <form action="<?= WEB_ROOT ?>/admin/tag/refuse" class="form-group">
+                            <input type="hidden" name="csrf" value="<?= $csrf ?>">
+                            <input type="hidden" name="word" value="<?= $tag->word ?>">
+                            <button class="btn btn-danger" type="submit" data-toggle="tooltip" title="Refuser">
+                                <i class="glyphicon glyphicon-ban-circle"></i></button>
+                        </form>
+                    <?php endif; ?>
                 </div>
             </td>
             <td>
-                <form action="<?= WEB_ROOT ?>/admin/tag/<?= $tag->id ?>/delete" method="post">
+                <form action="<?= WEB_ROOT ?>/admin/tag/<?= $tag->id . $type ?>/delete" method="post">
                     <div class="btn-group" role="group" aria-label="Basic example">
-                        <a href="<?= WEB_ROOT ?>/admin/tag/<?= $tag->id ?>" class="btn btn-default"
+                        <a href="<?= WEB_ROOT ?>/admin/tag/<?= $tag->id . $type  ?>" class="btn btn-default"
                            data-toggle="tooltip" title="Voir">
                             <i class="glyphicon glyphicon-eye-open"></i>
                         </a>
-                        <a href="<?= WEB_ROOT ?>/admin/tag/<?= $tag->id ?>/update" class="btn btn-default"
+                        <a href="<?= WEB_ROOT ?>/admin/tag/<?= $tag->id . $type ?>/update" class="btn btn-default"
                            data-toggle="tooltip" title="Modifier">
                             <i class="glyphicon glyphicon-edit"></i>
                         </a>
