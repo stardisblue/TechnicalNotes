@@ -34,7 +34,7 @@ class QuestionsEntity extends QuestionsTechnotesEntity
     public function __construct()
     {
         $columns = [
-            'status' => false
+            'status' => 0
         ];
 
         parent::__construct($columns);

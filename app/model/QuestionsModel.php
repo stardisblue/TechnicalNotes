@@ -26,12 +26,26 @@ class QuestionsModel extends Model implements QuestionTechnotesModelInterface
 {
     protected static $table = 'questions';
 
+    public static function getAnswersComments($id)
+    {
+        $array = static::getAnswers($id);
+
+        foreach ($array as $key => $answer) {
+            $array[$key]->comments = AnswersModel::sortComments($answer->id);
+        }
+
+        return $array;
+    }
+
     public static function getAnswers($id)
     {
         $query = self::newQuery()
-            ->select()
-            ->from('answers')
-            ->where(['question_id', '=', $id]);
+            ->select('answers.*, users.username')
+            ->from('answers, users')
+            ->where([
+                'conditions' => 'question_id = :id AND user_id = users.id',
+                'values' => [':id' => $id]
+            ]);
 
         return $query->find();
     }
@@ -45,12 +59,12 @@ class QuestionsModel extends Model implements QuestionTechnotesModelInterface
             $itemsById[$item->id] = $item;
         }
 
-        sort($itemsById);
-        $itemsReversed = array_reverse($itemsById);
+        $itemsReversed = array_reverse($itemsById, true);
         $itemsTree = [];
+
         foreach ($itemsReversed as $item) {
             if ($item->parent_id) {
-                $itemsReversed[$item->parent_id]->items = $item;
+                $itemsReversed[$item->parent_id]->items[] = $item;
             } else {
                 $itemsTree[] = $item;
             }
@@ -62,9 +76,12 @@ class QuestionsModel extends Model implements QuestionTechnotesModelInterface
     public static function getComments($id)
     {
         $query = self::newQuery()
-            ->select()
-            ->from('question_comments')
-            ->where(['question_id', '=', $id]);
+            ->select('question_comments.*, users.username')
+            ->from('question_comments, users')
+            ->where([
+                'conditions' => 'question_id = :question_id AND user_id = users.id',
+                'values' => [':question_id' => $id]
+            ]);
 
         return $query->find();
 
@@ -122,5 +139,39 @@ class QuestionsModel extends Model implements QuestionTechnotesModelInterface
             ->where(['user_id', '=', $id]);
 
         return $query->find(null, static::getEntityName());
+    }
+
+    public static function addComment($question_id, $user_id, $parent_id, $content)
+    {
+        $query = self::newQuery()
+            ->insertInto('question_comments')
+            ->values([
+                'question_id' => $question_id,
+                'user_id' => $user_id,
+                'parent_id' => $parent_id,
+                'content' => $content
+            ]);
+
+        $query->execute();
+    }
+
+    public static function deleteComment($comment_id)
+    {
+        $query = self::newQuery()
+            ->delete()
+            ->from('question_comments')
+            ->where(['id', '=', $comment_id]);
+
+        $query->execute();
+    }
+
+    public static function getComment($id)
+    {
+        $query = self::newQuery()
+            ->select()
+            ->from('question_comments')
+            ->where(['id', '=', $id]);
+
+        return $query->first();
     }
 }

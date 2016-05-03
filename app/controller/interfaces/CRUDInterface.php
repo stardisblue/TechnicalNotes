@@ -27,5 +27,7 @@ interface CRUDInterface
 
     public function view($id);
 
+    public function update($id);
+
     public function delete($id);
 }

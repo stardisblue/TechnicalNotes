@@ -24,12 +24,12 @@ use rave\lib\core\io\Out;
 use rave\lib\core\security\Text;
 use techweb\app\controller\abstracts\FrontEndController;
 use techweb\app\controller\interfaces\CRUDInterface;
-use techweb\app\entity\TechnotesEntity;
+use techweb\app\entity\QuestionsEntity;
+use techweb\app\model\QuestionsModel;
 use techweb\app\model\TagsModel;
-use techweb\app\model\TechnotesModel;
 use techweb\app\model\UsersModel;
 
-class Technotes extends FrontEndController implements CRUDInterface
+class Questions extends FrontEndController implements CRUDInterface
 {
     public function index($page = 0)
     {
@@ -38,8 +38,8 @@ class Technotes extends FrontEndController implements CRUDInterface
         $success = In::session('success');
         $this->loadView('index',
             [
-                'count' => TechnotesModel::count(),
-                'technotes' => TechnotesModel::page(),
+                'count' => QuestionsModel::count(),
+                'questions' => QuestionsModel::page(),
                 'info' => $info,
                 'warning' => $warning,
                 'success' => $success
@@ -49,83 +49,84 @@ class Technotes extends FrontEndController implements CRUDInterface
         Out::unsetSession('success');
     }
 
-    public function create()
-    {
-        if (isset($this->data['userLogged'])) {
-            $technote = new TechnotesEntity();
-            if (In::isSetPost(['title', 'content'])) {
-                $this->checkCSRF('technotes');
-
-                $title = Text::clean(In::post('title'));
-                $content = Text::clean(In::post('content'));
-
-                $technote->title = $title;
-                $technote->content = $content;
-
-                if (empty($title) || empty($content)) {
-                    $this->loadView('create',
-                        ['technote' => $technote, 'warning' => 'empty']);
-
-                    return;
-                }
-
-                $technote->user_id = $this->data['userLogged']->id;
-                $technote->slug = Text::slug(In::post('title', FILTER_DEFAULT));
-
-                TechnotesModel::save($technote);
-                $technote->id = TechnotesModel::lastInsertId();
-
-                $tags = In::post('tags', FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE | FILTER_FORCE_ARRAY);
-                foreach ($tags as $tagId) {
-                    if ($tag = TagsModel::get(['id' => $tagId])) {
-                        TechnotesModel::addTag($technote->id, $tag->id);
-                    }
-                }
-
-                Out::session('success', 'note_added');
-                $this->redirect('technotes');
-            }
-
-            $this->loadView('create', ['technote' => $technote]);
-        } else {
-            $this->redirect('login');
-        }
-    }
-
     public function view($id)
     {
-        $technote = TechnotesModel::get(['id' => $id]);
+        $question = QuestionsModel::get(['id' => $id]);
 
-        if (isset($technote)) {
+        if (isset($question)) {
             $this->loadView('view', [
-                'technote' => $technote,
-                'user' => UsersModel::get(['id' => $technote->user_id]),
-                'tags' => TechnotesModel::getTags($id),
-                'comments' => TechnotesModel::sortComments($id)
+                'question' => $question,
+                'user' => UsersModel::get(['id' => $question->user_id]),
+                'tags' => QuestionsModel::getTags($id),
+                'answers' => QuestionsModel::getAnswersComments($id),
+                'comments' => QuestionsModel::sortComments($id)
             ]);
 
             return;
         }
 
         Out::session('warning', 'not_exist');
-        $this->redirect('technotes');
+        $this->redirect('questions');
+    }
+
+    public function create()
+    {
+        if (isset($this->data['userLogged'])) {
+            $question = new QuestionsEntity();
+            if (In::isSetPost(['title', 'content'])) {
+                $this->checkCSRF('questions');
+
+                $title = Text::clean(In::post('title'));
+                $content = Text::clean(In::post('content'));
+
+                $question->title = $title;
+                $question->content = $content;
+
+                if (empty($title) || empty($content)) {
+                    $this->loadView('create',
+                        ['question' => $question, 'warning' => 'empty']);
+
+                    return;
+                }
+
+                $question->user_id = $this->data['userLogged']->id;
+                $question->slug = Text::slug(In::post('title', FILTER_DEFAULT));
+
+                QuestionsModel::save($question);
+                $question->id = QuestionsModel::lastInsertId();
+
+                $tags = In::post('tags', FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE | FILTER_FORCE_ARRAY);
+                foreach ($tags as $tagId) {
+                    if ($tag = TagsModel::get(['id' => $tagId])) {
+                        QuestionsModel::addTag($question->id, $tag->id);
+                    }
+                }
+
+                Out::session('success', 'note_added');
+                $this->redirect('questions');
+            }
+
+            $this->loadView('create', ['question' => $question]);
+        } else {
+            $this->redirect('login');
+        }
     }
 
     public function update($id)
     {
-        $technoteUser = $this->data['userLogged'];
-        if (isset($technoteUser)) {
-            $technote = TechnotesModel::get(['id' => $id]);
+        $userLogged = $this->data['userLogged'];
+        if (isset($userLogged)) {
+            $question = QuestionsModel::get(['id' => $id]);
 
-            if (!isset($technote) || $technote->user_id !== $technoteUser->id) {
+            if (!isset($question) || $question->user_id !== $userLogged->id) {
                 Out::session('warning', 'not_exist');
-                $this->redirect('technotes');
+                $this->redirect('questions');
             }
 
-            $technoteTags = TechnotesModel::getTags($id);
+            $questionTags = QuestionsModel::getTags($id);
 
             if (In::isSetPost(['title', 'content'])) {
-                $this->checkCSRF('technotes');
+                $this->checkCSRF('questions');
 
                 $title = Text::clean(In::post('title'));
                 $content = Text::clean(In::post('content'));
@@ -133,50 +134,51 @@ class Technotes extends FrontEndController implements CRUDInterface
                 if (empty($title) || empty($content)) {
                     $this->loadView('update',
                         [
-                            'technote' => $technote,
-                            'tags' => $technoteTags,
+                            'question' => $question,
+                            'tags' => $questionTags,
                             'warning' => 'empty'
                         ]);
 
                     return;
                 }
 
-                $technote->title = $title;
-                $technote->content = $content;
-                $technote->slug = Text::slug(In::post('title', FILTER_DEFAULT));
-                $technote->creation_date = date("Y-m-d H:i:s");
+                $question->title = $title;
+                $question->content = $content;
+                $question->slug = Text::slug(In::post('title', FILTER_DEFAULT));
+                $question->status = In::post('status') === 'closed' ? 1 : 0;
+                $question->creation_date = date("Y-m-d H:i:s");
 
-                TechnotesModel::save($technote);
+                QuestionsModel::save($question);
 
                 $tags = In::post('tags', FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE | FILTER_FORCE_ARRAY);
 
-                $technoteTagsId = [];
+                $questionTagsId = [];
 
-                foreach ($technoteTags as $technoteTag) {
-                    $technoteTagsId[] = $technoteTag->id;
+                foreach ($questionTags as $questionTag) {
+                    $questionTagsId[] = $questionTag->id;
                 }
 
-                $tagsToAdd = array_diff($tags, $technoteTagsId);
-                $tagsToRemove = array_diff($technoteTagsId, $tags);
+                $tagsToAdd = array_diff($tags, $questionTagsId);
+                $tagsToRemove = array_diff($questionTagsId, $tags);
 
                 foreach ($tagsToAdd as $tagId) {
                     if ($tag = TagsModel::get(['id' => $tagId])) {
-                        TechnotesModel::addTag($technote->id, $tag->id);
+                        QuestionsModel::addTag($question->id, $tag->id);
                     }
                 }
 
                 foreach ($tagsToRemove as $tagId) {
                     if ($tag = TagsModel::get(['id' => $tagId])) {
-                        TechnotesModel::removeTag($technote->id, $tag->id);
+                        QuestionsModel::removeTag($question->id, $tag->id);
                     }
                 }
 
                 Out::session('success', 'updated');
-                $this->redirect('technotes');
+                $this->redirect('questions');
             }
 
             $this->loadView('update',
-                ['technote' => $technote, 'tags' => $technoteTags]);
+                ['question' => $question, 'tags' => $questionTags]);
         } else {
             $this->redirect('login');
         }
@@ -184,20 +186,20 @@ class Technotes extends FrontEndController implements CRUDInterface
 
     public function delete($id)
     {
-        $technoteUser = $this->data['userLogged'];
-        if (isset($technoteUser)) {
-            $this->checkCSRF('technotes');
-            $technote = TechnotesModel::get(['id' => $id]);
+        $questionUser = $this->data['userLogged'];
+        if (isset($questionUser)) {
+            $this->checkCSRF('questions');
+            $question = QuestionsModel::get(['id' => $id]);
 
-            if (!isset($technote) || $technote->user_id !== $technoteUser->id) {
+            if (!isset($question) || $question->user_id !== $questionUser->id) {
                 Out::session('warning', 'not_exist');
-                $this->redirect('technotes');
+                $this->redirect('questions');
             }
 
-            TechnotesModel::delete($technote);
+            QuestionsModel::delete($question);
 
             Out::session('success', 'deleted');
-            $this->redirect('technotes');
+            $this->redirect('questions');
         }
 
         $this->redirect('login');
@@ -205,17 +207,17 @@ class Technotes extends FrontEndController implements CRUDInterface
 
     public function addComment($id)
     {
-        $technoteUser = $this->data['userLogged'];
-        if (isset($technoteUser)) {
-            $technote = TechnotesModel::get(['id' => $id]);
+        $questionUser = $this->data['userLogged'];
+        if (isset($questionUser)) {
+            $question = QuestionsModel::get(['id' => $id]);
 
-            if (!isset($technote) || $technote->user_id !== $technoteUser->id) {
+            if (!isset($question) || $question->user_id !== $questionUser->id) {
                 Out::session('warning', 'not_exist');
-                $this->redirect('technotes');
+                $this->redirect('questions');
             }
 
             if (In::isSetPost(['content'])) {
-                $this->checkCSRF('technotes');
+                $this->checkCSRF('questions');
                 $content = Text::clean(In::post('content'));
                 $parent = In::post('parent_id', FILTER_SANITIZE_NUMBER_INT);
 
@@ -224,15 +226,15 @@ class Technotes extends FrontEndController implements CRUDInterface
                 }
 
                 if (empty($content)) {
-                    $this->redirect('technote/' . $id . '-' . $technote->slug);
+                    $this->redirect('question/' . $id . '-' . $question->slug);
 
                     return;
                 }
 
-                TechnotesModel::addComment($id, $technoteUser->id, $parent, $content);
+                QuestionsModel::addComment($id, $questionUser->id, $parent, $content);
             }
 
-            $this->redirect('technote/' . $id . '-' . $technote->slug);
+            $this->redirect('question/' . $id . '-' . $question->slug);
         } else {
             $this->redirect('login');
         }
@@ -240,21 +242,22 @@ class Technotes extends FrontEndController implements CRUDInterface
 
     public function deleteComment()
     {
-        $technoteUser = $this->data['userLogged'];
-        if (isset($technoteUser)) {
-            $this->checkCSRF('technotes');
+        $questionUser = $this->data['userLogged'];
+        if (isset($questionUser)) {
+            $this->checkCSRF('questions');
             if ($comment_id = In::post('comment_id', FILTER_SANITIZE_NUMBER_INT)) {
-                $comment = TechnotesModel::getComment($comment_id);
+                $comment = QuestionsModel::getComment($comment_id);
 
-                if ($technoteUser->id === $comment->user_id) {
-                    TechnotesModel::deleteComment($comment_id);
+                if ($questionUser->id === $comment->user_id) {
+                    QuestionsModel::deleteComment($comment_id);
                 }
 
-                $this->redirect('technotes/');
+                $this->redirect('questions');
             }
-            $this->redirect('technotes/');
+            $this->redirect('questions');
         } else {
             $this->redirect('login');
         }
     }
+
 }

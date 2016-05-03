@@ -1,15 +1,15 @@
-<h1>Technote</h1>
+<h1>Question</h1>
 <form method="post">
     <input type="hidden" name="csrf" value="<?= $csrf ?>">
     <div class="form-group">
         <label for="title">Titre :</label>
-        <input type="text" name="title" id="title" class="form-control" value="<?= $technote->title ?>"
+        <input type="text" name="title" id="title" class="form-control" value="<?= $question->title ?>"
                placeholder="Les meilleurs titres sont les plus courts">
     </div>
     <div class="form-group">
         <label for="content">Note :</label>
             <textarea name="content" id="content" cols="30" rows="10"
-                      class="form-control"><?= $technote->content ?></textarea>
+                      class="form-control"><?= $question->content ?></textarea>
     </div>
 
     <label for="tags">Mots-clés</label>

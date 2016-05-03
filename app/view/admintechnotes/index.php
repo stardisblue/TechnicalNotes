@@ -25,7 +25,8 @@
             <td>
                 <form action="<?= WEB_ROOT ?>/admin/technote/<?= $technote->id ?>/delete" method="post">
                     <div class="btn-group" role="group" aria-label="Basic example">
-                        <a href="<?= WEB_ROOT ?>/technote/<?= $technote->id ?>" class="btn btn-default"
+                        <a href="<?= WEB_ROOT ?>/technote/<?= $technote->id ?>-<?= $technote->slug ?>"
+                           class="btn btn-default"
                            data-toggle="tooltip" title="Voir">
                             <i class="glyphicon glyphicon-eye-open"></i>
                         </a>

@@ -35,12 +35,12 @@ class TechnotesModel extends Model implements QuestionTechnotesModelInterface
             $itemsById[$item->id] = $item;
         }
 
-        sort($itemsById);
-        $itemsReversed = array_reverse($itemsById);
+        $itemsReversed = array_reverse($itemsById, true);
         $itemsTree = [];
+
         foreach ($itemsReversed as $item) {
             if ($item->parent_id) {
-                $itemsReversed[$item->parent_id]->items = $item;
+                $itemsReversed[$item->parent_id]->items[] = $item;
             } else {
                 $itemsTree[] = $item;
             }
@@ -111,5 +111,39 @@ class TechnotesModel extends Model implements QuestionTechnotesModelInterface
             ->where(['user_id', '=', $id]);
 
         return $query->find(null, static::getEntityName());
+    }
+
+    public static function addComment($technote_id, $user_id, $parent_id, $content)
+    {
+        $query = self::newQuery()
+            ->insertInto('technote_comments')
+            ->values([
+                'technote_id' => $technote_id,
+                'user_id' => $user_id,
+                'parent_id' => $parent_id,
+                'content' => $content
+            ]);
+
+        $query->execute();
+    }
+
+    public static function deleteComment($comment_id)
+    {
+        $query = self::newQuery()
+            ->delete()
+            ->from('technote_comments')
+            ->where(['id', '=', $comment_id]);
+
+        $query->execute();
+    }
+
+    public static function getComment($id)
+    {
+        $query = self::newQuery()
+            ->select()
+            ->from('technote_comments')
+            ->where(['id', '=', $id]);
+
+        return $query->first();
     }
 }

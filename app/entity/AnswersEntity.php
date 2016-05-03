@@ -26,7 +26,7 @@ use techweb\app\entity\abstracts\ContentEntity;
  *
  * @package techweb\app\entity
  */
-class AnwsersEntity extends ContentEntity
+class AnswersEntity extends ContentEntity
 {
     /**
      * TechnoteEntity constructor.

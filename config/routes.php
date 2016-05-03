@@ -82,42 +82,36 @@ $router->get('/technote/:id-:slug', ['Technotes' => 'view'])->with('id', '(\d+)'
 $router->get('/technote/:id/edit', ['Technotes' => 'update'])->with('id', '(\d+)'); #
 $router->post('/technote/:id/edit', ['Technotes' => 'update'])->with('id', '(\d+)'); #
 
-$router->post('/technote/:id/comment', ['Technotes' => 'addComment'])->with('id', '(\d+)');
-$router->post('/technote/:id/comment/delete', ['Technotes' => 'deleteComment'])->with('id', '(\d+)');
+$router->post('/technote/:id/comment', ['Technotes' => 'addComment'])->with('id', '(\d+)'); #
+$router->post('/technote/comment/delete', ['Technotes' => 'deleteComment'])->with('id', '(\d+)'); #
 
-$router->post('/technote/:id/delete', ['Technotes' => 'delete'])->with('id', '(\d+)');
-
-$router->post('/technote/:id/tag', ['Technotes' => 'addTag'])->with('id', '(\d+)');
-$router->post('/technote/:id/tag/delete', ['Technotes' => 'deleteTag'])->with('id', '(\d+)');
+$router->post('/technote/:id/delete', ['Technotes' => 'delete'])->with('id', '(\d+)'); #
 
 /*
  * Questions
  */
-$router->get('/questions', ['Questions' => 'index']);
+$router->get('/questions', ['Questions' => 'index']); #
 
-$router->get('/question/:id-:slug', ['Questions' => 'view'])->with('id', '(\d+)')->with('slug', '[\d\w-_]+');
+$router->get('/question/create', ['Questions' => 'create']); #
+$router->post('/question/create', ['Questions' => 'create']); #
 
-$router->get('/question/:id/edit', ['Questions' => 'update'])->with('id', '(\d+)');
-$router->post('/question/:id/edit', ['Questions' => 'update'])->with('id', '(\d+)');
+$router->get('/question/:id-:slug', ['Questions' => 'view'])->with('id', '(\d+)')->with('slug', '[\d\w-_]+'); #
 
-$router->post('/question/:id/delete', ['Questions' => 'delete'])->with('id', '(\d+)');
+$router->get('/question/:id/edit', ['Questions' => 'update'])->with('id', '(\d+)'); #
+$router->post('/question/:id/edit', ['Questions' => 'update'])->with('id', '(\d+)'); #
 
-$router->post('/question/:id/comment', ['Questions' => 'addComment'])->with('id', '(\d+)');
-$router->post('/question/:id/comment/delete', ['Questions' => 'deleteComment'])->with('id', '(\d+)');
+$router->post('/question/:id/delete', ['Questions' => 'delete'])->with('id', '(\d+)'); #
 
-$router->post('/question/:id/answer', ['Questions' => 'addAnswer'])->with('id', '(\d+)');
-$router->post('/question/:id/answer/delete', ['Questions' => 'deleteAnswer'])->with('id', '(\d+)');
+$router->post('/question/:id/comment', ['Questions' => 'addComment'])->with('id', '(\d+)'); #
+$router->post('/question/comment/delete', ['Questions' => 'deleteComment'])->with('id', '(\d+)'); #
 
-$router->post('/question/:id/:idanswer/comment', ['Questions' => 'addAnswerComment'])
+$router->post('/question/:id/answer', ['Answers' => 'create'])->with('id', '(\d+)'); #
+$router->post('/answer/:id/delete', ['Answers' => 'delete'])->with('id', '(\d+)'); #
+
+$router->post('/question/:id/:idanswer/comment', ['Answers' => 'addComment'])
     ->with('id', '(\d+)')
-    ->with('idanswer', '\d+');
-$router->post('/question/:id/:idanswer/comment', ['Questions' => 'deleteAnswerComment'])
-    ->with('id', '(\d+)')
-    ->with('idanswer', '\d+');
-
-$router->post('/question/:id/close', ['Questions' => 'close'])->with('id', '(\d+)');
-$router->post('/question/:id/open', ['Questions' => 'open'])->with('id', '(\d+)');
-
+    ->with('idanswer', '\d+'); #
+$router->post('/question/answer/comment/delete', ['Answers' => 'deleteComment']); #
 /*
  * Tags
  */

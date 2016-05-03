@@ -42,7 +42,8 @@
                 <form action="<?= WEB_ROOT ?>/admin/question/<?= $question->id ?>/delete" method="post">
 
                     <div class="btn-group">
-                        <a href="<?= WEB_ROOT ?>/question/<?= $question->id ?>" class="btn btn-default"
+                        <a href="<?= WEB_ROOT ?>/question/<?= $question->id ?>-<?= $question->slug ?>"
+                           class="btn btn-default"
                            data-toggle="tooltip" title="Voir">
                             <i class="glyphicon glyphicon-eye-open"></i>
                         </a>
